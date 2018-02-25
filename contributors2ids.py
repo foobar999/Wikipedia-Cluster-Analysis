@@ -15,10 +15,10 @@ def create_mappings(input_dump_files):
     contributors = xml_dump.map(input_dump_files, process_dump=process_dump, threads=4)
     contributors = [revision_contributor_name for revision_contributor_name in contributors]
     print('found {} contributions'.format(len(contributors)))
-    contributors = list(set(contributors))
+    contributors = list(set(contributors))  # entferne Dubletten
     print('found {} contributors'.format(len(contributors)))
     contributors.sort()
-    contributors = {contributor_name: id for id,contributor_name in enumerate(contributors)}
+    contributors = {contributor_name: id for id,contributor_name in enumerate(contributors)}    # erzeuge Abbildungen name->id
     return contributors
 
     

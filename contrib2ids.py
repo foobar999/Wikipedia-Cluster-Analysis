@@ -1,4 +1,4 @@
-import json
+import csv
 import argparse
 import sys
 from mw import xml_dump
@@ -18,7 +18,6 @@ def create_mappings(input_dump_files):
     contributors = list(set(contributors))  # entferne Dubletten
     print('found {} contributors'.format(len(contributors)))
     contributors.sort()
-    contributors = {contributor_name: id for id,contributor_name in enumerate(contributors)}    # erzeuge Abbildungen name->id
     return contributors
 
     
@@ -31,10 +30,11 @@ def main():
     input_dump_files = [file.name for file in args.input_dump_files]
     output_mappings_file = args.output_mappings_file.name
     
-    contributor_mappings = create_mappings(input_dump_files)
+    contributors = create_mappings(input_dump_files)
     
-    with open(output_mappings_file, 'w') as contributors2ids_file:
-        json.dump(contributor_mappings, contributors2ids_file)
+    with open(output_mappings_file, 'w', newline='') as contributors2ids_file:
+        csv_writer = csv.writer(contributors2ids_file, delimiter=' ')
+        csv_writer.writerows(enumerate(contributors))
         
         
 if __name__ == '__main__':

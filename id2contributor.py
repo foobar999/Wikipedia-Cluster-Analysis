@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import csv
 import argparse
 import sys
 from mw import xml_dump
-
+from src import csv_io 
 
 def process_dump(dump, path):
     for page in dump:
@@ -32,9 +33,11 @@ def main():
     
     contributors = create_mappings(input_dump_files)
     
-    with open(output_mappings_file, 'w', newline='', encoding='utf-8') as id2contributor_file:
-        csv_writer = csv.writer(id2contributor_file, delimiter=' ')
-        csv_writer.writerows(enumerate(contributors))   # schreibe Einträge der Form [(0,CONTRIBUTOR_1),(1,CONTRIBUTOR_2),...]
+    csv_io.write_rows(output_mappings_file, enumerate(contributors))
+    
+    #with open(output_mappings_file, 'w', newline='', encoding='utf-8') as id2contributor_file:
+    #    csv_writer = csv.writer(id2contributor_file, delimiter=' ')
+    #    csv_writer.writerows(enumerate(contributors))   # schreibe Einträge der Form [(0,CONTRIBUTOR_1),(1,CONTRIBUTOR_2),...]
         
         
 if __name__ == '__main__':

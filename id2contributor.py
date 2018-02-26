@@ -23,18 +23,18 @@ def create_mappings(input_dump_files):
     
 # TODO print durch logging ersetzen? (führt zu Problemen bei Windows mit multiprocessing)
 def main():  
-    parser = argparse.ArgumentParser(description='extracts contributors from given wikimedia dumps and creates a contributor->id mapping JSON file', epilog='Example: ./{} collections/afwiki-20070124-pages-meta-history.xml.bz2 res.json'.format(sys.argv[0]))
-    parser.add_argument("input_dump_files", nargs='+', type=argparse.FileType('r'), help='paths to wikimedia history dumps (.xml or .xml.bz2)')
-    parser.add_argument("output_mappings_file", type=argparse.FileType('w'), help='path to resulting contributor->id mappings file')
+    parser = argparse.ArgumentParser(description='extracts contributors from at least one wikimedia dump and creates an id->contributor mapping CSV file', epilog='Example: ./{} afwiki-20070124-pages-meta-history.xml.bz2 id2contributor.csv'.format(sys.argv[0]))
+    parser.add_argument("idump", nargs='+', type=argparse.FileType('r'), help='path to wikimedia history dump (.xml or .xml.bz2)')
+    parser.add_argument("oid2con", type=argparse.FileType('w'), help='path to resulting id->contributor mappings CSV file')
     args = parser.parse_args()
-    input_dump_files = [file.name for file in args.input_dump_files]
-    output_mappings_file = args.output_mappings_file.name
+    input_dump_files = [file.name for file in args.idump]
+    output_mappings_file = args.oid2con.name
     
     contributors = create_mappings(input_dump_files)
     
-    with open(output_mappings_file, 'w', newline='') as contributors2ids_file:
-        csv_writer = csv.writer(contributors2ids_file, delimiter=' ')
-        csv_writer.writerows(enumerate(contributors))
+    with open(output_mappings_file, 'w', newline='', encoding='utf-8') as id2contributor_file:
+        csv_writer = csv.writer(id2contributor_file, delimiter=' ')
+        csv_writer.writerows(enumerate(contributors))   # schreibe Einträge der Form [(0,CONTRIBUTOR_1),(1,CONTRIBUTOR_2),...]
         
         
 if __name__ == '__main__':

@@ -11,10 +11,12 @@ def add_sha1_to_revdoc(input_revdoc_path, output_revdoc_path, compress):
     revdocs = (json.loads(line) for line in ifile) # TODO ist das speichermäßig ok?
     writer = files.writer(output_revdoc_path)
     for revdoc in revdocs:
-        revdoc['sha1'] = sha1(bytes(revdoc['text'], 'utf8')).hexdigest()
+        #if 'text' in revdoc:    # TODO ????
+        text_to_hash = revdoc['text'] if 'text' in revdoc else ''
+        revdoc['sha1'] = sha1(bytes(text_to_hash, 'utf8')).hexdigest()
         json.dump(revdoc, writer)
         writer.write("\n")
-    print('wrote {}'.format(input_revdoc_path))
+    print('wrote {}'.format(output_revdoc_path))
 
 
 def add_sha1_to_revdocs(input_revdoc_paths, output_sha1_revdoc_dir, compress):

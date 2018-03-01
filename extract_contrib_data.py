@@ -25,7 +25,9 @@ def extract_contrib_data(contributor2id, input_dump_files):
     print('found {} contributions'.format(len(contributions)))
     return contributions
     
-    
+# TODO mwlib title parsing/normalizing mit gensims id2doc kram vergleichen (insb. Namespaces)
+# TODO kann man mwlib title normalizing auch füür contributors nutzen?
+# TODO berücksichtigung von deleted text?
 def main():  
     parser = argparse.ArgumentParser(description='creates a CSV file with one entry (contributor_id,doc_id,num_contrib_words,num_contrib_bytes) per contribution; needs an id->contributor mapping file (result of "id2contributor.py") and at least one wikipedia dump', epilog='Example: ./{} id2contrib.csv afwiki-20070124-pages-meta-history.xml.bz2 contrib_data.csv'.format(sys.argv[0]))
     parser.add_argument("iid2con", type=argparse.FileType('r'), help='path to input id2contrib CSV file')

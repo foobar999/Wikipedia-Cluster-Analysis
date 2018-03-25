@@ -1,0 +1,40 @@
+{
+    "1": {
+        "revisions": [
+            {"content": "apple", "user": 1},
+            {"content": "apple banana fruits", "user": 2},
+            {"content": "apple banana fruits tomato", "user": 2},
+            {"content": "", "user": 3},
+            {"content": "apple banana fruits", "user": 1}     
+        ]
+    },
+    "2": {
+        "revisions": [
+            {"content": "IT computer", "user": 4},
+            {"content": "IT computer mouse calculator", "user": 4},
+            {"content": "IT computer calculator software online", "user": 5}
+        ]
+    },
+    "3": {
+        "revisions": [
+            {"content": "oranges vegetables", "user": 3},
+            {"content": "oranges fruits", "user": 2},
+            {"content": "oranges fruits apples", "user": 3}
+        ]
+    },
+    "4": {
+        "revisions": [
+            {"content": "internet", "user": 5},
+            {"content": "internet industry computer IT", "user": 4},
+            {"content": "internet computer IT keyboard", "user": 1},
+            {"content": "internet computer IT keyboard smartphone", "user": 4}
+        ]
+    },
+    "5": {
+        "revisions": [
+            {"content": "newspaper articles", "user": 6},
+            {"content": "newspaper articles  ", "user": 6},
+            {"content": "newspaper articles online", "user": 7}
+        ]
+    }
+}

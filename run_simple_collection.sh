@@ -5,7 +5,7 @@ COLL_PREFIX="collections/$PREFIX"
 OUT_PREFIX="output/$PREFIX"
 
 echo "generating XML dumps from JSON description"
-time python generate_xml_from_simple_json_collection.py "$COLL_PREFIX.json" "$COLL_PREFIX-articles.xml" "$COLL_PREFIX-pages-meta-history.xml"
+time python generate_xml_from_simple_json_collection.py "$PREFIX.json" "$COLL_PREFIX-articles.xml" "$COLL_PREFIX-pages-meta-history.xml"
 echo "generating JSON revdocs from XML dumps"
 time ~/Python-Miniconda3/Scripts/mwxml.exe dump2revdocs "$COLL_PREFIX-pages-meta-history.xml" --output="$OUT_PREFIX-revdocs" --compress="json" --verbose
 echo "generating JSON revdocs with SHA1 hashes from revision texts"

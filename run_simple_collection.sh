@@ -24,5 +24,15 @@ time python generate_xml_from_simple_json_collection.py "$PREFIX.json" "$COLL_PR
 bzip2 -zkf "$COLL_PREFIX-articles.xml"
 bzip2 -zkf "$COLL_PREFIX-pages-meta-history.xml"
 mkdir -p $TM_DIR
-VOCABULARY_SIZE=100000
-python -m gensim.scripts.make_wiki "$COLL_PREFIX-articles.xml.bz2" "$TM_DIR/$PREFIX" $VOCABULARY_SIZE online
+VOCABULARY_SIZE=100
+NO_BELOW=0
+NO_ABOVE=1.0
+ARTICLE_MIN_TOKENS=1
+TOKEN_MIN_LEN=2
+TOKEN_MAX_LEN=20
+#python -m gensim.scripts.make_wiki "$COLL_PREFIX-articles.xml.bz2" "$TM_DIR/$PREFIX" $VOCABULARY_SIZE online
+echo "generating gensim model data"
+python simple_make_wiki.py "$COLL_PREFIX-articles.xml.bz2" "$TM_DIR/$PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN
+
+
+

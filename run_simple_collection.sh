@@ -26,9 +26,12 @@ TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words model"
-time python src/wiki_to_bow.py "$COLL_PREFIX-articles.xml.bz2" "$TM_PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
-bzip2 -zkf "$TM_PREFIX-bow.mm"  # TODO produktiv: das nicht-komprimierte löschen (d.h. das 'k' muss weg)
-bzip2 -dkf "$TM_PREFIX-wordids.txt.bz2" # zum Betrachten des Dictionary -> TODO produktiv rausnehmen!!!
+time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.pkl.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
+time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-bow.mm --id2word $TM_PREFIX-id2word.txt  # TODO produktiv raus
+
+
+haschegif
+
 
 SMART_TFIDF="ltn"
 echo "generating tf-idf model"

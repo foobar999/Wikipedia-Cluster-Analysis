@@ -27,16 +27,12 @@ TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words model"
 time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.pkl.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
-time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-bow.mm --id2word $TM_PREFIX-id2word.txt  # TODO produktiv raus
-
-
-haschegif
-
+time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-bow.mm --id2word $TM_PREFIX-id2word.txt # TODO produktiv raus
 
 SMART_TFIDF="ltn"
 echo "generating tf-idf model"
-time python src/bow_to_tfidf.py "$TM_PREFIX-bow.mm.bz2" "$TM_PREFIX-tfidf.mm" --id2word "$TM_PREFIX-wordids.txt.bz2" --smart=$SMART_TFIDF
-bzip2 -zkf "$TM_PREFIX-tfidf.mm"  # TODO produktiv: das nicht-komprimierte löschen
+time python src/bow_to_tfidf.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-tfidf.pkl.bz2 --smart=$SMART_TFIDF
+time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-tfidf.pkl.bz2 $TM_PREFIX-tfidf.mm --id2word $TM_PREFIX-id2word.txt  # TODO prouktive raus
 
 
 # echo "generating JSON revdocs from XML dumps"

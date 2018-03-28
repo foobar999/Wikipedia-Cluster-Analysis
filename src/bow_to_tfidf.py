@@ -3,22 +3,20 @@ import sys
 import argparse
 import logging
 import bz2
-from gensim.corpora import Dictionary, HashDictionary, MmCorpus, WikiCorpus
+from gensim.corpora import MmCorpus
 from gensim.models import TfidfModel
 
 DEFAULT_SMART = 'ltn'   # tf: 1+log2(tf)  df: log2(N/df)  normalisierung: nö
 
 def main():
-    parser = argparse.ArgumentParser(description='creates a tf-idf model from a given gensim bag-of-words model', epilog='Example: ./{} mycorpus-bow.mm mycorpus-tfidf.mm --id2word mycorpus-wordids.txt --smart=ltn'.format(sys.argv[0]))
-    parser.add_argument('bow', type=argparse.FileType('r'), help='path to input bow model file (.mm or .mm.bz2)')
-    parser.add_argument('tfidf', type=argparse.FileType('w'), help='path to output tfidf model .mm file')
-    parser.add_argument('--id2word', type=argparse.FileType('r'), help='optional path to input id2word mapping file (.txt or .txt.bz2); should fit to input bow model')
+    parser = argparse.ArgumentParser(description='creates a binary .pkl/.pkl.bz2 tf-idf model file from a given binary .pkl/.pkl.bz2 bag-of-words model file', epilog='Example: ./{} mycorpus-bow.pkl.bz2 mycorpus-tfidf.pkl.bz2 --smart=ltn'.format(sys.argv[0]))
+    parser.add_argument('model_bow', type=argparse.FileType('r'), help='path to input bow model file (.pkl or .pkl.bz2)')
+    parser.add_argument('model_tfidf', type=argparse.FileType('w'), help='path to output tfidf model file (.pkl of .pkl.bz2)')
     parser.add_argument('--smart', default=DEFAULT_SMART, help='used wlocals,wglobal,normalize functions for tf-idf in SMART notation (as noted in gensim gensim.models.tfidfmodel doc) (default "{}")'.format(DEFAULT_SMART))
     
     args = parser.parse_args()
-    input_bow_path = args.bow.name
-    output_tfidf_path = args.tfidf.name
-    input_id2word_path = args.id2word.name
+    input_bow_path = args.model_bow.name
+    output_tfidf_path = args.model_tfidf.name
     smart = args.smart
     
     program = os.path.basename(sys.argv[0])
@@ -26,14 +24,19 @@ def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
     logging.root.level = logging.INFO
     
-    logger.info('running {} with input_bow_path {}, output_tfidf_path {}, input_id2word_path {}, smart {}'.format(program, input_bow_path, output_tfidf_path, input_id2word_path, smart))
+    logger.info('running {} with input_bow_path {}, output_tfidf_path {}, smart {}'.format(program, input_bow_path, output_tfidf_path, smart))
     
-    bow_corpus = MmCorpus(input_bow_path)
-    id2word = Dictionary.load_from_text(input_id2word_path) if input_id2word_path else None
-    tfidf_model = TfidfModel(bow_corpus, id2word=id2word, smartirs=smart)
-
-    MmCorpus.serialize(output_tfidf_path, tfidf_model[bow_corpus], progress_cnt=10000)
+    bow_model = MmCorpus.load(input_bow_path)
+    tfidf_model = TfidfModel(bow_model, smartirs=smart)
+    tfidf_corpus = tfidf_model[bow_model]
+    tfidf_corpus.save(output_tfidf_path)
+    
     logger.info("finished running %s", program)
+    
+    #bow_corpus = MmCorpus(input_bow_path)
+    #id2word = Dictionary.load_from_text(input_id2word_path) if input_id2word_path else None
+    #tfidf_model = TfidfModel(bow_corpus, id2word=id2word, smartirs=smart)
+    #MmCorpus.serialize(output_tfidf_path, tfidf_model[bow_corpus], progress_cnt=10000)
     
     
 if __name__ == '__main__':

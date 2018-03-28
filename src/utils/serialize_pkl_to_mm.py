@@ -19,9 +19,6 @@ def main():
     logger.info('serializing {} to {}'.format(input_model_pkl_path, output_model_mm_path))
     model = SaveLoad.load(input_model_pkl_path)
     MmCorpus.serialize(output_model_mm_path, model)
-    #if output_id2word_path:
-    #    logger.info('serializing dictionary of given model to {}'.format(output_id2word_path))
-    #    model.dictionary.save_as_text(output_id2word_path)
     
 if __name__ == '__main__':
     main()

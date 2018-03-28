@@ -24,20 +24,14 @@ def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
     logging.root.level = logging.INFO
     
-    logger.info('running {} with input_bow_path {}, output_tfidf_path {}, smart {}'.format(program, input_bow_path, output_tfidf_path, smart))
-    
+    logger.info('running {} with input_bow_path {}, output_tfidf_path {}, smart {}'.format(program, input_bow_path, output_tfidf_path, smart))   
     bow_model = MmCorpus.load(input_bow_path)
     tfidf_model = TfidfModel(bow_model, smartirs=smart)
     tfidf_corpus = tfidf_model[bow_model]
     tfidf_corpus.save(output_tfidf_path)
     
     logger.info("finished running %s", program)
-    
-    #bow_corpus = MmCorpus(input_bow_path)
-    #id2word = Dictionary.load_from_text(input_id2word_path) if input_id2word_path else None
-    #tfidf_model = TfidfModel(bow_corpus, id2word=id2word, smartirs=smart)
-    #MmCorpus.serialize(output_tfidf_path, tfidf_model[bow_corpus], progress_cnt=10000)
-    
+        
     
 if __name__ == '__main__':
     main()

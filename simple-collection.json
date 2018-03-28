@@ -19,7 +19,7 @@
         "revisions": [
             {"content": "oranges vegetables", "user": 3},
             {"content": "oranges fruits", "user": 2},
-            {"content": "oranges fruits apples", "user": 3}
+            {"content": "oranges fruits apple apple", "user": 3}
         ]
     },
     "4": {

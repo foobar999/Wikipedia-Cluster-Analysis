@@ -4,6 +4,7 @@ PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
 OUT_PREFIX="output/$PREFIX"
 TM_DIR="output/topic"
+TM_PREFIX="output/topic/$PREFIX"
 
 echo "generating XML dumps from JSON description"
 time python generate_xml_from_simple_json_collection.py "$PREFIX.json" "$COLL_PREFIX-articles.xml" "$COLL_PREFIX-pages-meta-history.xml"
@@ -23,7 +24,8 @@ TOKEN_MAX_LEN=20
 NAMESPACES="0"
 #python -m gensim.scripts.make_wiki "$COLL_PREFIX-articles.xml.bz2" "$TM_DIR/$PREFIX" $VOCABULARY_SIZE online
 echo "generating gensim model data"
-python simple_make_wiki.py "$COLL_PREFIX-articles.xml.bz2" "$TM_DIR/$PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
+time python simple_make_wiki.py "$COLL_PREFIX-articles.xml.bz2" "$TM_PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
+bzip2 -dkf "$TM_PREFIX-wordids.txt.bz2" # zum Betrachten des Dictionary -> TODO produktiv rausnehmen!!!
 
 
 # echo "generating JSON revdocs from XML dumps"

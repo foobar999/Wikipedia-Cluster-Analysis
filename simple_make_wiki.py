@@ -44,28 +44,31 @@ def main():
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
-    logging.root.level = logging.DEBUG
+    logging.root.level = logging.INFO
     
     logger.info('running {} with input_articles {}, output_prefix {}, keep_words {}, no_below {}, no_above {}, article_min_tokens {}, token_min_len {}, token_max_len {}, namespaces {}'.format(sys.argv[0],input_articles_path,output_files_prefix,keep_words,no_below,no_above,article_min_tokens,token_min_len,token_max_len,namespaces))
-    dictionary = HashDictionary(id_range=keep_words, debug=False)
-    dictionary.allow_update = True  # start collecting document frequencies
-    wiki = WikiCorpus(input_articles_path, lemmatize=False, dictionary=dictionary, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
-    MmCorpus.serialize(output_files_prefix + '_bow.mm', wiki, progress_cnt=10000)
-    dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words) # im Original stand hier DEFAULT_DICT_SIZE?
-    dictionary.save_as_text(output_files_prefix + '_wordids.txt.bz2')
-    wiki.save(output_files_prefix + '_corpus.pkl.bz2')
-    # wiki = WikiCorpus(input_articles_path, lemmatize=False)
-    # wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
-    # MmCorpus.serialize(output_files_prefix + '_bow.mm', wiki, progress_cnt=10000)  # another ~9h
-    # wiki.dictionary.save_as_text(output_files_prefix + '_wordids.txt.bz2')
-    # dictionary = Dictionary.load_from_text(output_files_prefix + '_wordids.txt.bz2')
+    # mit Hashing-Trick -> schneller, weniger schön betrachtbar
+    # dictionary = HashDictionary(id_range=keep_words, debug=False)
+    # dictionary.allow_update = True  # start collecting document frequencies
+    # wiki = WikiCorpus(input_articles_path, lemmatize=False, dictionary=dictionary, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
+    # MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
+    # dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words) # im Original stand hier DEFAULT_DICT_SIZE?
+    # dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
+    # wiki.save(output_files_prefix + '-corpus.pkl.bz2')
+    # ohne Hashing-Trick
+    wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
+    print(wiki.__dict__)
+    wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
+    MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
+    wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
+    dictionary = Dictionary.load_from_text(output_files_prefix + '-wordids.txt.bz2')
     del wiki
     
-    mm = MmCorpus(output_files_prefix + '_bow.mm')
+    mm = MmCorpus(output_files_prefix + '-bow.mm')
     tfidf = TfidfModel(mm, id2word=dictionary, normalize=True)
     tfidf.save(output_files_prefix + '.tfidf_model')
 
-    MmCorpus.serialize(output_files_prefix + '_tfidf.mm', tfidf[mm], progress_cnt=10000)
+    MmCorpus.serialize(output_files_prefix + '-tfidf.mm', tfidf[mm], progress_cnt=10000)
     logger.info("finished running %s", program)
     
     

@@ -16,7 +16,7 @@ DEFAULT_TOKEN_MAX_LEN = 20
 DEFAULT_NAMESPACES = 0
 
 def main():
-    parser = argparse.ArgumentParser(description='creates gensim data files from a given XML.BZ2 MediaWiki dump', epilog='Example: ./{} enwiki-pages-articles.xml.bz2 topicdata/enwiki --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates gensim BOW,TFIDF representation files from a given xml.bz2 MediaWiki dump', epilog='Example: ./{} enwiki-pages-articles.xml.bz2 topicdata/enwiki --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
     parser.add_argument("idump", type=argparse.FileType('r'), help='path to input XML.BZ2 articles dump')
     parser.add_argument("oprefix", help='prefix for generated gensim files')
     parser.add_argument("--keep-words", type=int, default=DEFAULT_DICT_SIZE, help='number of most frequent word types to keep (default {})'.format(DEFAULT_DICT_SIZE))
@@ -57,7 +57,6 @@ def main():
     # wiki.save(output_files_prefix + '-corpus.pkl.bz2')
     # ohne Hashing-Trick
     wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
-    print(wiki.__dict__)
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
     wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')

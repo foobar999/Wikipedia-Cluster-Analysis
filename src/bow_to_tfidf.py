@@ -10,7 +10,7 @@ DEFAULT_SMART = 'ltn'   # tf: 1+log2(tf)  df: log2(N/df)  normalisierung: nö
 
 def main():
     parser = argparse.ArgumentParser(description='creates a tf-idf model from a given gensim bag-of-words model', epilog='Example: ./{} mycorpus-bow.mm mycorpus-tfidf.mm --id2word mycorpus-wordids.txt --smart=ltn'.format(sys.argv[0]))
-    parser.add_argument('bow', type=argparse.FileType('r'), help='path to input bow model .mm file')
+    parser.add_argument('bow', type=argparse.FileType('r'), help='path to input bow model file (.mm or .mm.bz2)')
     parser.add_argument('tfidf', type=argparse.FileType('w'), help='path to output tfidf model .mm file')
     parser.add_argument('--id2word', type=argparse.FileType('r'), help='optional path to input id2word mapping file (.txt or .txt.bz2); should fit to input bow model')
     parser.add_argument('--smart', default=DEFAULT_SMART, help='used wlocals,wglobal,normalize functions for tf-idf in SMART notation (as noted in gensim gensim.models.tfidfmodel doc) (default "{}")'.format(DEFAULT_SMART))

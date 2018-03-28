@@ -27,12 +27,13 @@ TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words model"
 time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.pkl.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
-time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-bow.mm --id2word $TM_PREFIX-id2word.txt # TODO produktiv raus
+time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-bow.mm # TODO produktiv raus
+time python src/utils/serialize_pkl_to_dict.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-dict.txt # TODO productiv raus
 
 SMART_TFIDF="ltn"
 echo "generating tf-idf model"
 time python src/bow_to_tfidf.py $TM_PREFIX-bow.pkl.bz2 $TM_PREFIX-tfidf.pkl.bz2 --smart=$SMART_TFIDF
-time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-tfidf.pkl.bz2 $TM_PREFIX-tfidf.mm --id2word $TM_PREFIX-id2word.txt  # TODO prouktive raus
+time python src/utils/serialize_pkl_to_mm.py $TM_PREFIX-tfidf.pkl.bz2 $TM_PREFIX-tfidf.mm # TODO prouktive raus
 
 
 # echo "generating JSON revdocs from XML dumps"

@@ -60,14 +60,6 @@ def main():
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
     wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
-    #dictionary = Dictionary.load_from_text(output_files_prefix + '-wordids.txt.bz2')
-    #del wiki
-    
-    #mm = MmCorpus(output_files_prefix + '-bow.mm')
-    #tfidf = TfidfModel(mm, id2word=dictionary, smartirs='ltn')  # tf: 1+log2(tf)  df: log2(N/df)  normalisierung: nö
-    #tfidf.save(output_files_prefix + '.tfidf_model')   # TODO braucht man das?
-
-    #MmCorpus.serialize(output_files_prefix + '-tfidf.mm', tfidf[mm], progress_cnt=10000)
     logger.info("finished running %s", program)
     
     

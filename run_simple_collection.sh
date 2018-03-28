@@ -9,6 +9,7 @@ TM_PREFIX="output/topic/$PREFIX"
 echo "generating XML dumps from JSON description"
 time python generate_xml_from_simple_json_collection.py "$PREFIX.json" "$COLL_PREFIX-articles.xml" "$COLL_PREFIX-pages-meta-history.xml"
 
+# TODO sollte ich lieber binäre formate mit .save()/.save_corpus() statt .save_as_text() nehmen (wie etwa tfidf.save(output_files_prefix + '.tfidf_model')?)
 # TODO preprocessing (stopwords,...)
 
 # erfordert grundsätzlich bz2
@@ -22,10 +23,16 @@ ARTICLE_MIN_TOKENS=1
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
-echo "generating gensim bow model"
+echo "generating bag-of-words model"
 time python src/wiki_to_bow.py "$COLL_PREFIX-articles.xml.bz2" "$TM_PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
 bzip2 -zkf "$TM_PREFIX-bow.mm"  # TODO nur .bz2 behalten bei produktiv!
 bzip2 -dkf "$TM_PREFIX-wordids.txt.bz2" # zum Betrachten des Dictionary -> TODO produktiv rausnehmen!!!
+
+SMART_TFIDF="ltn"
+echo "generating tf-idf model"
+# TODO auf .txt.bz2 dict umstellen
+time python src/bow_to_tfidf.py "$TM_PREFIX-bow.mm" "$TM_PREFIX-tfidf.mm" --id2word "$TM_PREFIX-wordids.txt" --smart=$SMART_TFIDF
+bzip2 -zkf "$TM_PREFIX-tfidf.mm"  # TODO nur .bz2 behalten bei produktiv!
 
 
 # echo "generating JSON revdocs from XML dumps"

@@ -22,8 +22,9 @@ ARTICLE_MIN_TOKENS=1
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
-echo "generating gensim model data"
-time python simple_make_wiki.py "$COLL_PREFIX-articles.xml.bz2" "$TM_PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
+echo "generating gensim bow model"
+time python src/wiki_to_bow.py "$COLL_PREFIX-articles.xml.bz2" "$TM_PREFIX" --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
+bzip2 -zkf "$TM_PREFIX-bow.mm"  # TODO nur .bz2 behalten bei produktiv!
 bzip2 -dkf "$TM_PREFIX-wordids.txt.bz2" # zum Betrachten des Dictionary -> TODO produktiv rausnehmen!!!
 
 

@@ -16,9 +16,9 @@ DEFAULT_TOKEN_MAX_LEN = 20
 DEFAULT_NAMESPACES = 0
 
 def main():
-    parser = argparse.ArgumentParser(description='creates gensim BOW,TFIDF representation files from a given xml.bz2 MediaWiki dump', epilog='Example: ./{} enwiki-pages-articles.xml.bz2 topicdata/enwiki --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates gensim bag-of-words representation files from a given xml.bz2 MediaWiki dump', epilog='Example: ./{} enwiki-pages-articles.xml.bz2 topicdata/enwiki --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
     parser.add_argument("idump", type=argparse.FileType('r'), help='path to input XML.BZ2 articles dump')
-    parser.add_argument("oprefix", help='prefix for generated gensim files')
+    parser.add_argument("oprefix", help='prefix for generated gensim bow files')
     parser.add_argument("--keep-words", type=int, default=DEFAULT_DICT_SIZE, help='number of most frequent word types to keep (default {})'.format(DEFAULT_DICT_SIZE))
     parser.add_argument("--no-below", type=int, default=DEFAULT_NO_BELOW, help='Keep only tokes which appear in at least NO_BELOW documents (default {})'.format(DEFAULT_NO_BELOW))
     parser.add_argument("--no-above", type=float, default=DEFAULT_NO_ABOVE, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})'.format(DEFAULT_NO_ABOVE))
@@ -60,14 +60,14 @@ def main():
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
     wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
-    dictionary = Dictionary.load_from_text(output_files_prefix + '-wordids.txt.bz2')
-    del wiki
+    #dictionary = Dictionary.load_from_text(output_files_prefix + '-wordids.txt.bz2')
+    #del wiki
     
-    mm = MmCorpus(output_files_prefix + '-bow.mm')
-    tfidf = TfidfModel(mm, id2word=dictionary, normalize=True)
-    tfidf.save(output_files_prefix + '.tfidf_model')
+    #mm = MmCorpus(output_files_prefix + '-bow.mm')
+    #tfidf = TfidfModel(mm, id2word=dictionary, smartirs='ltn')  # tf: 1+log2(tf)  df: log2(N/df)  normalisierung: nö
+    #tfidf.save(output_files_prefix + '.tfidf_model')   # TODO braucht man das?
 
-    MmCorpus.serialize(output_files_prefix + '-tfidf.mm', tfidf[mm], progress_cnt=10000)
+    #MmCorpus.serialize(output_files_prefix + '-tfidf.mm', tfidf[mm], progress_cnt=10000)
     logger.info("finished running %s", program)
     
     

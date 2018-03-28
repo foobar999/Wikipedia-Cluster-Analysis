@@ -16,37 +16,32 @@ DEFAULT_TOKEN_MAX_LEN = 20
 DEFAULT_NAMESPACES = 0
 
 def main():
-    parser = argparse.ArgumentParser(description='creates gensim bag-of-words representation files from a given xml.bz2 MediaWiki dump', epilog='Example: ./{} enwiki-pages-articles.xml.bz2 topicdata/enwiki --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
-    parser.add_argument("idump", type=argparse.FileType('r'), help='path to input XML.BZ2 articles dump')
-    parser.add_argument("oprefix", help='prefix for generated gensim bow files')
+    parser = argparse.ArgumentParser(description='creates a binary gensim bag-of-words .pkl/.pkl.bz2 model representation file from a given xml.bz2 MediaWiki dump', epilog='Example: ./{} mycorpus-pages-articles.xml.bz2 mycorpus-bow.pkl --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-min-len 2 --token-max-len 20 --namespaces 0 '.format(sys.argv[0]))
+    parser.add_argument("articles_dump", type=argparse.FileType('r'), help='path to input .xml.bz2 articles dump')
+    parser.add_argument("model_pkl", type=argparse.FileType('w'), help='path to output bow .pkl/.pkl.bz2 file')
     parser.add_argument("--keep-words", type=int, default=DEFAULT_DICT_SIZE, help='number of most frequent word types to keep (default {})'.format(DEFAULT_DICT_SIZE))
     parser.add_argument("--no-below", type=int, default=DEFAULT_NO_BELOW, help='Keep only tokes which appear in at least NO_BELOW documents (default {})'.format(DEFAULT_NO_BELOW))
     parser.add_argument("--no-above", type=float, default=DEFAULT_NO_ABOVE, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})'.format(DEFAULT_NO_ABOVE))
     parser.add_argument("--article-min-tokens", type=int, default=DEFAULT_ART_MIN_TOKENS, help='Analyze only articles of >= ARTICLE_MIN_TOKENS tokens default {}). Should be >=1'.format(DEFAULT_ART_MIN_TOKENS))
     parser.add_argument("--token-min-len", type=int, default=DEFAULT_TOKEN_MIN_LEN, help='Consider only tokens of at least TOKEN_MIN_LEN chars (default {})'.format(DEFAULT_TOKEN_MIN_LEN))
     parser.add_argument("--token-max-len", type=int, default=DEFAULT_TOKEN_MAX_LEN, help='Consider only tokens of at most TOKEN_MAX_LEN chars (default {})'.format(DEFAULT_TOKEN_MAX_LEN))
-    parser.add_argument("--namespaces", nargs='+', type=int, default=(DEFAULT_NAMESPACES), help='Consider only given MediaWiki namespaces (default {})'.format(DEFAULT_NAMESPACES))
-    
+    parser.add_argument("--namespaces", nargs='+', type=int, default=(DEFAULT_NAMESPACES), help='Consider only given MediaWiki namespaces (default {})'.format(DEFAULT_NAMESPACES))    
     
     args = parser.parse_args()
-    input_articles_path = args.idump.name
-    output_files_prefix = args.oprefix 
+    input_articles_path = args.articles_dump.name
+    output_model_path = args.model_pkl.name 
     keep_words = args.keep_words
     no_below,no_above = args.no_below,args.no_above
     article_min_tokens = args.article_min_tokens
     token_min_len,token_max_len = args.token_min_len,args.token_max_len
     namespaces = tuple(str(ns) for ns in args.namespaces)
     
-    if not os.path.isdir(os.path.dirname(output_files_prefix)):
-        parser.print_help(sys.stderr)
-        raise SystemExit('Error: Directory "{}" not exits. Create the directory and try again.'.format(os.path.dirname(output_files_prefix)))
-    
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
     logging.root.level = logging.INFO
     
-    logger.info('running {} with input_articles {}, output_prefix {}, keep_words {}, no_below {}, no_above {}, article_min_tokens {}, token_min_len {}, token_max_len {}, namespaces {}'.format(sys.argv[0],input_articles_path,output_files_prefix,keep_words,no_below,no_above,article_min_tokens,token_min_len,token_max_len,namespaces))
+    logger.info('running {} with input_articles {}, output_model_path {}, keep_words {}, no_below {}, no_above {}, article_min_tokens {}, token_min_len {}, token_max_len {}, namespaces {}'.format(sys.argv[0],input_articles_path,output_model_path,keep_words,no_below,no_above,article_min_tokens,token_min_len,token_max_len,namespaces))
     # mit Hashing-Trick -> schneller, weniger schön betrachtbar
     # dictionary = HashDictionary(id_range=keep_words, debug=False)
     # dictionary.allow_update = True  # start collecting document frequencies
@@ -58,8 +53,9 @@ def main():
     # ohne Hashing-Trick
     wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
-    MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
-    wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
+    #MmCorpus.serialize(output_files_prefix + '-bow.mm', wiki, progress_cnt=10000)
+    #wiki.dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
+    wiki.save(output_model_path) # speichere in Binärformat
     logger.info("finished running %s", program)
     
     

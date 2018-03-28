@@ -1,8 +1,8 @@
-
 import os
 import sys
 import argparse
 import logging
+import bz2
 from gensim.corpora import Dictionary, HashDictionary, MmCorpus, WikiCorpus
 from gensim.models import TfidfModel
 
@@ -12,13 +12,13 @@ def main():
     parser = argparse.ArgumentParser(description='creates a tf-idf model from a given gensim bag-of-words model', epilog='Example: ./{} mycorpus-bow.mm mycorpus-tfidf.mm --id2word mycorpus-wordids.txt --smart=ltn'.format(sys.argv[0]))
     parser.add_argument('bow', type=argparse.FileType('r'), help='path to input bow model .mm file')
     parser.add_argument('tfidf', type=argparse.FileType('w'), help='path to output tfidf model .mm file')
-    parser.add_argument('--id2word', type=argparse.FileType('r'), help='optional path to input id2word mapping file (.txt); should fit to input bow model')
+    parser.add_argument('--id2word', type=argparse.FileType('r'), help='optional path to input id2word mapping file (.txt or .txt.bz2); should fit to input bow model')
     parser.add_argument('--smart', default=DEFAULT_SMART, help='used wlocals,wglobal,normalize functions for tf-idf in SMART notation (as noted in gensim gensim.models.tfidfmodel doc) (default "{}")'.format(DEFAULT_SMART))
     
     args = parser.parse_args()
     input_bow_path = args.bow.name
     output_tfidf_path = args.tfidf.name
-    input_id2word_path = args.id2word
+    input_id2word_path = args.id2word.name
     smart = args.smart
     
     program = os.path.basename(sys.argv[0])

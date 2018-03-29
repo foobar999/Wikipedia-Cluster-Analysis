@@ -6,6 +6,7 @@ from gensim.corpora import MmCorpus, Dictionary
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
 import numpy as np
+from utils import init_gensim_logger
 
 def main():
     parser = argparse.ArgumentParser(description='applies a pickled lda model to a saved .mm corpus and saves the resulting corpus topics as a text-based dense matrix file (rows=documents, cols=topics)', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model mycorpus-corpus-topics.txt'.format(sys.argv[0]))
@@ -18,10 +19,7 @@ def main():
     input_model_prefix = args.model_prefix.name
     output_corpus_topics_path = args.corpus_topics.name
     
-    program = os.path.basename(sys.argv[0])
-    logger = logging.getLogger(program)
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
-    logging.root.level = logging.INFO
+    program, logger = init_gensim_logger()
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_model_prefix':input_model_prefix, 'output_corpus_topics_path':output_corpus_topics_path})))
     

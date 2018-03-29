@@ -7,16 +7,15 @@ TM_DIR="output/topic"
 TM_PREFIX="output/topic/$PREFIX"
 
 echo "generating XML dumps from JSON description"
-time python generate_xml_from_simple_json_collection.py "$PREFIX.json" "$COLL_PREFIX-articles.xml" "$COLL_PREFIX-pages-meta-history.xml"
+time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
 # TODO performanceüberlegungen:
 # - sollte ich lieber binäre formate mit .save()/.save_corpus() statt .save_as_text() nehmen (wie etwa tfidf.save(output_files_prefix + '.tfidf_model')?)
-# - .mm models durch .mm.bz2 ersetzen
 # TODO preprocessing (stopwords,...)
 
 # erfordert grundsätzlich .xml.bz2-Dateien
-bzip2 -zkf "$COLL_PREFIX-articles.xml"
-bzip2 -zkf "$COLL_PREFIX-pages-meta-history.xml"
+bzip2 -zkf $COLL_PREFIX-articles.xml
+bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
 mkdir -p $TM_DIR
 VOCABULARY_SIZE=100
 NO_BELOW=0
@@ -25,13 +24,15 @@ ARTICLE_MIN_TOKENS=1
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
-echo "generating bag-of-words model"
-# TODO bz2
+echo "generating bag-of-words corpus"
 time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.mm $TM_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
 bzip2 -zf $TM_PREFIX-bow.mm # komprimiere .mm Datei nachträglich
 
 NUMTOPICS=2
+echo "generating lda model"
 time python src/run_lda.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$TM_PREFIX-id2word.txt.bz2
+python src/utils/lda_model_to_corpus.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
+
 
 
 # echo "generating JSON revdocs from XML dumps"

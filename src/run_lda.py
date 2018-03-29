@@ -33,8 +33,6 @@ def main():
     # TODO id2word nicht mitspeichern?
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten
     
-    # np.savetxt('output/topic/haschegif', corpus2dense(lda_model[mmcorpus], num_terms=numtopics, num_docs=mmcorpus.num_docs)) #speichert dichtebesetzte topicattribute in textform; zeilen sind topics, spalten sind dokumente; auch binär mit np.save() möglich?
-    
     logger.info("finished running %s", program)
     
     

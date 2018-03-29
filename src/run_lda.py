@@ -3,19 +3,22 @@ import argparse
 import logging
 import bz2
 from pprint import pformat
+from gensim.utils import SaveLoad
+from gensim.models.ldamulticore import LdaMulticore
 
 def main():
-    parser = argparse.ArgumentParser(description='creates a lda model from a given bag-of-words or tf-idf model', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-topics.mm --id2word mycorpus-wordids.txt.bz2 '.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates a lda model from a given bag-of-words or tf-idf model', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-topics.mm 7 --id2word mycorpus-wordids.txt.bz2 '.format(sys.argv[0]))
     parser.add_argument('model', type=argparse.FileType('r'), help='path to input model file (bow or tfidf, .mm or .mm.bz2)')
     parser.add_argument('lda', type=argparse.FileType('w'), help='path to output lda topic model .mm file')
     parser.add_argument('numtopics', type=int, help='number of latent topics')
+    # TODO brauch ich das?
     parser.add_argument('--id2word', type=argparse.FileType('r'), help='optional path to input id2word mapping file (.txt or .txt.bz2); should fit to input model')
     
     args = parser.parse_args()
     input_model_path = args.model.name
     output_lda_path = args.lda.name
     numtopics = args.numtopics
-    input_id2word_path = args.id2word.name
+    input_id2word_path = args.id2word.name if args.id2word else None
     
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
@@ -24,8 +27,13 @@ def main():
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_model_path':input_model_path, 'output_lda_path':output_lda_path, 'numtopics':numtopics, 'input_id2word_path':input_id2word_path})))
     
+    model = SaveLoad.load(input_model_path)
+    print('*****************\n',model.__dict__)
+    lda_model = LdaMulticore(corpus=model, num_topics=numtopics)
+    print(lda_model.__dict__)
+    lda_corpus = lda_model[model]
+    print(lda_corpus.__dict__)
     
-    corpus = MmCorpus(input_bow_path)
     #id2word = Dictionary.load_from_text(input_id2word_path) if input_id2word_path else None
     #tfidf_model = TfidfModel(bow_corpus, id2word=id2word, smartirs=smart)
 

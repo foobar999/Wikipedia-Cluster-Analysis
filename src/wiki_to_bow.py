@@ -6,7 +6,6 @@ import argparse
 import logging
 from pprint import pformat
 from gensim.corpora import Dictionary, HashDictionary, MmCorpus, WikiCorpus
-from gensim.models import TfidfModel
 
 DEFAULT_DICT_SIZE = 100000
 DEFAULT_NO_BELOW = 5

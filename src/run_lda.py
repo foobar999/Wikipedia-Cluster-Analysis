@@ -4,8 +4,7 @@ import logging
 from pprint import pformat
 from gensim.corpora import MmCorpus, Dictionary
 from gensim.models.ldamulticore import LdaMulticore
-from gensim.matutils import corpus2dense
-import numpy as np
+from utils.utils import init_gensim_logger
 
 def main():
     parser = argparse.ArgumentParser(description='trains an lda model from a given bag-of-words corpus and saves several binary model files; no corpus data is saved, only the trained model file to save space', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model 7 --id2word mycorpus-wordids.txt.bz2 '.format(sys.argv[0]))
@@ -20,10 +19,7 @@ def main():
     numtopics = args.numtopics
     input_id2word_path = args.id2word.name if args.id2word else None
     
-    program = os.path.basename(sys.argv[0])
-    logger = logging.getLogger(program)
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
-    logging.root.level = logging.INFO
+    program, logger = init_gensim_logger()
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'output_model_prefix':output_model_prefix, 'numtopics':numtopics, 'input_id2word_path':input_id2word_path})))
     

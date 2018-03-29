@@ -6,6 +6,7 @@ import argparse
 import logging
 from pprint import pformat
 from gensim.corpora import Dictionary, HashDictionary, MmCorpus, WikiCorpus
+from utils.utils import init_gensim_logger
 
 DEFAULT_DICT_SIZE = 100000
 DEFAULT_NO_BELOW = 5
@@ -38,10 +39,7 @@ def main():
     token_min_len,token_max_len = args.token_min_len,args.token_max_len
     namespaces = tuple(str(ns) for ns in args.namespaces)
     
-    program = os.path.basename(sys.argv[0])
-    logger = logging.getLogger(program)
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')    
-    logging.root.level = logging.INFO
+    program, logger = init_gensim_logger()
     
     logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_corpus_path':output_corpus_path ,'output_id2word_path':output_id2word_path, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_min_len':token_min_len, 'token_max_len':token_max_len, 'namespaces':namespaces})))
     

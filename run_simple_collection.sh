@@ -31,7 +31,7 @@ bzip2 -zf $TM_PREFIX-bow.mm # komprimiere .mm Datei nachträglich
 NUMTOPICS=2
 echo "generating lda model"
 time python src/run_lda.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$TM_PREFIX-id2word.txt.bz2
-python src/utils/lda_model_to_corpus.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
+python src/utils/apply_lda_model_to_corpus.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 
 

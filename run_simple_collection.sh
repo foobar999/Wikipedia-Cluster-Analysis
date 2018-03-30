@@ -3,6 +3,8 @@ set -e  # Abbruch bei Fehler
 PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
 OUT_PREFIX="output/$PREFIX"
+BOW_DIR="output/bow"
+BOW_PREFIX="output/bow/$PREFIX"
 TM_DIR="output/topic"
 TM_PREFIX="output/topic/$PREFIX"
 
@@ -23,8 +25,8 @@ time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFI
 # gensim erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-articles.xml
 bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
-mkdir -p $TM_DIR
 
+mkdir -p $BOW_DIR
 VOCABULARY_SIZE=100
 NO_BELOW=0
 NO_ABOVE=1.0
@@ -34,18 +36,19 @@ TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words corpus"
 # TODO dict binär speichern?
-time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.mm $TM_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES --save-titles
-bzip2 -zf $TM_PREFIX-bow.mm # komprimiere bag-of-words-Korpus
-bzip2 -zf $TM_PREFIX-bow.mm.metadata.cpickle # komprimiere docID->(pageID,Dokumenttitel)-Datei
-bzip2 -dkf $TM_PREFIX-id2word.txt.bz2 # TODO produktiv raus
-bzip2 -dkf $TM_PREFIX-bow.mm.bz2 # TODO produktiv raus
+time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-bow.mm $BOW_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES --save-titles
+bzip2 -zf $BOW_PREFIX-bow.mm # komprimiere bag-of-words-Korpus
+bzip2 -zf $BOW_PREFIX-bow.mm.metadata.cpickle # komprimiere docID->(pageID,Dokumenttitel)-Datei
+bzip2 -dkf $BOW_PREFIX-id2word.txt.bz2 # TODO produktiv raus
+bzip2 -dkf $BOW_PREFIX-bow.mm.bz2 # TODO produktiv raus
 
+mkdir -p $TM_DIR
 NUMTOPICS=2
 PASSES=10
 ITERATIONS=100
 echo "generating lda model"
-time python src/run_lda.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$TM_PREFIX-id2word.txt.bz2 --passes=$PASSES --iterations=$ITERATIONS
-python src/utils/apply_lda_model_to_corpus.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
+time python src/run_lda.py $BOW_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$BOW_PREFIX-id2word.txt.bz2 --passes=$PASSES --iterations=$ITERATIONS
+python src/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 
 

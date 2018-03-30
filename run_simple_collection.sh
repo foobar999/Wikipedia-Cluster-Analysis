@@ -37,8 +37,9 @@ TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words corpus"
 # TODO dict binär speichern?
-time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.mm $TM_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
-bzip2 -zf $TM_PREFIX-bow.mm # komprimiere .mm Datei nachträglich
+time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.mm $TM_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES --save-titles
+bzip2 -zf $TM_PREFIX-bow.mm # komprimiere bag-of-words-Korpus
+bzip2 -zf $TM_PREFIX-bow.mm.metadata.cpickle # komprimiere docID->(pageID,Dokumenttitel)-Datei
 bzip2 -dkf $TM_PREFIX-id2word.txt.bz2 # TODO produktiv raus
 bzip2 -dkf $TM_PREFIX-bow.mm.bz2 # TODO produktiv raus
 

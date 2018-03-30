@@ -9,8 +9,6 @@ TM_PREFIX="output/topic/$PREFIX"
 echo "generating XML dumps from JSON description"
 time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
-# TODO performanceüberlegungen:
-# - sollte ich lieber binäre formate mit .save()/.save_corpus() statt .save_as_text() nehmen (wie etwa tfidf.save(output_files_prefix + '.tfidf_model')?)
 # TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
 # - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
 # - am besten mit filter_tokens() vom Dictionary!
@@ -25,7 +23,7 @@ time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFI
 # - "self.metadata" in "wikicorpus.py"
 # - DocIDs entsprechen genau Dokreihenfolge in Korpus https://groups.google.com/forum/#!topic/gensim/ildVmSqBmfw
 
-# erfordert grundsätzlich .xml.bz2-Dateien
+# gensim erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-articles.xml
 bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
 mkdir -p $TM_DIR
@@ -45,8 +43,10 @@ bzip2 -dkf $TM_PREFIX-id2word.txt.bz2 # TODO produktiv raus
 bzip2 -dkf $TM_PREFIX-bow.mm.bz2 # TODO produktiv raus
 
 NUMTOPICS=2
+PASSES=10
+ITERATIONS=100
 echo "generating lda model"
-time python src/run_lda.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$TM_PREFIX-id2word.txt.bz2
+time python src/run_lda.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$TM_PREFIX-id2word.txt.bz2 --passes=$PASSES --iterations=$ITERATIONS
 python src/utils/apply_lda_model_to_corpus.py $TM_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 

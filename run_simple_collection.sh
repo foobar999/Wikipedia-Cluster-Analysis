@@ -11,12 +11,25 @@ time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFI
 
 # TODO performanceüberlegungen:
 # - sollte ich lieber binäre formate mit .save()/.save_corpus() statt .save_as_text() nehmen (wie etwa tfidf.save(output_files_prefix + '.tfidf_model')?)
-# TODO preprocessing (stopwords,...)
+# TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
+# - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
+# - am besten mit filter_tokens() vom Dictionary!
+# - stemming? -> könnte ich ja mal untersuchen 
+#   - scheinen eher zu stören https://mimno.infosci.cornell.edu/papers/schofield_tacl_2016.pdf
+# - lemmatisierung? -> könnte ich ja mal versuchen https://radimrehurek.com/gensim/utils.html#gensim.utils.lemmatize braucht nur lemmatize=True und package
+#   - package aus rep braucht python 2, für python 3: https://github.com/clips/pattern https://stackoverflow.com/questions/44234796/pattern-package-for-python-3-6-anaconda
+#   - scheint positiven Einfluss zu haben (da gensim das benutzen will, https://arxiv.org/pdf/1608.03995.pdf)
+# - beachte sprachen bei stopwords, stemming, lemmatisierung!
+# - nummern filtern?
+# TODO speichere irgendwo zuordnung dokumenttitel bzw. wikimedia-id <-> gensim-docids
+# - "self.metadata" in "wikicorpus.py"
+# - DocIDs entsprechen genau Dokreihenfolge in Korpus https://groups.google.com/forum/#!topic/gensim/ildVmSqBmfw
 
 # erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-articles.xml
 bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
 mkdir -p $TM_DIR
+
 VOCABULARY_SIZE=100
 NO_BELOW=0
 NO_ABOVE=1.0
@@ -25,8 +38,11 @@ TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words corpus"
+# TODO dict binär speichern?
 time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $TM_PREFIX-bow.mm $TM_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-min-len $TOKEN_MIN_LEN --token-max-len $TOKEN_MAX_LEN --namespaces $NAMESPACES
 bzip2 -zf $TM_PREFIX-bow.mm # komprimiere .mm Datei nachträglich
+bzip2 -dkf $TM_PREFIX-id2word.txt.bz2 # TODO produktiv raus
+bzip2 -dkf $TM_PREFIX-bow.mm.bz2 # TODO produktiv raus
 
 NUMTOPICS=2
 echo "generating lda model"

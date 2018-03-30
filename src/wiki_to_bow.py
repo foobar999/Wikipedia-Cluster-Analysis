@@ -54,6 +54,7 @@ def main():
     # ohne Hashing-Trick
     wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_min_len, token_max_len=token_max_len, filter_namespaces=namespaces)
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
+    wiki.dictionary.compactify()
     MmCorpus.serialize(output_corpus_path, wiki, progress_cnt=10000)
     wiki.dictionary.save_as_text(output_id2word_path)
     logger.info("finished running %s", program)

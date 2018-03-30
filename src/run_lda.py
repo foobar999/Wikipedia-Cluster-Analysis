@@ -25,7 +25,7 @@ def main():
     
     mmcorpus = MmCorpus(input_corpus_path)
     dictionary = Dictionary.load_from_text(input_id2word_path) if input_id2word_path else None
-    lda_model = LdaMulticore(corpus=mmcorpus, num_topics=numtopics, id2word=dictionary)
+    lda_model = LdaMulticore(corpus=mmcorpus, num_topics=numtopics, id2word=dictionary, passes=100, iterations=1000)
     # TODO id2word nicht mitspeichern?
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten
     

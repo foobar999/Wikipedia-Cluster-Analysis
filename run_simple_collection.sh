@@ -42,7 +42,7 @@ python src/utils/dictionary_cpickle_to_text.py $BOW_PREFIX-corpus.id2word.cpickl
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
 mkdir -p $TM_DIR
-NUMTOPICS=2
+NUMTOPICS=3
 PASSES=10
 ITERATIONS=100
 echo "generating lda model"

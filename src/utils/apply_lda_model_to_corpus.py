@@ -29,7 +29,7 @@ def main():
     with open(output_corpus_topics_path, 'w') as ofile:
         ofile.write('docid: [(topicid,relation(docid,topicid)),...]\n')
         for docid,document_topics in enumerate(lda_model[mmcorpus]):
-            ofile.write(str(docid) + ': ' + str([(tid,"{0:.2f}".format(p)) for tid,p in document_topics]) + '\n')
+            ofile.write(str(docid+1) + ': ' + str([(tid,"{0:.2f}".format(p)) for tid,p in document_topics]) + '\n')
     
 if __name__ == '__main__':
     main()

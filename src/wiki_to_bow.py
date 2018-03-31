@@ -26,7 +26,7 @@ def main():
     parser.add_argument("--article-min-tokens", type=int, default=DEFAULT_ART_MIN_TOKENS, help='Analyze only articles of >= ARTICLE_MIN_TOKENS tokens default {}). Should be >=1'.format(DEFAULT_ART_MIN_TOKENS))
     parser.add_argument("--token-len-range", type=int, nargs=2, default=DEFAULT_TOKEN_LEN_RANGE, metavar=('MIN','MAX'), help='Consider only tokens of at least MIN and at most MAX chars (default {} {})'.format(DEFAULT_TOKEN_LEN_RANGE[0],DEFAULT_TOKEN_LEN_RANGE[1]))
     parser.add_argument("--namespaces", nargs='+', type=int, default=(DEFAULT_NAMESPACES), help='Consider only given MediaWiki namespaces (default {})'.format(DEFAULT_NAMESPACES))    
-    parser.add_argument("--save-titles", action='store_true', help='save to binary <corpus>.metadata.cpickle file document id mappings: {docID: (pageID,document title)}')
+    parser.add_argument("--save-titles", action='store_true', help='if set, save document id mappings: {docID: (pageID,document title)} to binary pickle <corpus>.metadata.cpickle file')
     
     args = parser.parse_args()
     input_articles_path = args.articles_dump.name

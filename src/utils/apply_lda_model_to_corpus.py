@@ -4,6 +4,7 @@ import logging
 from pprint import pformat
 from gensim.corpora import MmCorpus, Dictionary
 from gensim.models.ldamulticore import LdaMulticore
+from gensim.interfaces import TransformedCorpus
 from gensim.matutils import corpus2dense
 import numpy as np
 from utils import init_gensim_logger
@@ -25,7 +26,8 @@ def main():
     
     mmcorpus = MmCorpus(input_corpus_path)
     lda_model = LdaMulticore.load(input_model_prefix)
-    np.savetxt(output_corpus_topics_path, corpus2dense(lda_model[mmcorpus], num_terms=lda_model.num_topics, num_docs=mmcorpus.num_docs).T)
+    with open(output_corpus_topics_path, 'w') as ofile:
+        ofile.writelines((str(document_topics) + '\n' for document_topics in lda_model[mmcorpus]))
     
 if __name__ == '__main__':
     main()

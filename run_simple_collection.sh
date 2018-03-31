@@ -21,6 +21,7 @@ time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFI
 #   - scheint positiven Einfluss zu haben (da gensim das benutzen will, https://arxiv.org/pdf/1608.03995.pdf)
 # - beachte sprachen bei stopwords, stemming, lemmatisierung!
 # - nummern filtern?
+# TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
 
 # gensim erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-articles.xml

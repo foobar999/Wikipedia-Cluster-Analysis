@@ -34,21 +34,20 @@ ARTICLE_MIN_TOKENS=1
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
-echo "generating bag-of-words corpus"
-# TODO dict binär speichern?
-time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-bow.mm $BOW_PREFIX-id2word.txt.bz2 --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES --save-titles
-bzip2 -zf $BOW_PREFIX-bow.mm # komprimiere bag-of-words-Korpus
-bzip2 -zf $BOW_PREFIX-bow.mm.metadata.cpickle # komprimiere docID->(pageID,Dokumenttitel)-Datei
-bzip2 -dkf $BOW_PREFIX-id2word.txt.bz2 # TODO produktiv raus
-bzip2 -dkf $BOW_PREFIX-bow.mm.bz2 # TODO produktiv raus
+echo "generating bag-of-words corpus files"
+time python src/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-corpus --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES
+mv $BOW_PREFIX-corpus.mm.metadata.cpickle $BOW_PREFIX-corpus.metadata.cpickle # gib docID-Mapping intuitiveren Namen
+python src/utils/dict_cpickle_to_text.py $BOW_PREFIX-corpus.metadata.cpickle $BOW_PREFIX-corpus.metadata.json # TODO produktiv raus
+python src/utils/dictionary_cpickle_to_text.py $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
+bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
 mkdir -p $TM_DIR
 NUMTOPICS=2
 PASSES=10
 ITERATIONS=100
 echo "generating lda model"
-time python src/run_lda.py $BOW_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $NUMTOPICS --id2word=$BOW_PREFIX-id2word.txt.bz2 --passes=$PASSES --iterations=$ITERATIONS
-python src/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-bow.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
+time python src/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS
+python src/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 
 

@@ -19,6 +19,7 @@
 # TODO hashing dict -> dann auch in realisierung?
 
 set -e  # Abbruch bei Fehler
+#export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
 OUT_PREFIX="output/$PREFIX"
@@ -47,14 +48,12 @@ python scripts/utils/dict_cpickle_to_text.py $BOW_PREFIX-corpus.metadata.cpickle
 python scripts/utils/dictionary_cpickle_to_text.py $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
-haschegif
-
 mkdir -p $TM_DIR
 NUMTOPICS=3
 PASSES=10
 ITERATIONS=100
 echo "generating lda model"
-time python scripts/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS
+time python scripts/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS 2>&1 | tee $LOG_PREFIX-lda.log
 python scripts/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 

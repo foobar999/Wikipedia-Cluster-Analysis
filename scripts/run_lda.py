@@ -26,7 +26,6 @@ def main():
     passes,iterations = args.passes,args.iterations
     
     program, logger = init_gensim_logger()
-    logging.root.level = logging.DEBUG  # TODO produktiv raus
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_id2word_path':input_id2word_path, 'output_model_prefix':output_model_prefix, 'numtopics':numtopics, 'passes':passes, 'iterations':iterations})))
         

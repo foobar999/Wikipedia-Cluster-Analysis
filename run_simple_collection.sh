@@ -19,7 +19,7 @@
 # TODO hashing dict -> dann auch in realisierung?
 
 set -e  # Abbruch bei Fehler
-#export DEBUG="DEBUG" # TODO produktiv raus
+export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
 OUT_PREFIX="output/$PREFIX"

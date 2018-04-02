@@ -3,6 +3,7 @@ import argparse
 import logging
 from pprint import pformat
 from gensim.corpora import MmCorpus, Dictionary
+from gensim.models import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
 from utils.utils import init_gensim_logger
 
@@ -30,13 +31,9 @@ def main():
     logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_id2word_path':input_id2word_path, 'output_model_prefix':output_model_prefix, 'numtopics':numtopics, 'passes':passes, 'iterations':iterations})))
         
     corpus = MmCorpus(input_corpus_path)
-    id2word = Dictionary.load(input_id2word_path)
-    
-    #lda_model = LdaMulticore(corpus=mmcorpus, num_topics=numtopics, id2word=dictionary, passes=passes, iterations=iterations, chunksize=2000, alpha='symmetric', eval_every=None)
-    
-    from gensim.models import LdaModel # TODO produktiv durch LdaMulticore ersetzen
-    lda_model = LdaModel(corpus=corpus, num_topics=numtopics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha='symmetric', eval_every=None)
-    
+    id2word = Dictionary.load(input_id2word_path)    
+    model = LdaModel if 'DEBUG' in os.environ else LdaMulticore
+    lda_model = model(corpus=corpus, num_topics=numtopics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha='symmetric', eval_every=None)    
     
     # TODO id2word nicht mitspeichern?
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten

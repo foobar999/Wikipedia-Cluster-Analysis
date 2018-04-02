@@ -25,8 +25,7 @@ def main():
     output_cluster_labels_path = args.cluster_labels.name
     numclusters = args.numclusters
     
-    program, logger = init_gensim_logger()
-    logging.root.level = logging.DEBUG  # TODO produktiv raus    
+    program, logger = init_gensim_logger()  
     logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_lda_path':input_lda_path, 'output_cluster_labels_path':output_cluster_labels_path, 'numclusters':numclusters})))
         
     corpus = MmCorpus(input_corpus_path)

@@ -22,6 +22,12 @@ time python generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFI
 # - beachte sprachen bei stopwords, stemming, lemmatisierung!
 # - nummern filtern?
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
+# TODO debug-schalter mit mehr logging,...
+# TODO logging auf dateien ändern?
+# TODO logge: 
+# - #dokumente vor preprocessing (geht das? ansonsten über bash-script)
+# - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
+# TODO hashing dict -> dann auch in realisierung?
 
 # gensim erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-articles.xml

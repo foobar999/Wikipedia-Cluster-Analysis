@@ -10,8 +10,6 @@ from sklearn.cluster import MiniBatchKMeans
 from utils.utils import init_gensim_logger
 import numpy as np
  
-DEFAULT_PASSES = 100
-DEFAULT_ITERATIONS = 1000
 
 def main():
     parser = argparse.ArgumentParser(description='clusters documents of a corpus with k-means by applying a trained lda model to the corpus', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model mycorpus-clusters.cpickle.bz2 --id2word mycorpus-wordids.txt.bz2 --passes 10 --iterations 100 '.format(sys.argv[0]))
@@ -31,7 +29,8 @@ def main():
     corpus = MmCorpus(input_corpus_path)
     lda = LdaMulticore.load(input_lda_path)
     dense = corpus2dense(lda[corpus], lda.num_topics, corpus.num_docs).T  # TODO das wird nicht gestreamt -> probleme?
-    kmeans = MiniBatchKMeans(n_clusters=numclusters, init='k-means++', max_iter=1000000, batch_size=100, verbose=True, compute_labels=True, tol=0.0, max_no_improvement=10, n_init=3, reassignment_ratio=0.01)
+    verbose = 'DEBUG' in os.environ
+    kmeans = MiniBatchKMeans(n_clusters=numclusters, init='k-means++', max_iter=1000000, batch_size=100, verbose=verbose, compute_labels=True, tol=0.0, max_no_improvement=10, n_init=3, reassignment_ratio=0.01)
     logger.info('running k-means on {} documents, {} topics -> {} clusters'.format(corpus.num_docs,lda.num_topics,numclusters))
     logger.info(kmeans)
     cluster_labels = kmeans.fit_predict(dense)
@@ -39,7 +38,7 @@ def main():
     logger.info(type(cluster_labels))
     with smart_open(output_cluster_labels_path, 'wb') as ofile:
         np.save(ofile, cluster_labels)
-    np.savetxt(output_cluster_labels_path + '.txt', cluster_labels) # TODO entfernen
+    #np.savetxt(output_cluster_labels_path + '.txt', cluster_labels) # TODO entfernen
     
     logger.info("finished running %s", program)
     

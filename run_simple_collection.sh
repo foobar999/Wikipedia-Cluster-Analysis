@@ -27,6 +27,8 @@ BOW_DIR="output/bow"
 BOW_PREFIX="output/bow/$PREFIX"
 TM_DIR="output/topic"
 TM_PREFIX="output/topic/$PREFIX"
+CLUS_DIR="output/clusters"
+CLUS_PREFIX="output/clusters/$PREFIX"
 LOG_PREFIX="logs/$PREFIX"
 
 echo "generating XML dumps from JSON description"
@@ -44,8 +46,8 @@ NAMESPACES="0"
 echo "generating bag-of-words corpus files"
 time python scripts/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-corpus --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES 2>&1 | tee $LOG_PREFIX-wiki-to-bow.log
 mv $BOW_PREFIX-corpus.mm.metadata.cpickle $BOW_PREFIX-corpus.metadata.cpickle # gib docID-Mapping intuitiveren Namen
-python scripts/utils/dict_cpickle_to_text.py $BOW_PREFIX-corpus.metadata.cpickle $BOW_PREFIX-corpus.metadata.json # TODO produktiv raus
-python scripts/utils/dictionary_cpickle_to_text.py $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
+python scripts/utils/binary_to_text.py pickle $BOW_PREFIX-corpus.metadata.cpickle $BOW_PREFIX-corpus.metadata.json # TODO produktiv raus
+python scripts/utils/binary_to_text.py gensim $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
 mkdir -p $TM_DIR
@@ -56,6 +58,11 @@ echo "generating lda model"
 time python scripts/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS 2>&1 | tee $LOG_PREFIX-lda.log
 python scripts/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
+mkdir -p $CLUS_DIR
+NUMCLUSTERS=$NUMTOPICS
+echo "computing kmeans clusters"
+time python scripts/run_kmeans.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS 2>&1 | tee $LOG_PREFIX-kmeans.log
+python scripts/utils/binary_to_text.py numpy $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $CLUS_PREFIX-kmeans-labels.txt # TODO produktiv raus
 
 
 # echo "generating JSON revdocs from XML dumps"

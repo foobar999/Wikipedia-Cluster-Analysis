@@ -26,11 +26,11 @@ BOW_DIR="output/bow"
 BOW_PREFIX="output/bow/$PREFIX"
 TM_DIR="output/topic"
 TM_PREFIX="output/topic/$PREFIX"
+LOG_PREFIX="logs/$PREFIX"
 
 echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
-bzip2 -zkf $COLL_PREFIX-articles.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
-bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
+bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
 
 mkdir -p $BOW_DIR
 VOCABULARY_SIZE=100
@@ -41,11 +41,13 @@ TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
 NAMESPACES="0"
 echo "generating bag-of-words corpus files"
-time python scripts/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-corpus --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES
+time python scripts/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-corpus --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES 2>&1 | tee $LOG_PREFIX-wiki-to-bow.log
 mv $BOW_PREFIX-corpus.mm.metadata.cpickle $BOW_PREFIX-corpus.metadata.cpickle # gib docID-Mapping intuitiveren Namen
 python scripts/utils/dict_cpickle_to_text.py $BOW_PREFIX-corpus.metadata.cpickle $BOW_PREFIX-corpus.metadata.json # TODO produktiv raus
 python scripts/utils/dictionary_cpickle_to_text.py $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
+
+haschegif
 
 mkdir -p $TM_DIR
 NUMTOPICS=3

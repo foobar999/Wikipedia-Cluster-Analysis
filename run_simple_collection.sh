@@ -1,15 +1,4 @@
 #!/bin/bash
-set -e  # Abbruch bei Fehler
-PREFIX="simple-collection"
-COLL_PREFIX="collections/$PREFIX"
-OUT_PREFIX="output/$PREFIX"
-BOW_DIR="output/bow"
-BOW_PREFIX="output/bow/$PREFIX"
-TM_DIR="output/topic"
-TM_PREFIX="output/topic/$PREFIX"
-
-echo "generating XML dumps from JSON description"
-time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
 # TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
 # - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
@@ -29,8 +18,18 @@ time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.js
 # - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
 # TODO hashing dict -> dann auch in realisierung?
 
-# gensim erfordert grundsätzlich .xml.bz2-Dateien
-bzip2 -zkf $COLL_PREFIX-articles.xml
+set -e  # Abbruch bei Fehler
+PREFIX="simple-collection"
+COLL_PREFIX="collections/$PREFIX"
+OUT_PREFIX="output/$PREFIX"
+BOW_DIR="output/bow"
+BOW_PREFIX="output/bow/$PREFIX"
+TM_DIR="output/topic"
+TM_PREFIX="output/topic/$PREFIX"
+
+echo "generating XML dumps from JSON description"
+time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
+bzip2 -zkf $COLL_PREFIX-articles.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
 bzip2 -zkf $COLL_PREFIX-pages-meta-history.xml
 
 mkdir -p $BOW_DIR

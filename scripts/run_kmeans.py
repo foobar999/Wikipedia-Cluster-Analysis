@@ -13,7 +13,7 @@ import numpy as np
 DEFAULT_BATCH_SIZE = 1000
 
 def main():
-    parser = argparse.ArgumentParser(description='clusters documents of a corpus with k-means by applying a trained lda model to the corpus', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model mycorpus-clusters.cpickle.bz2 --id2word mycorpus-wordids.txt.bz2 --passes 10 --iterations 100 '.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='clusters documents of a corpus with k-means by applying a trained lda model to the corpus', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model mycorpus-kmeans-labels.cpickle.bz2 --id2word mycorpus-wordids.txt.bz2 --passes 10 --iterations 100 '.format(sys.argv[0]))
     parser.add_argument('corpus', type=argparse.FileType('r'), help='path to text-based input MatrixMarket bow corpus file (.mm/.mm.bz2)')
     parser.add_argument('lda', type=argparse.FileType('r'), help='path to binary input lda model file')
     parser.add_argument('cluster_labels', type=argparse.FileType('w'), help='path to output binary cluster labels file (.cpickle/.cpickle.bz2)')

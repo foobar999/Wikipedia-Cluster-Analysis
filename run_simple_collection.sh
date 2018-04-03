@@ -11,12 +11,13 @@
 # - beachte sprachen bei stopwords, stemming, lemmatisierung!
 # - nummern filtern?
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
-# TODO debug-schalter mit mehr logging,...
-# TODO logging auf dateien ändern?
 # TODO logge: 
 # - #dokumente vor preprocessing (geht das? ansonsten über bash-script)
 # - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
-# TODO hashing dict -> dann auch in realisierung?
+# TODO debug: normales dicr, release hashing dict 
+# TODO dafür sorgen, dass bei fehlendem namespace '0' genommen wird
+# TODO alpha,beta(bzw.eta) richtig berücksichtigen)
+# TODO log nach output schieben
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
@@ -65,6 +66,8 @@ echo "computing kmeans clusters"
 time python scripts/run_kmeans.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS --batch-size=$BATCHSIZE 2>&1 | tee $LOG_PREFIX-kmeans.log
 python scripts/utils/binary_to_text.py numpy $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $CLUS_PREFIX-kmeans-labels.txt # TODO produktiv raus
 
+echo "calculating silhouette score"
+time python scripts/evaluate_dense.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2
 
 # echo "generating JSON revdocs from XML dumps"
 # time ~/Python-Miniconda3/Scripts/mwxml.exe dump2revdocs "$COLL_PREFIX-pages-meta-history.xml" --output="$OUT_PREFIX-revdocs" --compress="json" --verbose

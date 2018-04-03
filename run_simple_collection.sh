@@ -18,7 +18,7 @@
 # TODO dafür sorgen, dass bei fehlendem namespace '0' genommen wird
 # TODO alpha,beta(bzw.eta) richtig berücksichtigen)
 # TODO log nach output schieben
-# TODO time mitloggen
+# TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

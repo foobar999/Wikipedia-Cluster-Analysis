@@ -19,6 +19,7 @@
 # TODO alpha,beta(bzw.eta) richtig berücksichtigen)
 # TODO log nach output schieben
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
+# TODO hyperparameter alpha=50/K, beta=0.01 nehmen?
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

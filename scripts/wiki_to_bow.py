@@ -13,7 +13,9 @@ import sys
 import argparse
 import logging
 from pprint import pformat
-from gensim.corpora import Dictionary, HashDictionary, MmCorpus, WikiCorpus
+from gensim.corpora import Dictionary, HashDictionary, MmCorpus
+#from gensim.corpora import WikiCorpus
+from no_namespace_wikicorpus import NoNamespaceWikiCorpus
 from utils.utils import init_gensim_logger
 
 DEFAULT_DICT_SIZE = 100000
@@ -57,7 +59,10 @@ def main():
     # dictionary.save_as_text(output_files_prefix + '-wordids.txt.bz2')
     # wiki.save(output_files_prefix + '-corpus.pkl.bz2')
     # ohne Hashing-Trick
-    wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_len_range[0], token_max_len=token_len_range[1], filter_namespaces=namespaces)
+    
+    #wiki = WikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_len_range[0], token_max_len=token_len_range[1], filter_namespaces=namespaces)
+    wiki = NoNamespaceWikiCorpus(input_articles_path, lemmatize=False, article_min_tokens=article_min_tokens, token_min_len=token_len_range[0], token_max_len=token_len_range[1], filter_namespaces=namespaces)
+    
     wiki.metadata = True    # schreibe Metadaten inkl. Titel?
     wiki.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     wiki.dictionary.compactify()

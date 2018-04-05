@@ -1,32 +1,12 @@
 {
     "1": {
         "revisions": [
-            {"content": "apfel birne apfel news", "user": 1}     
+            {"content": "it computer it", "user": 1}     
         ]
     },
     "2": {
         "revisions": [
-            {"content": "news birne handel", "user": 5}
-        ]
-    },
-    "3": {
-        "revisions": [
-            {"content": "apfel birne birne handel", "user": 3}
-        ]
-    },
-    "4": {
-        "revisions": [
-            {"content": "geld handel geld handel apfel", "user": 4}
-        ]
-    },
-    "5": {
-        "revisions": [
-            {"content": "news news", "user": 7}
-        ]
-    },
-    "6": {
-        "revisions": [
-            {"content": "geld handel geld apfel", "user": 7}
+            {"content": "unternehmen handel handel unternehmen", "user": 5}
         ]
     }
 }

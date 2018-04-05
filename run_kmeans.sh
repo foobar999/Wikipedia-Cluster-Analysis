@@ -5,13 +5,13 @@ if (( $# != 1 )); then
     echo "Usage: $0 PREFIX"
     exit 1
 fi
-
 unset DEBUG
 PREFIX=$1
+
 BOW_PREFIX="output/bow/$PREFIX"
 TM_PREFIX="output/topic/$PREFIX"
 CLUS_PREFIX="output/clusters/$PREFIX"
-LOG_PREFIX="logs/$PREFIX"
+LOG_PREFIX="output/logs/$PREFIX"
 
 NUMCLUSTERS=100
 BATCHSIZE=1000

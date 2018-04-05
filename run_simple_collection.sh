@@ -25,20 +25,19 @@ set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
-OUT_PREFIX="output/$PREFIX"
-BOW_DIR="output/bow"
+mkdir -p "output/bow"
 BOW_PREFIX="output/bow/$PREFIX"
-TM_DIR="output/topic"
+mkdir -p "output/topic"
 TM_PREFIX="output/topic/$PREFIX"
-CLUS_DIR="output/clusters"
+mkdir -p "output/clusters"
 CLUS_PREFIX="output/clusters/$PREFIX"
-LOG_PREFIX="logs/$PREFIX"
+mkdir -p "output/logs"
+LOG_PREFIX="output/logs/$PREFIX"
 
 echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
 
-mkdir -p $BOW_DIR
 VOCABULARY_SIZE=100
 NO_BELOW=0
 NO_ABOVE=1.0
@@ -53,7 +52,6 @@ python scripts/utils/binary_to_text.py pickle $BOW_PREFIX-corpus.metadata.cpickl
 python scripts/utils/binary_to_text.py gensim $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
-mkdir -p $TM_DIR
 NUMTOPICS=3
 PASSES=10
 ITERATIONS=100
@@ -61,7 +59,6 @@ echo "generating lda model"
 ( time python scripts/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS ) |& tee $LOG_PREFIX-lda.log
 python scripts/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
-mkdir -p $CLUS_DIR
 NUMCLUSTERS=$NUMTOPICS
 BATCHSIZE=1000
 echo "computing kmeans clusters"

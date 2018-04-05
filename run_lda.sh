@@ -5,13 +5,12 @@ if (( $# != 1 )); then
     echo "Usage: $0 PREFIX"
     exit 1
 fi
-
 unset DEBUG
 PREFIX=$1
 
 BOW_PREFIX="output/bow/$PREFIX"
 TM_PREFIX="output/topic/$PREFIX"
-LOG_PREFIX="logs/$PREFIX"
+LOG_PREFIX="output/logs/$PREFIX"
 
 NUMTOPICS=100
 PASSES=100 # TODO größer?

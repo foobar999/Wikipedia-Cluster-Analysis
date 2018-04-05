@@ -69,7 +69,7 @@ echo "computing kmeans clusters"
 python scripts/utils/binary_to_text.py numpy $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $CLUS_PREFIX-kmeans-labels.txt # TODO produktiv raus
 
 echo "calculating silhouette score"
-time python scripts/evaluate_dense.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2
+( time python scripts/evaluate_dense.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 ) |& tee $LOG_PREFIX-silhouette.log
 
 # echo "generating JSON revdocs from XML dumps"
 # time ~/Python-Miniconda3/Scripts/mwxml.exe dump2revdocs "$COLL_PREFIX-pages-meta-history.xml" --output="$OUT_PREFIX-revdocs" --compress="json" --verbose

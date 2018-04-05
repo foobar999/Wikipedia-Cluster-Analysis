@@ -16,9 +16,8 @@
 # - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
 # TODO debug: normales dicr, release hashing dict 
 # TODO dafür sorgen, dass bei fehlendem namespace '0' genommen wird
-# TODO alpha,beta(bzw.eta) richtig berücksichtigen)
-# TODO log nach output schieben
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
+# TODO alpha,beta(bzw.eta) richtig berücksichtigen)
 # TODO hyperparameter alpha=50/K, beta=0.01 nehmen?
 
 set -e  # Abbruch bei Fehler

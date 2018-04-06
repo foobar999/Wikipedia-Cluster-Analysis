@@ -15,7 +15,6 @@
 # - #dokumente vor preprocessing (geht das? ansonsten über bash-script)
 # - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
 # TODO debug: normales dicr, release hashing dict 
-# TODO dafür sorgen, dass bei fehlendem namespace '0' genommen wird
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO alpha,beta(bzw.eta) richtig berücksichtigen)
 # TODO hyperparameter alpha=50/K, beta=0.01 nehmen?
@@ -55,13 +54,13 @@ NUMTOPICS=3
 PASSES=10
 ITERATIONS=100
 echo "generating lda model"
-( time python scripts/run_lda.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS ) |& tee $LOG_PREFIX-lda.log
+( time python scripts/bow_to_topic.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS ) |& tee $LOG_PREFIX-lda.log
 python scripts/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 NUMCLUSTERS=$NUMTOPICS
 BATCHSIZE=1000
 echo "computing kmeans clusters"
-( time python scripts/run_kmeans.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS --batch-size=$BATCHSIZE ) |& tee $LOG_PREFIX-kmeans.log
+( time python scripts/topic_to_cluster.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS --batch-size=$BATCHSIZE ) |& tee $LOG_PREFIX-kmeans.log
 python scripts/utils/binary_to_text.py numpy $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $CLUS_PREFIX-kmeans-labels.txt # TODO produktiv raus
 
 echo "calculating silhouette score"

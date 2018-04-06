@@ -16,5 +16,5 @@ LOG_PREFIX="output/logs/$PREFIX"
 NUMCLUSTERS=100
 BATCHSIZE=1000
 echo "computing kmeans clusters"
-( time python scripts/run_kmeans.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS --batch-size=$BATCHSIZE ) |& tee $LOG_PREFIX-kmeans.log
+( time python scripts/topic_to_cluster.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $NUMCLUSTERS --batch-size=$BATCHSIZE ) |& tee $LOG_PREFIX-kmeans.log
 python scripts/utils/binary_to_text.py numpy $CLUS_PREFIX-kmeans-labels.cpickle.bz2 $CLUS_PREFIX-kmeans-labels.txt # TODO produktiv raus

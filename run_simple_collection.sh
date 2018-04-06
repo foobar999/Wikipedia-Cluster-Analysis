@@ -18,6 +18,7 @@
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO alpha,beta(bzw.eta) richtig berücksichtigen)
 # TODO hyperparameter alpha=50/K, beta=0.01 nehmen?
+# TODO "required" bei argparse einbauen
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
@@ -53,8 +54,10 @@ bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-c
 NUMTOPICS=3
 PASSES=10
 ITERATIONS=100
+ALPHA=symmetric
+BETA=symmetric
 echo "generating lda model"
-( time python scripts/bow_to_topic.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS ) |& tee $LOG_PREFIX-lda.log
+( time python scripts/bow_to_topic.py $BOW_PREFIX-corpus.mm.bz2 $BOW_PREFIX-corpus.id2word.cpickle.bz2 $TM_PREFIX-lda-model $NUMTOPICS --passes=$PASSES --iterations=$ITERATIONS --alpha=$ALPHA --beta=$BETA ) |& tee $LOG_PREFIX-lda.log
 python scripts/utils/apply_lda_model_to_corpus.py $BOW_PREFIX-corpus.mm.bz2 $TM_PREFIX-lda-model $TM_PREFIX-corpus-topics.txt # TODO produktiv raus
 
 NUMCLUSTERS=$NUMTOPICS

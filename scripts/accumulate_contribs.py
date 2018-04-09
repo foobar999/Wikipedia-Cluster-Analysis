@@ -4,7 +4,7 @@ import argparse
 from collections import defaultdict
 from pprint import pformat
 from gensim.corpora import MmCorpus
-from utils.utils import init_gensim_logger, number_of_tokens
+from utils.utils import init_gensim_logger
 
 # TODO könnte float irgendwann nötig sein?
 

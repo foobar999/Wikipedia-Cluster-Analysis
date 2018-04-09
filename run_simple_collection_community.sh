@@ -25,7 +25,6 @@ CONTRIBUTION_VALUE=diff_numterms
 bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm
 bzip2 -dkf $CONTRIB_PREFIX-raw-contributions.mm.bz2  # TODO produktiv raus
 
-
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contributions.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-acc-contributions.mm ) |& tee $LOG_PREFIX-acc-contribs.log
 bzip2 -zf $CONTRIB_PREFIX-acc-contributions.mm

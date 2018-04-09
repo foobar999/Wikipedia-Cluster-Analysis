@@ -39,7 +39,7 @@ def contrib_value_diff_numterms(ids_revisions):
         prev_num_toks = num_toks
     
     
-    
+# liefert zu einem Generator von Paaren (AutorID,Revision) einen Generator von (AutorID,Beitragswert(Revision))
 CONTRIBUTION_VALUE_FUNCTIONS = {
     'one': contrib_value_one,
     'numterms': contrib_value_numterms,

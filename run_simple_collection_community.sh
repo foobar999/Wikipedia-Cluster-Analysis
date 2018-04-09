@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO akkumulieren
+
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX="simple-collection"
@@ -18,4 +20,5 @@ echo "computing id2author dictionary"
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
 
 echo "computing author contributions"
-( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-contributions.mm --mode=one ) |& tee $LOG_PREFIX-id2author.log
+CONTRIBUTION_VALUE=numterms
+( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-contributions.mm --contribution-value=$CONTRIBUTION_VALUE ) |& tee $LOG_PREFIX-id2author.log

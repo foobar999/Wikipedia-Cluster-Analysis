@@ -50,7 +50,7 @@ def inspect_page(page):
     return True
     
 def main():
-    parser = argparse.ArgumentParser(description='creates an author contributions MatrixMarket file from a given WikiMedia *-pages-meta-history dump and a calculated id2author mapping', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates an document->author contributions MatrixMarket file from a given WikiMedia *-pages-meta-history dump and a calculated id2author mapping', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count'.format(sys.argv[0]))
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
     parser.add_argument('--id2author', type=argparse.FileType('r'), help='path to input binary id2author dictionary (.cpickle/.cpickle.bz2)', required=True)
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file', required=True)
@@ -71,7 +71,7 @@ def main():
     revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
     contrib_iter = (revision_value_fun(((id2author.token2id[rev.contributor.user_text], rev) for rev in page)) for page in dump)
     # TODO kann man hier was mit dictionary.doc2idx machen??
-    MmCorpus.serialize(output_contribs_path, corpus=contrib_iter, id2word=id2author, progress_cnt=1000)    
+    MmCorpus.serialize(output_contribs_path, corpus=contrib_iter, id2word=id2author, progress_cnt=10000)    
     
     #for page in contrib_iter:
     #    for author in page:

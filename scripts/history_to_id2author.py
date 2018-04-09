@@ -29,6 +29,8 @@ def main():
     author_iter = ((revision.contributor.user_text for revision in page) for page in dump)
     id2author = Dictionary(author_iter)
     id2author.save(output_id2author_path)
+    logging.info('number of processed documents: {}'.format(id2author.num_docs))
+    logging.info('number of found authors: {}'.format(len(id2author.token2id)))
         
 if __name__ == '__main__':
     main()

@@ -14,11 +14,11 @@
 # TODO logge: 
 # - #dokumente vor preprocessing (geht das? ansonsten über bash-script)
 # - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
-# TODO debug: normales dicr, release hashing dict 
+# TODO debug: normales dicr, release hashing dict -> sinnvoll, da terme später ziemlich sicher nötig?
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
-# TODO alpha,beta(bzw.eta) richtig berücksichtigen)
-# TODO hyperparameter alpha=50/K, beta=0.01 nehmen?
 # TODO "required" bei argparse einbauen
+# TODO wiki_to_bow -> articles_to_bow
+# TODO in allen description enwiki reinschreiben
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

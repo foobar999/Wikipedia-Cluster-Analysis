@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TODO akkumulieren
+# TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
@@ -27,8 +27,16 @@ bzip2 -dkf $CONTRIB_PREFIX-raw-contributions.mm.bz2  # TODO produktiv raus
 
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contributions.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-acc-contributions.mm ) |& tee $LOG_PREFIX-acc-contribs.log
-bzip2 -zf $CONTRIB_PREFIX-acc-contributions.mm
-bzip2 -dkf $CONTRIB_PREFIX-acc-contributions.mm.bz2  # TODO produktiv raus
+
+# TODO stabil nötigt?
+echo "sorting contributions by author"
+# ignoriere die ersten beiden Zeilen beim Sortieren
+( time ( head -n 2 $CONTRIB_PREFIX-acc-contributions.mm && tail -n +3 $CONTRIB_PREFIX-acc-contributions.mm | sort -k 2 -ns  ) > $CONTRIB_PREFIX-sorted-acc-contribs.mm ) |& tee $LOG_PREFIX-sorted-acc-contribs.log
+bzip2 -zf $CONTRIB_PREFIX-acc-contributions.mm $CONTRIB_PREFIX-sorted-acc-contribs.mm # wird unkomprimiert benötigt
+bzip2 -dkf $CONTRIB_PREFIX-acc-contributions.mm.bz2 $CONTRIB_PREFIX-sorted-acc-contribs.mm.bz2 # TODO produktiv raus
+
+
+
 
 
 

@@ -20,5 +20,5 @@ echo "computing id2author dictionary"
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
 
 echo "computing author contributions"
-CONTRIBUTION_VALUE=numterms
+CONTRIBUTION_VALUE=diff_numterms
 ( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-contributions.mm --contribution-value=$CONTRIBUTION_VALUE ) |& tee $LOG_PREFIX-id2author.log

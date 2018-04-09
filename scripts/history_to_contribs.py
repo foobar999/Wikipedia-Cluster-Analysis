@@ -3,29 +3,48 @@ import logging
 import argparse
 from pprint import pformat
 from mw import xml_dump
-from gensim.utils import smart_open, tokenize
+from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_gensim_logger
+from utils.utils import init_gensim_logger, number_of_tokens
 
 # TODO gegen frozenste von PageIDs prüfen
 # TODO gegen redirect,namespace o.Ä. prüfen
     
 CONTRIBUTION_VALUE_CHOICES = {
     'one': '1 per contribution',
-    'numterms': 'number of terms per contribution'
+    'numterms': 'number of terms per contribution',
+    'diff_numterms': 'max(0, difference of number of terms to previous contrib'
 }
 
+
+def contrib_value_one(ids_revisions):
+    for authorid,rev in ids_revisions:
+        yield authorid, 1
+        
+def contrib_value_numterms(ids_revisions):
+    for authorid,rev in ids_revisions:
+        yield authorid, number_of_tokens(rev.text)
+        
+# resultierende MM-Matrix wird kleiner, da ggf. 0en zurückgegeben, die ja nicht mitgespeichert werden
+# -> Löschen zählt nicht als Beitrag
+# -> Wörter tauschen zählt nicht als Beitrag
+# -> Leerzeichen hinzufügen zählt nicht
+def contrib_value_diff_numterms(ids_revisions):
+    authorid,rev = next(ids_revisions)
+    prev_num_toks = number_of_tokens(rev.text)
+    yield authorid, prev_num_toks
+    for authorid,rev in ids_revisions:
+        num_toks = number_of_tokens(rev.text)
+        yield authorid, max(0,num_toks-prev_num_toks)
+        prev_num_toks = num_toks
+    
+    
+    
 CONTRIBUTION_VALUE_FUNCTIONS = {
-    'one': lambda rev: 1,
-    'numterms': lambda rev: sum(1 for token in tokenize(rev.text))
+    'one': contrib_value_one,
+    'numterms': contrib_value_numterms,
+    'diff_numterms': contrib_value_diff_numterms
 }
-
-def fun(rev):
-    print(str(rev.text))
-    print(type(rev.text))
-    print(len(rev.text))
-    return len(tokenize(str(rev.text)))
-
     
 def inspect_page(page):
     return True
@@ -50,7 +69,7 @@ def main():
     
     dump = xml_dump.Iterator.from_file(smart_open(input_history_dump_path))
     revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
-    contrib_iter = ([(id2author.token2id[revision.contributor.user_text], revision_value_fun(revision)) for revision in page] for page in dump)
+    contrib_iter = (revision_value_fun(((id2author.token2id[rev.contributor.user_text], rev) for rev in page)) for page in dump)
     # TODO kann man hier was mit dictionary.doc2idx machen??
     MmCorpus.serialize(output_contribs_path, corpus=contrib_iter, id2word=id2author, progress_cnt=1000)    
     

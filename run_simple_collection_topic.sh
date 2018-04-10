@@ -51,6 +51,9 @@ python scripts/utils/binary_to_text.py pickle $BOW_PREFIX-corpus.metadata.cpickl
 python scripts/utils/binary_to_text.py gensim $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping
 
+echo "extracting pageids from metadata"
+( time python scripts/metadata_to_pageids.py --metadata=$BOW_PREFIX-corpus.metadata.cpickle.bz2 --pageids=$BOW_PREFIX-corpus.pageids.cpickle.bz2 ) |& tee $LOG_PREFIX-pageids.log
+
 NUMTOPICS=3
 PASSES=10
 ITERATIONS=100

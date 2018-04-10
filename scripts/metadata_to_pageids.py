@@ -24,6 +24,7 @@ def main():
     metadata = unpickle(input_metadata_path)
     logger.debug('unpickled {}'.format(metadata))
     pageids = frozenset(int(md[0]) for md in metadata.values())
+    logger.info('extracted {} pageids'.format(len(pageids)))
     logger.debug('created set {}'.format(pageids))
     pickle(pageids, output_pageids_path)
     

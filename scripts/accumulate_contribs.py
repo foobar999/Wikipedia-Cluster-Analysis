@@ -6,12 +6,10 @@ from pprint import pformat
 from gensim.corpora import MmCorpus
 from utils.utils import init_gensim_logger
 
-# TODO könnte float irgendwann nötig sein?
-
 def accumulate(raw_doc_contribs):
     accumulator = defaultdict(lambda: 0)
     for author_id, value in raw_doc_contribs:
-        accumulator[author_id] += int(value)
+        accumulator[author_id] += value
     return ((author_id,accumulator[author_id]) for author_id in accumulator)
 
     

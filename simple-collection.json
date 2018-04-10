@@ -36,5 +36,12 @@
             {"content": "newspaper articles  ", "user": 6},
             {"content": "newspaper articles online", "user": 7}
         ]
+    },
+    "6": {
+        "revisions": [
+            {"content": "internet IT", "user": 5},
+            {"content": "internet IT keyboard", "user": 4},
+            {"content": "", "user": 1}
+        ]
     }
 }

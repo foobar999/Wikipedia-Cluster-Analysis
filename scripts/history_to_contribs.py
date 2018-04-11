@@ -46,57 +46,47 @@ CONTRIBUTION_VALUE_FUNCTIONS = {
     'diff_numterms': contrib_value_diff_numterms
 }
     
-def inspect_page(page):
-    return True
+    
+def create_author2id_dictionary(history_dump):
+    dump_authors = ((revision.contributor.user_text for revision in page) for page in history_dump)
+    return Dictionary(dump_authors)
+    
+    
+def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
+    dump_doc_auth_contribs = (revision_value_fun(((id2author.token2id[rev.contributor.user_text], rev) for rev in page)) for page in history_dump)
+    return dump_doc_auth_contribs 
+    
     
 def main():
-    parser = argparse.ArgumentParser(description='creates an document->author contributions MatrixMarket file from a given WikiMedia *-pages-meta-history dump and a calculated id2author mapping', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates an id2author mapping gensim dictionary a document->authorid contributions MatrixMarket file from a given WikiMedia *-pages-meta-history dump', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count'.format(sys.argv[0]))
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
-    parser.add_argument('--id2author', type=argparse.FileType('r'), help='path to input binary id2author dictionary (.cpickle/.cpickle.bz2)', required=True)
+    parser.add_argument('--id2author', type=argparse.FileType('w'), help='path to output binary id2author dictionary (.cpickle/.cpickle.bz2)', required=True)
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file', required=True)
     parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_CHOICES, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES), required=True)
     
     args = parser.parse_args()
     input_history_dump_path = args.history_dump.name
-    input_id2author_path = args.id2author.name
+    output_id2author_path = args.id2author.name
     output_contribs_path = args.contribs.name
     contribution_value = args.contribution_value
     
     program, logger = init_gensim_logger()
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'input_id2author_path':input_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value})))
+    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value})))
 
-    id2author = Dictionary.load(input_id2author_path)
+    with smart_open(input_history_dump_path) as history_dump_file:    
+        logger.info('generating author->id mappings')
+        history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)
+        id2author = create_author2id_dictionary(history_dump_iter)
+        id2author.save(output_id2author_path)
+        
+    with smart_open(input_history_dump_path) as history_dump_file: 
+        logger.info('generating MatrixMarket representation per revision: (docid, authorid, value of revision)')
+        history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)
+        revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
+        doc_auth_contribs = create_doc_auth_contributions(history_dump_iter, id2author, revision_value_fun)
+        MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, progress_cnt=10000)    
     
-    dump = xml_dump.Iterator.from_file(smart_open(input_history_dump_path))
-    revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
-    contrib_iter = (revision_value_fun(((id2author.token2id[rev.contributor.user_text], rev) for rev in page)) for page in dump)
-    # TODO kann man hier was mit dictionary.doc2idx machen??
-    MmCorpus.serialize(output_contribs_path, corpus=contrib_iter, id2word=id2author, progress_cnt=10000)    
     
-    #for page in contrib_iter:
-    #    for author in page:
-    #        logger.info(author)
-    #    logger.info(page)
-    
-    
-    """
-    print('reading {}'.format(files))
-    dump_entries = xml_dump.map(files, process_dump=process_dump, threads=4)
-    page_ids_titles = [(page_id,page_title) for page_id,page_title in dump_entries]
-    print('found {} page ids & titles'.format(len(page_ids_titles)))
-    #entries = list(set(contributors))
-    #print('found {} contributors'.format(len(contributors)))
-    #contributors.sort()
-    #contributors = {contributor_name: id for id,contributor_name in enumerate(contributors)}
-    with open('page_ids_titles.json', 'w') as page_ids_titles_file:
-        json.dump(page_ids_titles, page_ids_titles_file, indent=0)
-    """
-
-"""
-def process_dump(dump, path):
-    for page in dump:
-        yield page.id, page.title
-"""
         
 if __name__ == '__main__':
     main()

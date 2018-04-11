@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
+# TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"
+#   dazu filterung: entferne dokumente mit weniger als k verschiedenen autoren?
+# TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

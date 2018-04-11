@@ -7,8 +7,8 @@ from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
 from utils.utils import init_gensim_logger, number_of_tokens
 
-# TODO gegen frozenste von PageIDs prüfen
 # TODO gegen redirect,namespace o.Ä. prüfen
+# TODO sowas wie "min-authors"?
     
 CONTRIBUTION_VALUE_CHOICES = {
     'one': '1 per contribution',
@@ -72,7 +72,7 @@ def main():
     
     program, logger = init_gensim_logger()
     logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value})))
-
+    
     with smart_open(input_history_dump_path) as history_dump_file:    
         logger.info('generating author->id mappings')
         history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)

@@ -9,6 +9,7 @@ from utils.utils import init_gensim_logger, number_of_tokens
 
 # TODO gegen redirect,namespace o.Ä. prüfen
 # TODO sowas wie "min-authors"?
+# TODO IP ignorieren Flag
     
 CONTRIBUTION_VALUE_CHOICES = {
     'one': '1 per contribution',

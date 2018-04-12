@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# TODO numterms raus, da nicht intuitiv!s
+# TODO statistik skript -> iteriere mit counter über corpus (eigenes skript, da ungefiltert): #doks,#autoren,#beiträge
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
+#   TODO filtere author2id dict mit gensim methoden
 #   muss ich wirklich dokumente rausschmeißen, die nix zum topicmodel beitragen? 
 #     naja: je früher raus, desto besser
 #   eher filterung: entferne dokumente mit weniger als k verschiedenen autoren?
@@ -25,6 +28,8 @@ PREFIX="simple-collection"
 COLL_PREFIX="collections/$PREFIX"
 mkdir -p "output/contribs"
 CONTRIB_PREFIX="output/contribs/$PREFIX"
+mkdir -p "output/graph"
+GRAPH_PREFIX="output/graph/$PREFIX"
 mkdir -p "output/logs"
 LOG_PREFIX="output/logs/$PREFIX"
 

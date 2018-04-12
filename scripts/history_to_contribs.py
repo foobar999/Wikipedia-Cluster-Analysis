@@ -13,18 +13,13 @@ from utils.utils import init_gensim_logger, number_of_tokens
     
 CONTRIBUTION_VALUE_CHOICES = {
     'one': '1 per contribution',
-    'numterms': 'number of terms per contribution',
     'diff_numterms': 'max(0, difference of number of terms to previous contrib'
 }
 
 
 def contrib_value_one(ids_revisions):
     for authorid,rev in ids_revisions:
-        yield authorid, 1
-        
-def contrib_value_numterms(ids_revisions):
-    for authorid,rev in ids_revisions:
-        yield authorid, number_of_tokens(rev.text)
+        yield authorid, 1        
         
 # resultierende MM-Matrix wird kleiner, da ggf. 0en zurückgegeben, die ja nicht mitgespeichert werden
 # -> Löschen zählt nicht als Beitrag
@@ -43,7 +38,6 @@ def contrib_value_diff_numterms(ids_revisions):
 # liefert zu einem Generator von Paaren (AutorID,Revision) einen Generator von (AutorID,Beitragswert(Revision))
 CONTRIBUTION_VALUE_FUNCTIONS = {
     'one': contrib_value_one,
-    'numterms': contrib_value_numterms,
     'diff_numterms': contrib_value_diff_numterms
 }
     

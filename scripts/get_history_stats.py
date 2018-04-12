@@ -45,22 +45,24 @@ def main():
             numauthors_to_count[len(unique_authors)] += 1
             
     numdocs = sum(numdocs for numdocs in numrevs_to_count.values())
-    numrevs = sum(numdocs*numrevs for (numrevs,numdocs) in numrevs_to_count.items())    
+    numrevs = sum(numdocs*numrevs for (numrevs,numdocs) in numrevs_to_count.items())
+    numauthors = len(author_to_numdocs)
     logger.info('number of documents {}'.format(numdocs))
     logger.info('number of revisions {}'.format(numrevs))    
+    logger.info('number of authors {}'.format(numauthors))
     
-    for numrevs, count in numrevs_to_count.items():
+    for numrevs, count in numrevs_to_count.most_common(5):
         logger.debug('{} documents have {} revisions'.format(count, numrevs))
         
-    for numauthors, count in numauthors_to_count.items():
+    for numauthors, count in numauthors_to_count.most_common(5):
         logger.debug('{} documents have {} different authors'.format(count, numauthors))
         
     numdocs_of_author_to_count = Counter(author_to_numdocs.values())          
-    for numdocs_of_author, count in numdocs_of_author_to_count.items():
+    for numdocs_of_author, count in numdocs_of_author_to_count.most_common(5):
         logger.debug('{} authors contributed to {} different documents'.format(count, numdocs_of_author))
         
     numrevs_of_author_to_count = Counter(author_to_numrevs.values())
-    for numrevs_of_author, count in numrevs_of_author_to_count.items():
+    for numrevs_of_author, count in numrevs_of_author_to_count.most_common(5):
         logger.debug('{} authors created {} revisions'.format(count, numrevs_of_author))
     
     

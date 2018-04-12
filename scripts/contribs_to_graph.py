@@ -6,6 +6,7 @@ from itertools import combinations
 from gensim.utils import smart_open
 from gensim.corpora import  MmCorpus
 import networkx as nx
+from networkx.readwrite import json_graph
 from utils.utils import init_gensim_logger
 
 program, logger = init_gensim_logger()
@@ -35,13 +36,15 @@ def main():
     G = nx.Graph()
     logger.info('adding edges to graph')
     for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs):
-        print(d1,d2,co_authorship_degree)
         if not G.has_edge(d1, d2):
             G.add_edge(d1, d2, weight=co_authorship_degree)
         else:
             G[d1][d2]['weight'] += co_authorship_degree
             
-    nx.drawing.nx_pydot.write_dot(G,sys.stdout)
+    logger.debug('\n' + pformat(json_graph.adjacency_data(G)))
+    logger.info('created graph with {} nodes, {} edges'.format(len(G), G.size()))
+    nx.write_gpickle(G, output_graph_path)
+    
         
 if __name__ == '__main__':
     main()

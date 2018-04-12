@@ -58,10 +58,8 @@ echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contrib
 bzip2 -zf $CONTRIB_PREFIX-acc-contributions.mm $CONTRIB_PREFIX-auth-doc-contribs.mm
 bzip2 -dkf $CONTRIB_PREFIX-acc-contributions.mm.bz2 $CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 # TODO produktiv raus
 
-
-
-
-
+echo "creating graph from contributions"
+( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-graph.cpickle.bz2 ) |& tee $LOG_PREFIX-graph.log
 
 
 

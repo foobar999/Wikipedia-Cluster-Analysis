@@ -30,12 +30,17 @@ mkdir -p "output/contribs"
 CONTRIB_PREFIX="output/contribs/$PREFIX"
 mkdir -p "output/graph"
 GRAPH_PREFIX="output/graph/$PREFIX"
+mkdir -p "output/stats"
+STATS_PREFIX="output/stats/$PREFIX"
 mkdir -p "output/logs"
 LOG_PREFIX="output/logs/$PREFIX"
 
 echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml 
+
+echo "calculating stats from history dump"
+( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
 
 echo "computing author contributions"
 CONTRIBUTION_VALUE=diff_numterms

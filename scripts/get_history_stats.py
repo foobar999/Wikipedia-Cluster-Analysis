@@ -1,30 +1,45 @@
 import os, sys
 import logging
 import argparse
-import json
+import csv
 from collections import Counter
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from utils.utils import init_gensim_logger, number_of_tokens
+from utils.utils import init_gensim_logger
+    
+def write_rows(csv_filename, rows):
+    with open(csv_filename, 'w', newline='', encoding='utf-8') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=' ')
+        csv_writer.writerows(rows)  
+        
+def read_rows(csv_filename):   
+    with open(csv_filename, 'r', newline='', encoding='utf-8') as csv_file:
+        csvreader = csv.reader(csv_file, delimiter=' ')
+        return [row for row in csvreader]
+    
     
 calced_stats = ''' 
 number of documents |
 number of authors |
-number of revisions |
-histogram of numbers of revisions of documents |
-histogram of numbers of revisions of authors |
-histogram of numbers of different authors of documents |
-histogram of numbers of different contributed documents of authors
+number of revisions 
+'''
+written_stats = '''
+histogram of numbers of revisions of documents -> STAT-FILES-PREFIX-num-revs-per-doc.csv |
+histogram of numbers of revisions of authors -> STAT-FILES-PREFIX-num-revs-per-auth.csv | 
+histogram of numbers of different authors of documents -> STAT-FILES-PREFIX-PREFIX-num-auth-per-doc.csv |
+histogram of numbers of different contributed documents of authors -> STAT-FILES-PREFIX-num-docs-per-auth.csv
 '''
     
     
 def main():
-    parser = argparse.ArgumentParser(description='calculates and logs: {}'.format(calced_stats), epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='calculates and logs {}, writes {}'.format(calced_stats,written_stats), epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2'.format(sys.argv[0]))
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
+    parser.add_argument('--stat-files-prefix', help='prefix of generated CSV stat files', required=True)
     
     args = parser.parse_args()
     input_history_dump_path = args.history_dump.name
+    output_stat_prefix = args.stat_files_prefix
     
     program, logger = init_gensim_logger()
     logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path})))
@@ -65,6 +80,10 @@ def main():
     for numrevs_of_author, count in numrevs_of_author_to_count.most_common(5):
         logger.debug('{} authors created {} revisions'.format(count, numrevs_of_author))
     
+    write_rows(output_stat_prefix + '-num-revs-per-doc.csv', sorted(numrevs_to_count.items()))
+    write_rows(output_stat_prefix + '-num-revs-per-auth.csv', sorted(numrevs_of_author_to_count.items()))
+    write_rows(output_stat_prefix + '-num-auth-per-doc.csv', sorted(numauthors_to_count.items()))
+    write_rows(output_stat_prefix + '-num-docs-per-auth.csv', sorted(numdocs_of_author_to_count.items()))
     
     
     

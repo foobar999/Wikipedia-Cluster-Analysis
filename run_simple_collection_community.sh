@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TODO numterms raus, da nicht intuitiv!s
+# TODO igraph nehmen, da mehr algos + schneller
 # TODO statistik skript -> iteriere mit counter über corpus (eigenes skript, da ungefiltert): #doks,#autoren,#beiträge
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden

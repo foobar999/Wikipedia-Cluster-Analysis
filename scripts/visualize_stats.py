@@ -34,7 +34,7 @@ def main():
     logger.info('read {} rows'.format(len(data)))
     data = [tuple(int(v) for v in row) for row in data]
     logger.debug('data\n{}'.format(data))
-    data_x, data_y = [row[0] for row in data], [row[1] for row in data]
+    data_x, data_y = np.array([row[0] for row in data],dtype=int), np.array([row[1] for row in data],dtype=int)
     cumul = np.cumsum(data_y)
     total_sum = np.sum(data_y)
     quantile_y_index = np.where(cumul >= quantile_of*total_sum)[0][0]
@@ -44,7 +44,10 @@ def main():
     logger.info('{}-quantile at x={}'.format(quantile_of, quantile))
     
     logger.info('saving plot to {}'.format(output_viz_path))
-    plt.bar(data_x[:quantile], data_y[:quantile])
+    
+    plt.bar(data_x[:quantile_y_index], data_y[:quantile_y_index])
+    #plt.xticks(data_x[:quantile_y_index])
+    #plt.yticks(data_y[:quantile_y_index])
     plt.savefig(output_viz_path)
     logger.info('plot saved')
     

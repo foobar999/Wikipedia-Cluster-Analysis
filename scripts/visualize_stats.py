@@ -24,11 +24,11 @@ def main():
     
     args = parser.parse_args()
     input_stats_path = args.stats.name
-    output_viz_prefix = args.viz.name
+    output_viz_path = args.viz.name
     quantile_of = args.quantile
     
     program, logger = init_gensim_logger()
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_stats_path':input_stats_path, 'output_viz_prefix':output_viz_prefix})))
+    logger.info('running {} with:\n{}'.format(program, pformat({'input_stats_path':input_stats_path, 'output_viz_path':output_viz_path})))
          
     data = read_rows(input_stats_path)
     logger.info('read {} rows'.format(len(data)))
@@ -36,14 +36,18 @@ def main():
     logger.debug('data\n{}'.format(data))
     data_x, data_y = [row[0] for row in data], [row[1] for row in data]
     cumul = np.cumsum(data_y)
-    logger.debug(cumul)
-    quantile_y_index = np.where(cumul >= quantile_of*np.sum(data_y))[0][0]
+    total_sum = np.sum(data_y)
+    quantile_y_index = np.where(cumul >= quantile_of*total_sum)[0][0]
     logger.debug('{}-quantile in y at index {}'.format(quantile_of,quantile_y_index))
     quantile = data_x[quantile_y_index]    
-    logger.info('{}-quantile: {}'.format(quantile_of, quantile))
+    logger.info('sum of y-values {}'.format(total_sum))
+    logger.info('{}-quantile at x={}'.format(quantile_of, quantile))
     
+    logger.info('saving plot to {}'.format(output_viz_path))
     plt.bar(data_x[:quantile], data_y[:quantile])
-    plt.show()
+    plt.savefig(output_viz_path)
+    logger.info('plot saved')
+    
         
 if __name__ == '__main__':
     main()

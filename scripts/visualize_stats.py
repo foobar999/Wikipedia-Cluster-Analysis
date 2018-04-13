@@ -45,7 +45,7 @@ def main():
     
     logger.info('saving plot to {}'.format(output_viz_path))
     
-    plt.bar(data_x[:quantile_y_index], data_y[:quantile_y_index])
+    plt.bar(data_x[:quantile], data_y[:quantile])
     #plt.xticks(data_x[:quantile_y_index])
     #plt.yticks(data_y[:quantile_y_index])
     plt.savefig(output_viz_path)

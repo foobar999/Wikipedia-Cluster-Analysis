@@ -41,7 +41,7 @@ bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
 echo "calculating stats from history dump"
 ( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
-QUANTILE=0.99
+QUANTILE=1
 for STAT_FILE in $STATS_PREFIX*.csv; do
     [ -f "$STAT_FILE" ] || break
     IMAGE_FILE="${STAT_FILE%%.*}.pdf"

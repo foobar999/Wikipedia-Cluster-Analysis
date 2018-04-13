@@ -6,18 +6,8 @@ from collections import Counter
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from utils.utils import init_gensim_logger
-    
-def write_rows(csv_filename, rows):
-    with open(csv_filename, 'w', newline='', encoding='utf-8') as csv_file:
-        csv_writer = csv.writer(csv_file, delimiter=' ')
-        csv_writer.writerows(rows)  
-        
-def read_rows(csv_filename):   
-    with open(csv_filename, 'r', newline='', encoding='utf-8') as csv_file:
-        csvreader = csv.reader(csv_file, delimiter=' ')
-        return [row for row in csvreader]
-    
+from utils.utils import init_gensim_logger, write_rows
+      
     
 calced_stats = ''' 
 number of documents |
@@ -84,24 +74,7 @@ def main():
     write_rows(output_stat_prefix + '-num-revs-per-auth.csv', sorted(numrevs_of_author_to_count.items()))
     write_rows(output_stat_prefix + '-num-auth-per-doc.csv', sorted(numauthors_to_count.items()))
     write_rows(output_stat_prefix + '-num-docs-per-auth.csv', sorted(numdocs_of_author_to_count.items()))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    logger.info('wrote files')
     
     
         

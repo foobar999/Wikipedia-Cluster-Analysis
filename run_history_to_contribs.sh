@@ -11,7 +11,8 @@ LOG_PREFIX="output/logs/$PREFIX"
 
 echo "computing author contributions"
 CONTRIBUTION_VALUE=one
-( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE ) |& tee $LOG_PREFIX-raw-contribs.log
+MIN_AUTH_DOCS=2
+( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS ) |& tee $LOG_PREFIX-raw-contribs.log
 bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm
 
 echo "accmulating contributions"

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # TODO igraph nehmen, da mehr algos + schneller
-# TODO statistik skript -> iteriere mit counter über corpus (eigenes skript, da ungefiltert): #doks,#autoren,#beiträge
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden
 #   muss ich wirklich dokumente rausschmeißen, die nix zum topicmodel beitragen? 
@@ -39,22 +38,14 @@ echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml 
 
-echo "calculating stats from history dump"
-( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
-QUANTILE=1
-for STAT_FILE in $STATS_PREFIX*.csv; do
-    [ -f "$STAT_FILE" ] || break
-    IMAGE_FILE="${STAT_FILE%%.*}.pdf"
-    LOG_FILE="$(basename ${STAT_FILE%%.*})"
-    ( python scripts/visualize_stats.py --stats=$STAT_FILE --viz=$IMAGE_FILE --quantile=$QUANTILE ) |& tee output/logs/$LOG_FILE.log
-done
-
 echo "computing author contributions"
 CONTRIBUTION_VALUE=diff_numterms
-( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE ) |& tee $LOG_PREFIX-raw-contribs.log
+MIN_AUTH_DOCS=1
+( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS ) |& tee $LOG_PREFIX-raw-contribs.log
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
 bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm
 bzip2 -dkf $CONTRIB_PREFIX-raw-contributions.mm.bz2  # TODO produktiv raus
+
 
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contributions.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-acc-contributions.mm ) |& tee $LOG_PREFIX-acc-contribs.log
@@ -73,7 +64,15 @@ bzip2 -dkf $CONTRIB_PREFIX-acc-contributions.mm.bz2 $CONTRIB_PREFIX-auth-doc-con
 echo "creating graph from contributions"
 ( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-graph.cpickle.bz2 ) |& tee $LOG_PREFIX-graph.log
 
-
+echo "calculating stats from history dump"
+( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
+QUANTILE=1
+for STAT_FILE in $STATS_PREFIX*.csv; do
+    [ -f "$STAT_FILE" ] || break
+    IMAGE_FILE="${STAT_FILE%%.*}.pdf"
+    LOG_FILE="$(basename ${STAT_FILE%%.*})"
+    ( python scripts/visualize_stats.py --stats=$STAT_FILE --viz=$IMAGE_FILE --quantile=$QUANTILE ) |& tee output/logs/$LOG_FILE.log
+done
 
 
 

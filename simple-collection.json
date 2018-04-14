@@ -2,32 +2,32 @@
     "1": {
         "revisions": [
             {"content": "apple", "user": 1},
-            {"content": "apple banana fruits", "user": 2},
-            {"content": "apple banana fruits tomato", "user": 2},
-            {"content": "", "user": 3},
+            {"content": "apple banana fruits", "user": 4},
+            {"content": "apple banana fruits tomato", "user": 4},
+            {"content": "", "user": 5},
             {"content": "apple banana fruits", "user": 1}     
         ]
     },
     "2": {
         "revisions": [
-            {"content": "IT computer", "user": 4},
-            {"content": "IT computer mouse calculator", "user": 4},
-            {"content": "IT computer calculator software online", "user": 5}
+            {"content": "IT computer", "user": 2},
+            {"content": "IT computer mouse calculator", "user": 2},
+            {"content": "IT computer calculator software online", "user": 3}
         ]
     },
     "3": {
         "revisions": [
-            {"content": "oranges vegetables", "user": 3},
-            {"content": "oranges fruits", "user": 2},
-            {"content": "oranges fruits apple apple", "user": 3}
+            {"content": "oranges vegetables", "user": 5},
+            {"content": "oranges fruits", "user": 4},
+            {"content": "oranges fruits apple apple", "user": 5}
         ]
     },
     "4": {
         "revisions": [
-            {"content": "internet", "user": 5},
-            {"content": "internet industry computer IT", "user": 4},
+            {"content": "internet", "user": 3},
+            {"content": "internet industry computer IT", "user": 2},
             {"content": "internet computer IT keyboard", "user": 1},
-            {"content": "internet computer IT keyboard smartphone", "user": 4}
+            {"content": "internet computer IT keyboard smartphone", "user": 2}
         ]
     },
     "5": {
@@ -39,8 +39,8 @@
     },
     "6": {
         "revisions": [
-            {"content": "internet IT", "user": 5},
-            {"content": "internet IT keyboard", "user": 4},
+            {"content": "internet IT", "user": 3},
+            {"content": "internet IT keyboard", "user": 2},
             {"content": "", "user": 1}
         ]
     }

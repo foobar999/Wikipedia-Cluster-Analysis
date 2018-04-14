@@ -45,6 +45,7 @@ def create_author2id_dictionary(history_dump):
     return Dictionary(dump_authors)
         
     
+# beachte: ein Dokument geht auch in die Gesamtzahl der Dokumente ein, wenn alle Revisionen weggefilter wurden!
 def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
     def get_revisions_of_page(page):
         for rev in page:

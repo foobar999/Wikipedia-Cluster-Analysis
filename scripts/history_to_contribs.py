@@ -53,7 +53,12 @@ def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
             if username in id2author.token2id:
                 yield (id2author.token2id[username], rev)
     
-    return (revision_value_fun(get_revisions_of_page(page)) for page in history_dump) 
+    for page in history_dump:
+        filtered_revisions = tuple(auth_rev for auth_rev in get_revisions_of_page(page))
+        if len(filtered_revisions) > 0:
+            yield revision_value_fun(iter(filtered_revisions))
+    
+    #return (revision_value_fun(get_revisions_of_page(page)) for page in history_dump) 
     
     
 def main():

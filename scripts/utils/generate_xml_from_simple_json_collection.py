@@ -32,12 +32,12 @@ def create_revisions_pages_from_simple_collection(simple_collection, start_date=
     start_date, die 2. Revision den Zeitstempel start_date+1*time_delta usw.
     '''
     pages = []
-    for docid,doc in simple_collection.items():
+    for docid,(doctitle,doc) in enumerate(simple_collection.items()):
         page = OrderedDict()
-        page['title'] = 'Document {}'.format(docid)
+        page['title'] = doctitle
         if 'namespace' in doc:
             page['ns'] = doc['namespace']
-        page['id'] = docid
+        page['id'] = docid + 1
         page['revision'] = []
         for i,rev in enumerate(doc['revisions']):
             current_revision = OrderedDict()

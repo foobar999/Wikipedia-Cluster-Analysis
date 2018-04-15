@@ -43,8 +43,10 @@ CONTRIBUTION_VALUE=diff_numterms
 MIN_AUTH_DOCS=3
 ( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS ) |& tee $LOG_PREFIX-raw-contribs.log
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
-bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm
+mv $CONTRIB_PREFIX-raw-contributions.mm.metadata.cpickle $CONTRIB_PREFIX.titles.cpickle # Artikeltitel-Datei umbennen
+bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm $CONTRIB_PREFIX.titles.cpickle # komprimiere Beiträge, Artikeltitel
 bzip2 -dkf $CONTRIB_PREFIX-raw-contributions.mm.bz2  # TODO produktiv raus
+python scripts/utils/binary_to_text.py pickle $CONTRIB_PREFIX.titles.cpickle.bz2 $CONTRIB_PREFIX.titles.json # TODO produktiv raus
 
 
 echo "accmulating contributions"

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# NonamespaceWIkiCorpus bzgl. namespace 0 überarbeiten
 # TODO igraph nehmen, da mehr algos + schneller
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden
@@ -40,7 +41,7 @@ bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
 echo "computing author contributions"
 CONTRIBUTION_VALUE=diff_numterms
-MIN_AUTH_DOCS=3
+MIN_AUTH_DOCS=1
 ( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS ) |& tee $LOG_PREFIX-raw-contribs.log
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
 mv $CONTRIB_PREFIX-raw-contributions.mm.metadata.cpickle $CONTRIB_PREFIX.titles.cpickle # Artikeltitel-Datei umbennen

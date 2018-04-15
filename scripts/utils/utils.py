@@ -15,10 +15,14 @@ def init_gensim_logger():
     mpl_logger.setLevel(logging.INFO) 
     return program, logger
     
-    
 def number_of_tokens(str):
     return sum(1 for token in tokenize(str))
     
+def is_page_in_mainspace(page):
+    if page.namespace is not None:
+        return page.namespace == 0
+    else:
+        return ':' not in page.title   
     
 def write_rows(csv_filename, rows):
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csv_file:

@@ -6,7 +6,7 @@ from collections import Counter
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from utils.utils import init_gensim_logger, write_rows
+from utils.utils import init_gensim_logger, write_rows, is_page_in_mainspace
       
     
 calced_stats = ''' 
@@ -21,13 +21,6 @@ histogram of numbers of different authors of documents -> STAT-FILES-PREFIX-num-
 histogram of numbers of different contributed documents of authors -> STAT-FILES-PREFIX-num-docs-per-auth.csv |
 numbers of documents not in mainspace (0) and in mainspace (1) -> STAT-FILES-PREFIX-num-docs-per-namespace.csv
 '''
-   
-
-def is_page_in_mainspace(page):
-    if page.namespace is not None:
-        return page.namespace == 0
-    else:
-        return ':' not in page.title
    
     
 def main():

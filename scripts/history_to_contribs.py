@@ -6,9 +6,8 @@ from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
 from six import itervalues, iteritems
-from utils.utils import init_gensim_logger, number_of_tokens, debug_mode_set
+from utils.utils import init_gensim_logger, number_of_tokens, debug_mode_set, is_page_in_mainspace
 
-# TODO gegen redirect,namespace o.Ä. prüfen
 # TODO IP ignorieren Flag?
     
 def contrib_value_one(ids_revisions):
@@ -38,10 +37,14 @@ CONTRIBUTION_VALUE_FUNCTIONS = {
     'one': contrib_value_one,
     'diff_numterms': contrib_value_diff_numterms
 }
+
+def get_mainspace_pages(history_dump):
+    return (page for page in history_dump if is_page_in_mainspace(page))
+    
     
 # liefert einen Generator: ((Username je Revision) je Artikel)
 def create_author2id_dictionary(history_dump):
-    dump_authors = ((revision.contributor.user_text for revision in page) for page in history_dump)
+    dump_authors = ((revision.contributor.user_text for revision in page) for page in get_mainspace_pages(history_dump))
     return Dictionary(dump_authors)
         
     
@@ -68,11 +71,11 @@ def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
     #    if len(filtered_revisions) > 0:
     #        yield revision_value_fun(iter(filtered_revisions))
     
-    return MetadataCorpus((revision_value_fun(get_revisions_of_page(page)),page.title) for page in history_dump) 
+    return MetadataCorpus((revision_value_fun(get_revisions_of_page(page)),page.title) for page in get_mainspace_pages(history_dump)) 
     
     
 def main():
-    parser = argparse.ArgumentParser(description='creates an id2author mapping gensim dictionary a document->authorid contributions MatrixMarket file and a binary article title file from a given WikiMedia *-pages-meta-history dump', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count --min-auth-docs=2'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='creates an id2author mapping gensim dictionary a document->authorid contributions MatrixMarket file and a binary article title file from a given WikiMedia *-pages-meta-history dump (considering only articles in mainspace!)', epilog='Example: ./{} --history-dump=enwiki-pages-meta-history.xml.bz2 --id2author=enwiki-id2author.cpickle.bz2 --contribs=enwiki-contributions.mm --contribution-value=count --min-auth-docs=2'.format(sys.argv[0]))
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
     parser.add_argument('--id2author', type=argparse.FileType('w'), help='path to output binary id2author dictionary (.cpickle/.cpickle.bz2)', required=True)
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file; also creates a binary article title file CONTRIBS.metadata.cpickle', required=True)

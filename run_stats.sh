@@ -13,7 +13,7 @@ STATS_PREFIX="output/stats/$PREFIX"
 LOG_PREFIX="output/logs/$PREFIX"
 
 echo "calculating stats from history dump"
-#( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
+( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX ) |& tee $LOG_PREFIX-stats.log
 QUANTILE=0.95
 for STAT_FILE in $STATS_PREFIX*.csv; do
     [ -f "$STAT_FILE" ] || break

@@ -35,7 +35,8 @@ def create_revisions_pages_from_simple_collection(simple_collection, start_date=
     for docid,doc in simple_collection.items():
         page = OrderedDict()
         page['title'] = 'Document {}'.format(docid)
-        #page['ns'] = 0
+        if 'namespace' in doc:
+            page['ns'] = doc['namespace']
         page['id'] = docid
         page['revision'] = []
         for i,rev in enumerate(doc['revisions']):

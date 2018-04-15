@@ -1,5 +1,6 @@
 {
     "1": {
+        "namespace": 0,
         "revisions": [
             {"content": "apple", "user": 1},
             {"content": "apple banana fruits", "user": 4},
@@ -9,6 +10,7 @@
         ]
     },
     "2": {
+        "namespace": 0,
         "revisions": [
             {"content": "IT computer", "user": 2},
             {"content": "IT computer mouse calculator", "user": 2},
@@ -16,6 +18,7 @@
         ]
     },
     "3": {
+        "namespace": 0,
         "revisions": [
             {"content": "oranges vegetables", "user": 5},
             {"content": "oranges fruits", "user": 4},
@@ -31,6 +34,7 @@
         ]
     },
     "5": {
+        "namespace": 0,
         "revisions": [
             {"content": "newspaper articles", "user": 6},
             {"content": "newspaper articles  ", "user": 6},
@@ -38,10 +42,17 @@
         ]
     },
     "6": {
+        "namespace": 0,
         "revisions": [
             {"content": "internet IT", "user": 3},
             {"content": "internet IT keyboard", "user": 2},
             {"content": "", "user": 1}
+        ]
+    },
+    "7": {
+        "namespace": 1,
+        "revisions": [
+            {"content": "internet", "user": 5}
         ]
     }
 }

@@ -39,13 +39,23 @@ CONTRIBUTION_VALUE_FUNCTIONS = {
     'diff_numterms': contrib_value_diff_numterms
 }
     
-    
+# liefert einen Generator: ((Username je Revision) je Artikel)
 def create_author2id_dictionary(history_dump):
     dump_authors = ((revision.contributor.user_text for revision in page) for page in history_dump)
     return Dictionary(dump_authors)
         
     
-# beachte: ein Dokument geht auch in die Gesamtzahl der Dokumente ein, wenn alle Revisionen weggefilter wurden!
+# einfache Klasse, die einen Generator wrappt und self.metadata = True setzt, damit gensim die Artikeltitel speichert
+class MetadataCorpus(object):
+    def __init__(self, generator):
+        self.generator = generator
+        self.metadata = True
+    def __iter__(self):
+        yield from self.generator
+
+# beachte: ein Dokument geht auch in die Gesamtzahl der Dokumente ein, wenn alle Revisionen weggefilter wurden!7
+
+# liefert einen MetadataCorpus-gewrappten Generator: ((UserID, Beitrag je Revision), Titel je Artikel)
 def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
     def get_revisions_of_page(page):
         for rev in page:
@@ -53,12 +63,12 @@ def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
             if username in id2author.token2id:
                 yield (id2author.token2id[username], rev)
     
-    for page in history_dump:
-        filtered_revisions = tuple(auth_rev for auth_rev in get_revisions_of_page(page))
-        if len(filtered_revisions) > 0:
-            yield revision_value_fun(iter(filtered_revisions))
+    #for page in history_dump:
+    #    filtered_revisions = tuple(auth_rev for auth_rev in get_revisions_of_page(page))
+    #    if len(filtered_revisions) > 0:
+    #        yield revision_value_fun(iter(filtered_revisions))
     
-    #return (revision_value_fun(get_revisions_of_page(page)) for page in history_dump) 
+    return MetadataCorpus((revision_value_fun(get_revisions_of_page(page)),page.title) for page in history_dump) 
     
     
 def main():
@@ -92,8 +102,8 @@ def main():
         logger.info('generating MatrixMarket representation per revision: (docid, authorid, value of revision)')
         history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)
         revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
-        doc_auth_contribs = create_doc_auth_contributions(history_dump_iter, id2author, revision_value_fun)
-        MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, progress_cnt=10000)    
+        doc_auth_contribs = create_doc_auth_contributions(history_dump_iter, id2author, revision_value_fun) 
+        MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, metadata=True, progress_cnt=10000)    
     
     
         

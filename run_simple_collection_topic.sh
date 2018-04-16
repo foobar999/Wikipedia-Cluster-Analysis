@@ -37,6 +37,7 @@ echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
 
+
 VOCABULARY_SIZE=100
 NO_BELOW=0
 NO_ABOVE=1.0

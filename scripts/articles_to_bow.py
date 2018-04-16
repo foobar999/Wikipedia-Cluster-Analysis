@@ -53,7 +53,7 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
                 num_articles += 1
                 num_positions += len(tokens)
                 if metadata:
-                    yield tokens, (title, pageid)
+                    yield tokens, (pageid, title)
                 else:
                     yield tokens
     logger.info('loaded {} articles (total), {} articles (filtered), {} positions (filtered)'.format(num_articles_total,num_articles,num_positions))

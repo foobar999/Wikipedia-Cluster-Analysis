@@ -90,6 +90,7 @@ def main():
     parser.add_argument("--no-above", type=float, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})', required=True)
     parser.add_argument("--article-min-tokens", type=int, help='Analyze only articles of >= ARTICLE_MIN_TOKENS tokens default {}). Should be >=1', required=True)
     parser.add_argument("--token-len-range", type=int, nargs=2, metavar=('MIN','MAX'), help='Consider only tokens of at least MIN and at most MAX chars', required=True)
+    parser.add_argument("--namespace-prefixes", nargs='+', help='ignore every article beginning with one of these prefixes', required=True)
     
     args = parser.parse_args()
     input_articles_path = args.articles_dump.name
@@ -98,11 +99,12 @@ def main():
     no_below,no_above = args.no_below,args.no_above
     article_min_tokens = args.article_min_tokens
     token_len_range = args.token_len_range
+    namespace_prefixes = tuple(prefix + ':' for prefix in args.namespace_prefixes)
     
-    logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range})))
+    logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespace_prefixes':namespace_prefixes})))
             
     logger.info('generating vocabulary')
-    corpus = MediaWikiCorpus(input_articles_path, article_min_tokens, token_len_range[0], token_len_range[1], ('Help:',))
+    corpus = MediaWikiCorpus(input_articles_path, article_min_tokens, token_len_range[0], token_len_range[1], namespace_prefixes)
     corpus.dictionary = Dictionary(corpus.get_texts())
     corpus.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     corpus.dictionary.compactify()

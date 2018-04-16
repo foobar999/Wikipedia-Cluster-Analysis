@@ -15,18 +15,78 @@ import logging
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from gensim.corpora.wikicorpus import process_article, filter_wiki, tokenize
-from gensim.corpora import Dictionary, HashDictionary, MmCorpus, TextCorpus
-#from gensim.corpora import WikiCorpus
-from no_namespace_wikicorpus import NoNamespaceWikiCorpus
+from gensim.corpora.wikicorpus import filter_wiki, tokenize
+from gensim.corpora import Dictionary, MmCorpus, TextCorpus
 from utils.utils import init_gensim_logger
 
+# TODO raus
 DEFAULT_DICT_SIZE = 100000
 DEFAULT_NO_BELOW = 5
 DEFAULT_NO_ABOVE = 0.5
 DEFAULT_ART_MIN_TOKENS = 50
 DEFAULT_TOKEN_LEN_RANGE = [2,20]
 DEFAULT_NAMESPACES = 0
+
+program, logger = init_gensim_logger()
+
+
+def is_mainspace_page(page, namespace_prefixes):
+    if page.namespace:
+        return page.namespace == 0
+    else:
+        return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
+
+def get_page_data(page):
+    text = str(next(page).text)
+    return page.title, text, page.id       
+
+def get_tokens(text, token_min_len, token_max_len):
+    text = filter_wiki(text)
+    return tokenize(text, token_min_len, token_max_len, True)
+    
+def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):
+    num_articles_total = 0
+    num_articles = 0
+    num_tokens = 0
+    for page in articles_dump:
+        logger.debug('article "{}"'.format(page.title))
+        num_articles_total += 1
+        if is_mainspace_page(page, namespace_prefixes):
+            logger.debug('article "{}" considered mainspace'.format(page.title))
+            title, text, pageid = get_page_data(page)
+            tokens = get_tokens(text, token_min_len, token_max_len)
+            if len(tokens) >= article_min_tokens:
+                logger.debug('article "{}" considered long enough'.format(page.title))
+                num_articles += 1
+                num_tokens += len(tokens)
+                if metadata:
+                    yield tokens, (title, pageid)
+                else:
+                    yield tokens
+    logger.info('loaded {} articles (total), {} articles (filtered), {} tokens (filtered)'.format(num_articles_total,num_articles,num_tokens))
+    
+                    
+def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):
+    with smart_open(articles_path) as articles_dump_file:  
+        articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
+        return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata)
+            
+            
+            
+
+class MediaWikiCorpus(TextCorpus):
+    def __init__(self, articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes):
+        self.articles_path = articles_path
+        self.article_min_tokens = article_min_tokens
+        self.token_min_len = token_min_len
+        self.token_max_len = token_max_len
+        self.namespace_prefixes = namespace_prefixes
+        self.metadata = False
+        
+    def get_texts(self):
+        return get_filtered_articles_data_from_path(self.articles_path, self.article_min_tokens, self.token_min_len, self.token_max_len, self.namespace_prefixes, self.metadata)
+       
+
 
 def main():
     parser = argparse.ArgumentParser(description=description, epilog='Example: ./{} mycorpus-pages-articles.xml.bz2 output/mycorpus --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-len-range 2 20 --namespaces 0'.format(sys.argv[0]))
@@ -48,56 +108,8 @@ def main():
     token_len_range = args.token_len_range
     namespaces = tuple(str(ns) for ns in args.namespaces)
     
-    program, logger = init_gensim_logger()
-    
     logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespaces':namespaces})))
-    
-    def is_mainspace_page(page, namespace_prefixes):
-        if page.namespace:
-            return page.namespace == 0
-        else:
-            return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
-    
-    def get_page_data(page):
-        text = str(next(page).text)
-        return page.title, text, page.id       
-    
-    def get_tokens(text, token_min_len, token_max_len):
-        text = filter_wiki(text)
-        return tokenize(text, token_min_len, token_max_len, True)
-        
-    def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, yield_metadata):
-        for page in articles_dump:
-            if is_mainspace_page(page, namespace_prefixes):
-                title, text, pageid = get_page_data(page)
-                tokens = get_tokens(text, token_min_len, token_max_len)
-                if len(tokens) >= article_min_tokens:
-                    if yield_metadata:
-                        yield tokens, (title, pageid)
-                    else:
-                        yield tokens
-                        
-    def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, yield_metadata):
-        with smart_open(articles_path) as articles_dump_file:  
-            articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
-            return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, yield_metadata)
-                
-                
-                
-    
-    class MediaWikiCorpus(TextCorpus):
-        def __init__(self, articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes):
-            self.articles_path = articles_path
-            self.article_min_tokens = article_min_tokens
-            self.token_min_len = token_min_len
-            self.token_max_len = token_max_len
-            self.namespace_prefixes = namespace_prefixes
-            self.metadata = False
             
-        def get_texts(self):
-            return get_filtered_articles_data_from_path(self.articles_path, self.article_min_tokens, self.token_min_len, self.token_max_len, self.namespace_prefixes, self.metadata)
-       
-        
     logger.info('generating vocabulary')
     #article_data = get_filtered_articles_data_from_path(input_articles_path, 1, 2, 20, ('Help:',), False)
     corpus = MediaWikiCorpus(input_articles_path, 1, 2, 20, ('Help:',))

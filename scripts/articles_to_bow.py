@@ -82,14 +82,14 @@ class MediaWikiCorpus(TextCorpus):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=description, epilog='Example: ./{} mycorpus-pages-articles.xml.bz2 output/mycorpus --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-len-range 2 20'.format(sys.argv[0]))
-    parser.add_argument("articles_dump", type=argparse.FileType('r'), help='path to input .xml.bz2 articles dump')
-    parser.add_argument("out_prefix", help='prefix of the generated output files')
+    parser = argparse.ArgumentParser(description=description, epilog='Example: ./{} enwiki-pages-articles.xml.bz2 output/enwiki-corpus --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-len-range 2 20'.format(sys.argv[0]))
+    parser.add_argument("--articles-dump", type=argparse.FileType('r'), help='path to input .xml.bz2 articles dump', required=True)
+    parser.add_argument("--out-prefix", help='prefix of the generated output files', required=True)
     parser.add_argument("--keep-words", type=int, help='number of most frequent word types to keep (default {})', required=True)
     parser.add_argument("--no-below", type=int, help='Keep only tokes which appear in at least NO_BELOW documents (default {})', required=True)
     parser.add_argument("--no-above", type=float, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})', required=True)
     parser.add_argument("--article-min-tokens", type=int, help='Analyze only articles of >= ARTICLE_MIN_TOKENS tokens default {}). Should be >=1', required=True)
-    parser.add_argument("--token-len-range", type=int, nargs=2, metavar=('MIN','MAX'), help='Consider only tokens of at least MIN and at most MAX chars', required=True)   
+    parser.add_argument("--token-len-range", type=int, nargs=2, metavar=('MIN','MAX'), help='Consider only tokens of at least MIN and at most MAX chars', required=True)
     
     args = parser.parse_args()
     input_articles_path = args.articles_dump.name
@@ -110,6 +110,7 @@ def main():
     corpus.dictionary.save(output_id2word_path)    
     
     logger.info('generating bag of words corpus')
+    corpus.metadata = True
     output_corpus_path = output_prefix + '.mm'
     MmCorpus.serialize(output_corpus_path, corpus, progress_cnt=10000, metadata=True)
         

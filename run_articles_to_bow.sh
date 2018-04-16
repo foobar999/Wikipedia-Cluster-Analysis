@@ -18,8 +18,10 @@ NO_ABOVE=0.1
 ARTICLE_MIN_TOKENS=50
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=20
-NAMESPACES="0"
+NAMESPACE_PREFIXES=$(cat output/$PREFIX-namespaces.txt | tr '[:space:]' ' ')
 echo "generating bag-of-words corpus files"
-( time python scripts/wiki_to_bow.py $COLL_PREFIX-articles.xml.bz2 $BOW_PREFIX-corpus --keep-words $VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens $ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespaces $NAMESPACES ) |& tee $LOG_PREFIX-wiki-to-bow.log
+( time python scripts/articles_to_bow.py --articles-dump=$COLL_PREFIX-pages-articles.xml.bz2 --out-prefix=$BOW_PREFIX-corpus --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --namespace-prefixes $NAMESPACE_PREFIXES ) |& tee $LOG_PREFIX-wiki-to-bow.log
 mv $BOW_PREFIX-corpus.mm.metadata.cpickle $BOW_PREFIX-corpus.metadata.cpickle # gib docID-Mapping intuitiveren Namen
+#python scripts/utils/binary_to_text.py pickle $BOW_PREFIX-corpus.metadata.cpickle $BOW_PREFIX-corpus.metadata.json # TODO produktiv raus
+#python scripts/utils/binary_to_text.py gensim $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.id2word.txt # TODO produktiv raus
 bzip2 -zf $BOW_PREFIX-corpus.mm $BOW_PREFIX-corpus.id2word.cpickle $BOW_PREFIX-corpus.metadata.cpickle # komprimiere Korpus, Dictionary, docID-Mapping

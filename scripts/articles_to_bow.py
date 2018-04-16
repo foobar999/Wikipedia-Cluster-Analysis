@@ -28,7 +28,7 @@ def is_mainspace_page(page, namespace_prefixes):
         return page.namespace == 0
     else:
         return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
-
+        
 def get_page_data(page):
     text = str(next(page).text)
     return page.title, text, page.id       
@@ -39,30 +39,32 @@ def get_tokens(text, token_min_len, token_max_len):
     
 def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):
     num_articles_total = 0
-    num_articles = 0
+    num_mainspace_articles = 0
+    num_mainspace_long_enough_articles = 0
     num_positions = 0
     for page in articles_dump:
         logger.debug('article "{}"'.format(page.title))
         num_articles_total += 1
         if is_mainspace_page(page, namespace_prefixes):
             logger.debug('article "{}" considered mainspace'.format(page.title))
+            num_mainspace_articles += 1
             title, text, pageid = get_page_data(page)
             tokens = get_tokens(text, token_min_len, token_max_len)
             if len(tokens) >= article_min_tokens:
                 logger.debug('article "{}" considered long enough'.format(page.title))
-                num_articles += 1
+                num_mainspace_long_enough_articles += 1
                 num_positions += len(tokens)
                 if metadata:
                     yield tokens, (pageid, title)
                 else:
                     yield tokens
-    logger.info('loaded {} articles (total), {} articles (filtered), {} positions (filtered)'.format(num_articles_total,num_articles,num_positions))
+    logger.info('loaded {} articles (total), {} articles considered mainspace, {} articles considered mainspace with >= article_min_tokens tokens, {} positions (filtered)'.format(num_articles_total, num_mainspace_articles, num_mainspace_long_enough_articles, num_positions))
     
                     
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):
-    with smart_open(articles_path) as articles_dump_file:  
-        articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
-        return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata)
+    articles_dump_file = smart_open(articles_path)
+    articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
+    return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata)
             
             
             

@@ -32,10 +32,17 @@ def main():
     logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path})))
     
     author_doc_contribs = MmCorpus(input_contribs_path)
-    logger.info('adding edges to graph')
-    related_docs = [(d1,d2) for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs)]
-    graph = Graph(n=None, edges=related_docs, directed=False )
+    logger.info('creating graph of {} nodes/documents'.format(author_doc_contribs.num_docs))
+    
+    edges = [(d1,d2) for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs)]
+    print(edges)
+    graph = Graph(n=None, edges=edges, directed=False )
     print(graph)
+    print([node for node in graph.vs])
+    graph.simplify()
+    graph.delete_vertices(Graph.degree(graph) == 0)
+    print(graph)
+    print([node for node in graph.vs])
     #for x in related_docs:
     #    print(x)
         
@@ -44,9 +51,9 @@ def main():
         #else:
         #    G[d1][d2]['weight'] += co_authorship_degree
             
-    logger.debug('\n' + pformat(json_graph.adjacency_data(G)))
-    logger.info('created graph with {} nodes, {} edges'.format(len(G), G.size()))
-    nx.write_gpickle(G, output_graph_path)
+    #logger.debug('\n' + pformat(json_graph.adjacency_data(G)))
+    #logger.info('created graph with {} nodes, {} edges'.format(len(G), G.size()))
+    #nx.write_gpickle(G, output_graph_path)
     
         
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO das mit den Namespaces kann ich für neue korpora skippen
 # TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
 # - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
 # - am besten mit filter_tokens() vom Dictionary!
@@ -39,7 +40,7 @@ bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml # gensi
 
 echo "extracting likely namespaces from XML dump"
 NS_MIN_OCCURENCES=1
-( time bzgrep -o "<title>.*\:.*</title>" $COLL_PREFIX-articles.xml.bz2 | awk -F: '{print substr($1,8)}' | sort | uniq -c | awk -v limit=$NS_MIN_OCCURENCES '$1 >= limit{print $2}' | tee output/$PREFIX-namespaces.txt )|& tee $LOG_PREFIX-namespaces.log
+( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-articles.xml.bz2 $NS_MIN_OCCURENCES | tee output/$PREFIX-namespaces.txt )|& tee $LOG_PREFIX-namespaces.log
 
 
 VOCABULARY_SIZE=100

@@ -17,17 +17,11 @@ from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
-from utils.utils import init_gensim_logger
+from utils.utils import init_gensim_logger, is_mainspace_page
 
 
 program, logger = init_gensim_logger()
 
-
-def is_mainspace_page(page, namespace_prefixes):
-    if page.namespace:
-        return page.namespace == 0
-    else:
-        return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
         
 def get_page_data(page):
     text = str(next(page).text)

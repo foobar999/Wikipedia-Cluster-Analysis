@@ -9,6 +9,9 @@ from six import itervalues, iteritems
 from utils.utils import init_gensim_logger, number_of_tokens, debug_mode_set, is_page_in_mainspace
 
 # TODO IP ignorieren Flag?
+
+program, logger = init_gensim_logger()
+
     
 def contrib_value_one(ids_revisions):
     for authorid,rev in ids_revisions:
@@ -38,40 +41,59 @@ CONTRIBUTION_VALUE_FUNCTIONS = {
     'diff_numterms': contrib_value_diff_numterms
 }
 
-def get_mainspace_pages(history_dump):
-    return (page for page in history_dump if is_page_in_mainspace(page))
+# liefert einen Generator ((Revisionen als Tupel, Seitentitel) für alle Seiten im Mainspace)
+def get_filtered_revisions_of_pages(history_dump):
+    num_pages_total = 0
+    num_pages_mainspace = 0
+    num_revisions_filtered = 0
+    for page in history_dump:
+        num_pages_total += 1
+        logger.debug('page {}'.format(page.title))
+        if is_page_in_mainspace(page):
+            num_pages_mainspace += 1
+            revisions = tuple(revision for revision in page)
+            num_revisions_filtered += len(revisions)
+            logger.debug('page {} considered mainspace, having {} revisions'.format(page.title, len(revisions)))
+            yield revisions,page.title
+    logger.info('loaded {} pages, {} pages considered mainspace, containing {} revisions'.format(num_pages_total, num_pages_mainspace, num_revisions_filtered))
     
     
-# liefert einen Generator: ((Username je Revision) je Artikel)
-def create_author2id_dictionary(history_dump):
-    dump_authors = ((revision.contributor.user_text for revision in page) for page in get_mainspace_pages(history_dump))
-    return Dictionary(dump_authors)
-        
+# liefert einen Generator ((Autorname für alle Revisionen) für alle Seiten im Mainspace)
+def get_revision_authors_of_pages(history_dump):
+    for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump):
+        yield (revision.contributor.user_text for revision in revisions)
     
-# einfache Klasse, die einen Generator wrappt und self.metadata = True setzt, damit gensim die Artikeltitel speichert
+
+# liefert einen Generator ((Autor-ID, Revision) für alle Revisionen), wobei das Dictionary den Autornamen enthalten muss
+def get_authorid_rev_pairs_by_dictionary(revisions, id2author):
+    for revision in revisions:
+        username = revision.contributor.user_text
+        if username in id2author.token2id:
+            yield id2author.token2id[username], revision
+    
+    
+# liefert einen Generator (((Autor-ID, Revisionswert) für alle Revisionen), Seitentitel für alle Seiteini im Mainspace)
+def get_revision_values_of_pages(history_dump, id2author, revision_value_fun):
+    num_contribs_of_dict_authors = 0
+    for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump):
+        authorid_rev_pairs = tuple(authorid_rev for authorid_rev in get_authorid_rev_pairs_by_dictionary(revisions, id2author))
+        logger.debug('page {} having {} revisions of authors in dictionary'.format(pagetitle, len(authorid_rev_pairs)))
+        num_contribs_of_dict_authors += len(authorid_rev_pairs)
+        if len(authorid_rev_pairs) > 0:
+           logger.debug('calculating revision values of non-empty revision list')
+           authorid_revisionvalue_pairs = revision_value_fun(iter(authorid_rev_pairs))
+           yield authorid_revisionvalue_pairs, pagetitle
+    logger.info('loaded {} revisions of authors in dictionary'.format(num_contribs_of_dict_authors))
+
+
+#einfache Klasse, die einen Generator wrappt und self.metadata = True setzt, damit gensim die Artikeltitel speichert
 class MetadataCorpus(object):
     def __init__(self, generator):
         self.generator = generator
         self.metadata = True
     def __iter__(self):
         yield from self.generator
-
-# beachte: ein Dokument geht auch in die Gesamtzahl der Dokumente ein, wenn alle Revisionen weggefilter wurden!7
-
-# liefert einen MetadataCorpus-gewrappten Generator: ((UserID, Beitrag je Revision), Titel je Artikel)
-def create_doc_auth_contributions(history_dump, id2author, revision_value_fun):
-    def get_revisions_of_page(page):
-        for rev in page:
-            username = rev.contributor.user_text
-            if username in id2author.token2id:
-                yield (id2author.token2id[username], rev)
     
-    #for page in history_dump:
-    #    filtered_revisions = tuple(auth_rev for auth_rev in get_revisions_of_page(page))
-    #    if len(filtered_revisions) > 0:
-    #        yield revision_value_fun(iter(filtered_revisions))
-    
-    return MetadataCorpus((revision_value_fun(get_revisions_of_page(page)),page.title) for page in get_mainspace_pages(history_dump)) 
     
     
 def main():
@@ -89,23 +111,23 @@ def main():
     contribution_value = args.contribution_value
     min_author_docs = args.min_auth_docs
     
-    program, logger = init_gensim_logger()
     logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs})))
         
     with smart_open(input_history_dump_path) as history_dump_file:    
         logger.info('generating author->id mappings')
-        history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)
+        history_dump = xml_dump.Iterator.from_file(history_dump_file)
         # benutze id2word-Dictionary von gensim als id2author-Dictionary
-        id2author = create_author2id_dictionary(history_dump_iter)
+        #id2author = create_author2id_dictionary(history_dump_iter)
+        id2author = Dictionary(get_revision_authors_of_pages(history_dump))
         # entferne Autoren, die an weniger als min_author_docs beteiligt
         id2author.filter_extremes(no_below=min_author_docs, no_above=1, keep_n=None, keep_tokens=None)
         id2author.save(output_id2author_path)
         
     with smart_open(input_history_dump_path) as history_dump_file: 
         logger.info('generating MatrixMarket representation per revision: (docid, authorid, value of revision)')
-        history_dump_iter = xml_dump.Iterator.from_file(history_dump_file)
+        history_dump = xml_dump.Iterator.from_file(history_dump_file)
         revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
-        doc_auth_contribs = create_doc_auth_contributions(history_dump_iter, id2author, revision_value_fun) 
+        doc_auth_contribs = MetadataCorpus(get_revision_values_of_pages(history_dump, id2author, revision_value_fun))
         MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, metadata=True, progress_cnt=10000)    
     
     

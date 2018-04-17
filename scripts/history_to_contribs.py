@@ -1,3 +1,4 @@
+
 import os, sys
 import logging
 import argparse
@@ -79,10 +80,10 @@ def get_revision_values_of_pages(history_dump, id2author, revision_value_fun):
         authorid_rev_pairs = tuple(authorid_rev for authorid_rev in get_authorid_rev_pairs_by_dictionary(revisions, id2author))
         logger.debug('page {} having {} revisions of authors in dictionary'.format(pagetitle, len(authorid_rev_pairs)))
         num_contribs_of_dict_authors += len(authorid_rev_pairs)
-        if len(authorid_rev_pairs) > 0:
-           logger.debug('calculating revision values of non-empty revision list')
-           authorid_revisionvalue_pairs = revision_value_fun(iter(authorid_rev_pairs))
-           yield authorid_revisionvalue_pairs, pagetitle
+        #if len(authorid_rev_pairs) > 0:
+        logger.debug('calculating revision values of non-empty revision list')
+        authorid_revisionvalue_pairs = revision_value_fun(iter(authorid_rev_pairs))
+        yield authorid_revisionvalue_pairs, pagetitle
     logger.info('loaded {} revisions of authors in dictionary'.format(num_contribs_of_dict_authors))
 
 
@@ -93,7 +94,6 @@ class MetadataCorpus(object):
         self.metadata = True
     def __iter__(self):
         yield from self.generator
-    
     
     
 def main():
@@ -117,7 +117,6 @@ def main():
         logger.info('generating author->id mappings')
         history_dump = xml_dump.Iterator.from_file(history_dump_file)
         # benutze id2word-Dictionary von gensim als id2author-Dictionary
-        #id2author = create_author2id_dictionary(history_dump_iter)
         id2author = Dictionary(get_revision_authors_of_pages(history_dump))
         # entferne Autoren, die an weniger als min_author_docs beteiligt
         id2author.filter_extremes(no_below=min_author_docs, no_above=1, keep_n=None, keep_tokens=None)
@@ -134,16 +133,6 @@ def main():
         
 if __name__ == '__main__':
     main()
-
-    
-    
-# in Anlehnung an filter_extremes() und filter_tokens() https://github.com/RaRe-Technologies/gensim/blob/master/gensim/corpora/dictionary.py
-# def filter_author2id_without_compactify(author2id, no_below):
-    # good_ids = (v for v in itervalues(author2id.token2id) if no_below <= author2id.dfs.get(v, 0))
-    # good_ids = sorted(good_ids, key=author2id.dfs.get, reverse=True)
-    # good_ids = set(good_ids)
-    # author2id.token2id = {token: tokenid for token, tokenid in iteritems(author2id.token2id) if tokenid in good_ids}
-    # author2id.dfs = {tokenid: freq for tokenid, freq in iteritems(author2id.dfs) if tokenid in good_ids}
     
     
     

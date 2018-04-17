@@ -110,7 +110,7 @@ def main():
     output_contribs_path = args.contribs.name
     contribution_value = args.contribution_value
     min_author_docs = args.min_auth_docs
-    namespace_prefixes = tuple(prefix + ':' for prefix in args.namespace_prefixes) if args.namespace_prefixes else ()
+    namespace_prefixes = tuple(prefix for prefix in args.namespace_prefixes) if args.namespace_prefixes else ()
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs, 'namespace_prefixes':namespace_prefixes})))        
         

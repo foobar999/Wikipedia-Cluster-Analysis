@@ -95,7 +95,7 @@ def main():
     no_below,no_above = args.no_below,args.no_above
     article_min_tokens = args.article_min_tokens
     token_len_range = args.token_len_range
-    namespace_prefixes = tuple(prefix + ':' for prefix in args.namespace_prefixes)
+    namespace_prefixes = tuple(prefix for prefix in args.namespace_prefixes)
     
     logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespace_prefixes':namespace_prefixes})))
             

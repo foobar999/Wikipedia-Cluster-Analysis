@@ -48,8 +48,8 @@ def main():
     logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path, 'is_weighted':is_weighted})))
     
     contribs = MmCorpus(input_contribs_path)
-    #graph = Graph.TupleList(get_cooccurence_pairs(contribs), edge_attrs=('weight'))
-    graph = Graph.TupleList(get_cooccurence_pairs(contribs))
+    edge_attrs = ('weight') if is_weighted else None
+    graph = Graph.TupleList(get_cooccurence_pairs(contribs), edge_attrs=edge_attrs)
     logger.info('created graph with {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     log_graph(graph)
     graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})

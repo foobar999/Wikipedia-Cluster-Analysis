@@ -63,7 +63,7 @@ bzip2 -zf $CONTRIB_PREFIX-doc-auth-contribs.mm $CONTRIB_PREFIX-auth-doc-contribs
 bzip2 -dkf $CONTRIB_PREFIX-doc-auth-contribs.mm.bz2 $CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 # TODO produktiv raus
 
 echo "creating graph from contributions"
-( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-co-authorship.cpickle.bz2 ) |& tee $LOG_PREFIX-graph.log
+( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-co-authorship.cpickle ) |& tee $LOG_PREFIX-graph.log
 
 echo "calculating stats from history dump"
 ( time python scripts/get_history_stats.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --stat-files-prefix=$STATS_PREFIX --namespace-prefixes=$NAMESPACE_PREFIXES_FILE ) |& tee $LOG_PREFIX-stats.log

@@ -53,20 +53,19 @@ bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm $CONTRIB_PREFIX.titles.cpickle # 
 bzip2 -dkf $CONTRIB_PREFIX-raw-contributions.mm.bz2  # TODO produktiv raus
 python scripts/utils/binary_to_text.py pickle $CONTRIB_PREFIX.titles.cpickle.bz2 $CONTRIB_PREFIX.titles.json # TODO produktiv raus
 
-
 echo "accmulating contributions"
-( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contributions.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-acc-contributions.mm ) |& tee $LOG_PREFIX-acc-contribs.log
+( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contributions.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-doc-auth-contribs.mm ) |& tee $LOG_PREFIX-doc-auth-contribs.log
 
 function swap_columns_and_sort {
-    ACC_FILE=$CONTRIB_PREFIX-acc-contributions.mm
-    ( head -n 1 $ACC_FILE && # übernehme erste Zeile
-      head -n 2 $ACC_FILE | tail -n 1 | awk '{ print $2 " " $1 " " $3}' && # tausche #dokumente,#autoren in zweiter zeile
-      tail -n +3 $ACC_FILE | sort -k 2 -ns | awk '{ print $2 " " $1 " " $3}'  ) > $CONTRIB_PREFIX-auth-doc-contribs.mm # sortiere nach autoren und tausche docid,autorid
+    DOC_AUTH_FILE=$CONTRIB_PREFIX-doc-auth-contribs.mm
+    ( head -n 1 $DOC_AUTH_FILE && # übernehme erste Zeile
+      head -n 2 $DOC_AUTH_FILE | tail -n 1 | awk '{ print $2 " " $1 " " $3}' && # tausche #dokumente,#autoren in zweiter zeile
+      tail -n +3 $DOC_AUTH_FILE | sort -k 2 -ns | awk '{ print $2 " " $1 " " $3}'  ) > $CONTRIB_PREFIX-auth-doc-contribs.mm # sortiere nach autoren und tausche docid,autorid
 }
 echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contribvalue) file"
-( time swap_columns_and_sort ) |& tee $LOG_PREFIX-sorted-acc-contribs.log
-bzip2 -zf $CONTRIB_PREFIX-acc-contributions.mm $CONTRIB_PREFIX-auth-doc-contribs.mm
-bzip2 -dkf $CONTRIB_PREFIX-acc-contributions.mm.bz2 $CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 # TODO produktiv raus
+( time swap_columns_and_sort ) |& tee $LOG_PREFIX-auth-doc-contribs.log
+bzip2 -zf $CONTRIB_PREFIX-doc-auth-contribs.mm $CONTRIB_PREFIX-auth-doc-contribs.mm
+bzip2 -dkf $CONTRIB_PREFIX-doc-auth-contribs.mm.bz2 $CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 # TODO produktiv raus
 
 echo "creating graph from contributions"
 ( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-graph.cpickle.bz2 ) |& tee $LOG_PREFIX-graph.log

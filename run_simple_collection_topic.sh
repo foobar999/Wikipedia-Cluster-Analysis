@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO das mit den Namespaces kann ich für neue korpora skippen
 # TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
 # - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
 # - am besten mit filter_tokens() vom Dictionary!
@@ -12,13 +11,9 @@
 # - beachte sprachen bei stopwords, stemming, lemmatisierung!
 # - nummern filtern?
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
-# TODO logge: 
-# - #dokumente vor preprocessing (geht das? ansonsten über bash-script)
-# - nach preprocessing: #dokumente, größe dictionay, größe bow (d.h. summe aller einträge)
 # TODO debug: normales dicr, release hashing dict -> sinnvoll, da terme später ziemlich sicher nötig?
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO "required" bei argparse einbauen
-# TODO wiki_to_bow -> articles_to_bow
 # TODO in allen description enwiki reinschreiben
 
 set -e  # Abbruch bei Fehler

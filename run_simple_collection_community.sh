@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# TODO das mit den namespaces in python von datei holen
-
-# TODO titel können auch ohne ns doppelpunkt enthalten 
-#   - https://de.wikipedia.org/wiki/Final_Fantasy_VII:_Advent_Children
-#   - möglk.: einfach raus, falls : drin
-#   - möglk.: nutze parser von mediawiki https://pythonhosted.org/mediawiki-utilities/lib/title.html -> funzt nicht bei Aliasen / kanonischen namen
-#   - möglk.: hoffen, dass <ns> attribut überall angegeben -> eher aussichtslos
-#   - möglk.: namespaces per api ziehen -> garantiert 20 neue probleme (kein inet grad? firewall? richtige sprache ziehen?)
-#   - möglk.: gemäß https://helpful.knobs-dials.com/index.php/Harvesting_wikipedia -> extrahiere "namespace", also alles vorm ersten doppelpunkt, prüfe, wie häufig er vorkommt -> wenn häufig, ist's ein namespace -> alle damit raus, wenn selten, ist es keiner -> behalten
-# WICHTIG: pages-meta-history enthält talk-namespaces, page-articles nicht
 # TODO igraph nehmen, da mehr algos + schneller
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden

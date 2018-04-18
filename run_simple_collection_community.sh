@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO .index-Dateien kicken
 # TODO igraph nehmen, da mehr algos + schneller
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden

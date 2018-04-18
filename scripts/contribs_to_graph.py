@@ -31,12 +31,15 @@ def main():
     
     logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path})))
     
-    author_doc_contribs = MmCorpus(input_contribs_path)
-    logger.info('creating graph of {} nodes/documents'.format(author_doc_contribs.num_docs))
+    with open(input_contribs_path, 'r') as input_contribs_file:
+        graph = Graph.Load(input_contribs_file, format='edgelist')
     
-    edges = [(d1,d2) for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs)]
-    print(edges)
-    graph = Graph(n=None, edges=edges, directed=False )
+    #author_doc_contribs = MmCorpus(input_contribs_path)
+    #logger.info('creating graph of {} nodes/documents'.format(author_doc_contribs.num_docs))
+    
+    #edges = [(d1,d2) for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs)]
+    #print(edges)
+    #graph = Graph(n=None, edges=edges, directed=False )
     print(graph)
     print([node for node in graph.vs])
     graph.simplify()

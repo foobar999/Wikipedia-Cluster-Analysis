@@ -6,7 +6,7 @@ from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_gensim_logger, number_of_tokens, is_mainspace_page
+from utils.utils import init_gensim_logger, number_of_tokens, is_mainspace_page, read_lines
 
 # TODO IP ignorieren Flag?
 
@@ -102,18 +102,19 @@ def main():
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file; also creates a binary article title file CONTRIBS.metadata.cpickle', required=True)
     parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_CHOICES, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES), required=True)
     parser.add_argument('--min-auth-docs', type=int, help='only consider contributions of authors that contributed to at least MIN_AUTH_DOCS different documents', required=True)
-    parser.add_argument("--namespace-prefixes", nargs='+', help='ignore every article beginning with one of these prefixes')
-    
+    parser.add_argument("--namespace-prefixes", type=argparse.FileType('r'), help='file of namespace prefixes to ignore')    
+        
+    args = parser.parse_args()
     args = parser.parse_args()
     input_history_dump_path = args.history_dump.name
     output_id2author_path = args.id2author.name
     output_contribs_path = args.contribs.name
     contribution_value = args.contribution_value
     min_author_docs = args.min_auth_docs
-    namespace_prefixes = tuple(prefix for prefix in args.namespace_prefixes) if args.namespace_prefixes else ()
-    
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs, 'namespace_prefixes':namespace_prefixes})))        
+    namespace_prefixes = read_lines(args.namespace_prefixes.name) if args.namespace_prefixes else ()
         
+    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs, 'namespace_prefixes':namespace_prefixes})))        
+            
     with smart_open(input_history_dump_path) as history_dump_file:    
         logger.info('generating author->id mappings')
         history_dump = xml_dump.Iterator.from_file(history_dump_file)

@@ -17,7 +17,7 @@ from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
-from utils.utils import init_gensim_logger, is_mainspace_page
+from utils.utils import init_gensim_logger, is_mainspace_page, read_lines
 
 
 program, logger = init_gensim_logger()
@@ -86,7 +86,7 @@ def main():
     parser.add_argument("--no-above", type=float, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})', required=True)
     parser.add_argument("--article-min-tokens", type=int, help='Analyze only articles of >= ARTICLE_MIN_TOKENS tokens default {}). Should be >=1', required=True)
     parser.add_argument("--token-len-range", type=int, nargs=2, metavar=('MIN','MAX'), help='Consider only tokens of at least MIN and at most MAX chars', required=True)
-    parser.add_argument("--namespace-prefixes", nargs='+', help='ignore every article beginning with one of these prefixes', required=True)
+    parser.add_argument("--namespace-prefixes", type=argparse.FileType('r'), help='file of namespace prefixes to ignore')
     
     args = parser.parse_args()
     input_articles_path = args.articles_dump.name
@@ -95,7 +95,7 @@ def main():
     no_below,no_above = args.no_below,args.no_above
     article_min_tokens = args.article_min_tokens
     token_len_range = args.token_len_range
-    namespace_prefixes = tuple(prefix for prefix in args.namespace_prefixes)
+    namespace_prefixes = read_lines(args.namespace_prefixes.name) if args.namespace_prefixes else ()
     
     logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespace_prefixes':namespace_prefixes})))
             

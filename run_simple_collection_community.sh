@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# TODO NonamespaceWIkiCorpus bzgl. namespace 0 überarbeiten
+# TODO das mit den namespaces in python von datei holen
+
 # TODO titel können auch ohne ns doppelpunkt enthalten 
 #   - https://de.wikipedia.org/wiki/Final_Fantasy_VII:_Advent_Children
 #   - möglk.: einfach raus, falls : drin
@@ -42,6 +43,7 @@ mkdir -p "output/stats"
 STATS_PREFIX="output/stats/$PREFIX"
 mkdir -p "output/logs"
 LOG_PREFIX="output/logs/$PREFIX"
+NAMESPACE_PREFIXES_FILE="output/$PREFIX-namespaces.txt"
 
 echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
@@ -49,13 +51,12 @@ bzip2 -zkf $COLL_PREFIX-articles.xml $COLL_PREFIX-pages-meta-history.xml
 
 echo "extracting likely namespaces from XML dump"
 NS_MIN_OCCURENCES=1
-( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-pages-meta-history.xml.bz2 $NS_MIN_OCCURENCES | tee output/$PREFIX-namespaces.txt )|& tee $LOG_PREFIX-namespaces.log
+( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-pages-meta-history.xml.bz2 $NS_MIN_OCCURENCES | tee $NAMESPACE_PREFIXES_FILE )|& tee $LOG_PREFIX-namespaces.log
 
 echo "computing author contributions"
 CONTRIBUTION_VALUE=diff_numterms
 MIN_AUTH_DOCS=1
-NAMESPACE_PREFIXES=$(cat output/$PREFIX-namespaces.txt | tr '[:space:]' ' ')
-( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_PREFIX-raw-contribs.log
+( time python scripts/history_to_contribs.py --history-dump=$COLL_PREFIX-pages-meta-history.xml.bz2 --id2author=$CONTRIB_PREFIX-id2author.cpickle.bz2 --contribs=$CONTRIB_PREFIX-raw-contributions.mm --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --namespace-prefixes=$NAMESPACE_PREFIXES_FILE ) |& tee $LOG_PREFIX-raw-contribs.log
 python scripts/utils/binary_to_text.py gensim $CONTRIB_PREFIX-id2author.cpickle.bz2 $CONTRIB_PREFIX-id2author.txt # TODO produktiv raus
 mv $CONTRIB_PREFIX-raw-contributions.mm.metadata.cpickle $CONTRIB_PREFIX.titles.cpickle # Artikeltitel-Datei umbennen
 bzip2 -zf $CONTRIB_PREFIX-raw-contributions.mm $CONTRIB_PREFIX.titles.cpickle # komprimiere Beiträge, Artikeltitel

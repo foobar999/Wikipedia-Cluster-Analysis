@@ -18,20 +18,15 @@ def init_gensim_logger():
 def number_of_tokens(str):
     return sum(1 for token in tokenize(str))
     
-# TODO raus
-def is_page_in_mainspace(page):
-    if page.namespace is not None:
-        return page.namespace == 0
-    else:
-        return ':' not in page.title   
-        
-
 def is_mainspace_page(page, namespace_prefixes):
     if page.namespace:
         return page.namespace == 0
     else:
         return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
         
+def read_lines(fname):
+    with open(fname, 'r') as f:
+        return tuple(f.read().splitlines())
     
 def write_rows(csv_filename, rows):
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csv_file:
@@ -42,3 +37,9 @@ def read_rows(csv_filename):
     with open(csv_filename, 'r', newline='', encoding='utf-8') as csv_file:
         csvreader = csv.reader(csv_file, delimiter=' ')
         return [tuple(val for val in row) for row in csvreader]
+        
+        
+        
+        
+        
+        

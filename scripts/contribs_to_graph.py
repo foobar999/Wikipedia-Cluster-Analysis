@@ -55,7 +55,7 @@ def main():
     graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})
     logger.info('simplified graph to {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     log_graph(graph)
-        
+    graph.write_pickle(fname=output_graph_path)
         
         
         

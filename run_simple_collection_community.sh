@@ -1,7 +1,7 @@
 #!/bin/bash
 
+# http://www.shizukalab.com/toolkits/sna/bipartite
 # TODO .index-Dateien kicken
-# TODO igraph nehmen, da mehr algos + schneller
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden
 #   muss ich wirklich dokumente rausschmeißen, die nix zum topicmodel beitragen? 
@@ -20,7 +20,6 @@
 #   topicclus: filtere mittels whitelist bei clustering die entsprechenden docs
 #   commclus: filtere mittels whitelist bei grapherzeugung?
 #   ich sollte erst filtern, wenn kein mm-dateizugriff mehr nöigt
-# TODO tausche bei mm spalten, da sonst gensim zicken macht?
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

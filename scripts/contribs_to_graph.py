@@ -10,54 +10,54 @@ from utils.utils import init_gensim_logger
 
 program, logger = init_gensim_logger()
 
-# TODO option für paarweise maß einbauen
+# TODO gewichteten kram:
+# - simplify aufsummieren lassen
+# - option für paarweises maß 
+# - für gewichtet kann man im Grunde edge_attrs=('weight') in TupleList setzen
+# TODO option für paarweise maß einbauen?
 
-def get_related_doc_pairs(author_doc_contribs):    
-    for authorid,doc_contribs in enumerate(author_doc_contribs):
-        logger.debug('contribs of {}: {}'.format(authorid,doc_contribs))
-        for d1_contrib,d2_contrib in combinations(doc_contribs,2):
-            co_authorship_degree = min(d1_contrib[1],d2_contrib[1])
-            yield d1_contrib[0], d2_contrib[0], co_authorship_degree
 
+def get_cooccurence_pairs(ys_weights):    
+    for x,ys_weights in enumerate(ys_weights):
+        logger.debug('contribs for {}: {}'.format(x, ys_weights))
+        for (y1,w1), (y2,w2) in combinations(ys_weights, 2):
+            co_occurrence_degree = min(w1, w2)
+            yield str(y1), str(y2), co_occurrence_degree
+
+           
+def log_graph(graph):
+    logger.debug('GRAPH\n{}'.format(str(graph)))    
+    for i, node in enumerate(graph.vs):
+        logger.debug('node {} with name {}'.format(i, node['name']))
+    for edge in graph.es:
+        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
+        logger.debug('edge {}--{}--{}'.format(edge.source, weight, edge.target))
+     
 
 def main():
-    parser = argparse.ArgumentParser(description='creates a pickled networkx graph from a given authorid-docid contributions file by calculating pairwise document distances', epilog='Example: ./{} --contribs=enwiki-auth-doc-contribs.mm.bz2 --graph=enwiki-document-graph.cpickle '.format(sys.argv[0]))
-    parser.add_argument('--contribs', type=argparse.FileType('r'), help='path to input authorid-documentid-contrib MatrixMarketfile (.mm/.mm.bz2)', required=True)
-    parser.add_argument('--graph', type=argparse.FileType('w'), help='path to output binary pickled graph file (.cpickle/.cpickle.bz2)', required=True)
+    parser = argparse.ArgumentParser(description='maps a given contribution file [(x1,y1,wa),(x1,y2,wb),...,(x2,y1,wc),...] to a co-occurence graph of yi-nodes; must be sorted by x,y; w-values are conjuncted by minimum', epilog='Example: ./{} --contribs=enwiki-auth-doc-contribs.mm.bz2 --graph=enwiki-document-graph.cpickle '.format(sys.argv[0]))
+    parser.add_argument('--contribs', type=argparse.FileType('r'), help='path to input contribution MatrixMarket file (.mm/.mm.bz2)', required=True)
+    parser.add_argument('--graph', type=argparse.FileType('w'), help='path to output co-occurence .mm MatrixMarket file', required=True)
+    parser.add_argument('--weighted', action='store_true')
     
     args = parser.parse_args()
     input_contribs_path = args.contribs.name
     output_graph_path = args.graph.name
+    is_weighted = args.weighted
     
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path})))
+    logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path, 'is_weighted':is_weighted})))
     
-    with open(input_contribs_path, 'r') as input_contribs_file:
-        graph = Graph.Load(input_contribs_file, format='edgelist')
-    
-    #author_doc_contribs = MmCorpus(input_contribs_path)
-    #logger.info('creating graph of {} nodes/documents'.format(author_doc_contribs.num_docs))
-    
-    #edges = [(d1,d2) for d1,d2,co_authorship_degree in get_related_doc_pairs(author_doc_contribs)]
-    #print(edges)
-    #graph = Graph(n=None, edges=edges, directed=False )
-    print(graph)
-    print([node for node in graph.vs])
-    graph.simplify()
-    graph.delete_vertices(Graph.degree(graph) == 0)
-    print(graph)
-    print([node for node in graph.vs])
-    #for x in related_docs:
-    #    print(x)
+    contribs = MmCorpus(input_contribs_path)
+    #graph = Graph.TupleList(get_cooccurence_pairs(contribs), edge_attrs=('weight'))
+    graph = Graph.TupleList(get_cooccurence_pairs(contribs))
+    logger.info('created graph with {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
+    log_graph(graph)
+    graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})
+    logger.info('simplified graph to {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
+    log_graph(graph)
         
-     #if not G.has_edge(d1, d2):
-        #    G.add_edge(d1, d2, weight=co_authorship_degree)
-        #else:
-        #    G[d1][d2]['weight'] += co_authorship_degree
-            
-    #logger.debug('\n' + pformat(json_graph.adjacency_data(G)))
-    #logger.info('created graph with {} nodes, {} edges'.format(len(G), G.size()))
-    #nx.write_gpickle(G, output_graph_path)
-    
+        
+        
         
 if __name__ == '__main__':
     main()

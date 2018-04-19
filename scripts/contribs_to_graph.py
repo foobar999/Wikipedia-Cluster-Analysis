@@ -6,7 +6,7 @@ from itertools import combinations
 from gensim.utils import smart_open
 from gensim.corpora import  MmCorpus
 from igraph import Graph
-from utils.utils import init_logger
+from utils.utils import init_logger, log_graph
 
 logger = init_logger()
 
@@ -22,22 +22,13 @@ def get_cooccurence_pairs(ys_weights):
         logger.debug('contribs for {}: {}'.format(x, ys_weights))
         for (y1,w1), (y2,w2) in combinations(ys_weights, 2):
             co_occurrence_degree = min(w1, w2)
-            yield str(y1), str(y2), co_occurrence_degree
-
-           
-def log_graph(graph):
-    logger.debug('GRAPH\n{}'.format(str(graph)))    
-    for i, node in enumerate(graph.vs):
-        logger.debug('node {} with name {}'.format(i, node['name']))
-    for edge in graph.es:
-        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-        logger.debug('edge {}--{}--{}'.format(edge.source, weight, edge.target))
+            yield str(y1), str(y2), co_occurrence_degree           
      
 
 def main():
-    parser = argparse.ArgumentParser(description='maps a given contribution file [(x1,y1,wa),(x1,y2,wb),...,(x2,y1,wc),...] to a co-occurence graph of yi-nodes; must be sorted by x,y; w-values are conjuncted by minimum', epilog='Example: ./{} --contribs=enwiki-auth-doc-contribs.mm.bz2 --graph=enwiki-document-graph.cpickle '.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='maps a given contribution file [(x1,y1,wa),(x1,y2,wb),...,(x2,y1,wc),...] to a co-occurence graph of yi-nodes; must be sorted by x,y; w-values are conjuncted by minimum')
     parser.add_argument('--contribs', type=argparse.FileType('r'), help='path to input contribution MatrixMarket file (.mm/.mm.bz2)', required=True)
-    parser.add_argument('--graph', type=argparse.FileType('w'), help='path to output co-occurence .mm MatrixMarket file', required=True)
+    parser.add_argument('--graph', type=argparse.FileType('w'), help='path to output pickled, gzip graph file', required=True)
     parser.add_argument('--weighted', action='store_true')
     
     args = parser.parse_args()
@@ -55,7 +46,7 @@ def main():
     graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})
     logger.info('simplified graph to {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     log_graph(graph)
-    graph.write_pickle(fname=output_graph_path)
+    graph.write_picklez(fname=output_graph_path)
         
         
         

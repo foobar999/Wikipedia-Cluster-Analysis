@@ -61,7 +61,7 @@ def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
 # liefert einen Generator ((Autorname für alle Revisionen) für alle Seiten im Mainspace)
 def get_revision_authors_of_pages(history_dump, namespace_prefixes):
     for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
-        yield (revision.contributor.user_text for revision in revisions)
+        yield (revision.contributor.user_text for revision in revisions if revision.contributor.user_text is not None)
     
 
 # liefert einen Generator ((Autor-ID, Revision) für alle Revisionen), wobei das Dictionary den Autornamen enthalten muss

@@ -3,9 +3,11 @@ import sys, os
 import csv
 from gensim.utils import tokenize
 
+
 def debug_mode_set():
     return 'DEBUG' in os.environ
 
+    
 def init_logger():
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
@@ -14,6 +16,18 @@ def init_logger():
     mpl_logger = logging.getLogger('matplotlib') # deaktiviere matplotlib-debug-logging
     mpl_logger.setLevel(logging.INFO) 
     return logger
+
+logger = init_logger()
+    
+    
+def log_graph(graph):
+    logger.debug('GRAPH\n{}'.format(str(graph)))    
+    for i, node in enumerate(graph.vs):
+        logger.debug('node {} with name {}'.format(i, node['name']))
+    for edge in graph.es:
+        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
+        logger.debug('edge {}--{}--{}'.format(edge.source, weight, edge.target))
+    
     
 def number_of_tokens(str):
     return sum(1 for token in tokenize(str))

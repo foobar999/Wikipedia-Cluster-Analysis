@@ -28,6 +28,11 @@ def main():
     logger.debug(components)
     logger.info('size histogram')
     logger.info(components.size_histogram())
+    degree_histogram = graph.degree_distribution()
+    logger.info('node degree distribution')
+    logger.info(degree_histogram)
+    logger.info('mean degree: {}'.format(degree_histogram.mean))
+    
         
         
 if __name__ == '__main__':

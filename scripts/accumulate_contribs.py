@@ -4,7 +4,10 @@ import argparse
 from collections import defaultdict
 from pprint import pformat
 from gensim.corpora import MmCorpus
-from utils.utils import init_gensim_logger
+from utils.utils import init_logger
+
+logger = init_logger()
+
 
 def accumulate(raw_doc_contribs):
     accumulator = defaultdict(lambda: 0)
@@ -22,8 +25,7 @@ def main():
     input_raw_contribs_dump_path = args.raw_contribs.name
     output_acc_contribs_dump_path = args.acc_contribs.name
     
-    program, logger = init_gensim_logger()
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_raw_contribs_dump_path':input_raw_contribs_dump_path, 'output_acc_contribs_dump_path':output_acc_contribs_dump_path})))
+    logger.info('running with:\n{}'.format(pformat({'input_raw_contribs_dump_path':input_raw_contribs_dump_path, 'output_acc_contribs_dump_path':output_acc_contribs_dump_path})))
 
     raw_contribs = MmCorpus(input_raw_contribs_dump_path)
     acc_contribs = (accumulate(raw_doc_contribs) for raw_doc_contribs in raw_contribs)

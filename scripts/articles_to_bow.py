@@ -17,9 +17,9 @@ from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
-from utils.utils import init_gensim_logger, is_mainspace_page, read_lines
+from utils.utils import init_logger, is_mainspace_page, read_lines
 
-program, logger = init_gensim_logger()
+logger = init_logger()
 
         
 def get_page_data(page):
@@ -96,7 +96,7 @@ def main():
     token_len_range = args.token_len_range
     namespace_prefixes = read_lines(args.namespace_prefixes.name) if args.namespace_prefixes else ()
     
-    logger.info('running {} with:\n{}'.format(program,pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespace_prefixes':namespace_prefixes})))
+    logger.info('running with:\n{}'.format(pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_len_range':token_len_range, 'namespace_prefixes':namespace_prefixes})))
             
     logger.info('generating vocabulary')
     corpus = MediaWikiCorpus(input_articles_path, article_min_tokens, token_len_range[0], token_len_range[1], namespace_prefixes)

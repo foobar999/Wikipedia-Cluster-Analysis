@@ -7,8 +7,11 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
 from gensim.utils import smart_open
 from sklearn.cluster import MiniBatchKMeans
-from utils.utils import init_gensim_logger
+from utils.utils import init_logger
 import numpy as np
+ 
+logger = init_logger()
+ 
  
 DEFAULT_BATCH_SIZE = 1000
 
@@ -27,8 +30,7 @@ def main():
     numclusters = args.numclusters
     batch_size = args.batch_size
     
-    program, logger = init_gensim_logger()  
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_lda_path':input_lda_path, 'output_cluster_labels_path':output_cluster_labels_path, 'numclusters':numclusters, 'batch_size':batch_size})))
+    logger.info('running with:\n{}'.format(pformat({'input_corpus_path':input_corpus_path, 'input_lda_path':input_lda_path, 'output_cluster_labels_path':output_cluster_labels_path, 'numclusters':numclusters, 'batch_size':batch_size})))
         
     corpus = MmCorpus(input_corpus_path)
     lda = LdaMulticore.load(input_lda_path)
@@ -43,7 +45,6 @@ def main():
     with smart_open(output_cluster_labels_path, 'wb') as ofile:
         np.save(ofile, cluster_labels)
     
-    logger.info("finished running %s", program)
     
     
 if __name__ == '__main__':

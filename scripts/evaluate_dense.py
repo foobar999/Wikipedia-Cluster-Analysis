@@ -7,9 +7,11 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
 from gensim.utils import smart_open
 import numpy as np
-from utils.utils import init_gensim_logger
+from utils.utils import init_logger
 from sklearn.metrics import silhouette_score
  
+logger = init_logger()
+
 
 def main():
     parser = argparse.ArgumentParser(description='calculates silhouette coefficient for a previous clustering', epilog='Example: ./{} mycorpus-bow.mm.bz2 mycorpus-lda-model mycorpus-kmeans-labels.cpickle.bz2 --id2word mycorpus-wordids.txt.bz2 --passes 10 --iterations 100 '.format(sys.argv[0]))
@@ -22,8 +24,7 @@ def main():
     input_lda_path = args.lda.name
     input_cluster_labels_path = args.cluster_labels.name
     
-    program, logger = init_gensim_logger()  
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_lda_path':input_lda_path, 'input_cluster_labels_path':input_cluster_labels_path})))
+    logger.info('running with:\n{}'.format(pformat({'input_corpus_path':input_corpus_path, 'input_lda_path':input_lda_path, 'input_cluster_labels_path':input_cluster_labels_path})))
         
     corpus = MmCorpus(input_corpus_path)
     lda = LdaMulticore.load(input_lda_path)
@@ -38,7 +39,6 @@ def main():
     score = silhouette_score(dense_corpus_topics, labels, metric='euclidean')
     logger.info('score {}'.format(score))
     
-    logger.info("finished running %s", program)
     
     
 if __name__ == '__main__':

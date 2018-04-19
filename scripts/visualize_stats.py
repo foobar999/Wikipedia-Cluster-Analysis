@@ -3,17 +3,10 @@ import logging
 import argparse
 from pprint import pformat
 import matplotlib.pyplot as plt
-from utils.utils import init_gensim_logger, read_rows
+from utils.utils import init_logger, read_rows
 import numpy as np
     
-#i = 0
-#ctr, mysum = 0, sum(data_y)
-#while ctr/mysum < quantile_of:
-#    print(ctr/mysum,i,mysum)
-#    ctr += data_y[i]
-#    i += 1
-#quantile = data_x[i]    
-#quantile = np.percentile(data_y, 95, interpolation='lower', axis=0)
+logger = init_logger()
     
     
 def main():
@@ -27,8 +20,7 @@ def main():
     output_viz_path = args.viz.name
     quantile_of = args.quantile
     
-    program, logger = init_gensim_logger()
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_stats_path':input_stats_path, 'output_viz_path':output_viz_path})))
+    logger.info('running with:\n{}'.format(pformat({'input_stats_path':input_stats_path, 'output_viz_path':output_viz_path})))
          
     data = read_rows(input_stats_path)
     logger.info('read {} rows'.format(len(data)))
@@ -54,3 +46,14 @@ def main():
         
 if __name__ == '__main__':
     main()
+    
+    
+    
+#i = 0
+#ctr, mysum = 0, sum(data_y)
+#while ctr/mysum < quantile_of:
+#    print(ctr/mysum,i,mysum)
+#    ctr += data_y[i]
+#    i += 1
+#quantile = data_x[i]    
+#quantile = np.percentile(data_y, 95, interpolation='lower', axis=0)

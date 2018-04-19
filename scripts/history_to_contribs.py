@@ -6,11 +6,11 @@ from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_gensim_logger, number_of_tokens, is_mainspace_page, read_lines
+from utils.utils import init_logger, number_of_tokens, is_mainspace_page, read_lines
 
 # TODO IP ignorieren Flag?
 
-program, logger = init_gensim_logger()
+logger = init_logger()
 
     
 def contrib_value_one(ids_revisions):
@@ -113,7 +113,7 @@ def main():
     min_author_docs = args.min_auth_docs
     namespace_prefixes = read_lines(args.namespace_prefixes.name) if args.namespace_prefixes else ()
         
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs, 'namespace_prefixes':namespace_prefixes})))        
+    logger.info('running with:\n{}'.format(pformat({'input_history_dump_path':input_history_dump_path, 'output_id2author_path':output_id2author_path, 'output_contribs_path':output_contribs_path, 'contribution_value':contribution_value, 'min_author_docs':min_author_docs, 'namespace_prefixes':namespace_prefixes})))        
             
     with smart_open(input_history_dump_path) as history_dump_file:    
         logger.info('generating author->id mappings')

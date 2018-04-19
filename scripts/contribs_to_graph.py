@@ -6,9 +6,9 @@ from itertools import combinations
 from gensim.utils import smart_open
 from gensim.corpora import  MmCorpus
 from igraph import Graph
-from utils.utils import init_gensim_logger
+from utils.utils import init_logger
 
-program, logger = init_gensim_logger()
+logger = init_logger()
 
 # TODO gewichteten kram:
 # - simplify aufsummieren lassen
@@ -45,7 +45,7 @@ def main():
     output_graph_path = args.graph.name
     is_weighted = args.weighted
     
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path, 'is_weighted':is_weighted})))
+    logger.info('running with:\n{}'.format(pformat({'input_contribs_path':input_contribs_path, 'output_graph_path':output_graph_path, 'is_weighted':is_weighted})))
     
     contribs = MmCorpus(input_contribs_path)
     edge_attrs = ('weight') if is_weighted else None

@@ -6,8 +6,10 @@ from collections import Counter
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from utils.utils import init_gensim_logger, write_rows, read_lines
+from utils.utils import init_logger, write_rows, read_lines
       
+logger = init_logger()
+
     
 calced_stats = ''' 
 number of documents |
@@ -43,8 +45,7 @@ def main():
     output_stat_prefix = args.stat_files_prefix
     namespace_prefixes = read_lines(args.namespace_prefixes.name) if args.namespace_prefixes else ()
     
-    program, logger = init_gensim_logger()
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_history_dump_path':input_history_dump_path, 'namespace_prefixes':namespace_prefixes})))
+    logger.info('running with:\n{}'.format(pformat({'input_history_dump_path':input_history_dump_path, 'namespace_prefixes':namespace_prefixes})))
                         
     numrevs_to_count = Counter()
     numauthors_to_count = Counter()

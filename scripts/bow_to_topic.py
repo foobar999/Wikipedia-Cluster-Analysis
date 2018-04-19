@@ -5,7 +5,9 @@ from pprint import pformat
 from gensim.corpora import MmCorpus, Dictionary
 from gensim.models import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
-from utils.utils import init_gensim_logger
+from utils.utils import init_logger
+
+logger = init_logger()
 
 DEFAULT_PASSES = 100
 DEFAULT_ITERATIONS = 1000
@@ -39,9 +41,7 @@ def main():
     passes,iterations = args.passes,args.iterations
     alpha, beta = args.alpha, args.beta
     
-    program, logger = init_gensim_logger()
-    
-    logger.info('running {} with:\n{}'.format(program, pformat({'input_corpus_path':input_corpus_path, 'input_id2word_path':input_id2word_path, 'output_model_prefix':output_model_prefix, 'numtopics':numtopics, 'passes':passes, 'iterations':iterations, 'alpha':alpha, 'beta':beta})))
+    logger.info('running with:\n{}'.format(pformat({'input_corpus_path':input_corpus_path, 'input_id2word_path':input_id2word_path, 'output_model_prefix':output_model_prefix, 'numtopics':numtopics, 'passes':passes, 'iterations':iterations, 'alpha':alpha, 'beta':beta})))
         
     corpus = MmCorpus(input_corpus_path)
     id2word = Dictionary.load(input_id2word_path)    
@@ -49,9 +49,7 @@ def main():
     lda_model = model(corpus=corpus, num_topics=numtopics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None)    
     
     # TODO id2word nicht mitspeichern?
-    lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten
-    
-    logger.info("finished running %s", program)
+    lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten    
     
     
 if __name__ == '__main__':

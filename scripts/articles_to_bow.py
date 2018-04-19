@@ -19,7 +19,6 @@ from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
 from utils.utils import init_gensim_logger, is_mainspace_page, read_lines
 
-
 program, logger = init_gensim_logger()
 
         

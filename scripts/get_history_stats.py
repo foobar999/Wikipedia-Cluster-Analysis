@@ -59,7 +59,7 @@ def main():
             namespace_to_count[namespace] += 1
             document_revisions = [revision for revision in document]
             numrevs_to_count[len(document_revisions)] += 1
-            revisions_authors = [revision.contributor.user_text for revision in document_revisions]
+            revisions_authors = [revision.contributor.user_text for revision in document_revisions if revision.contributor.user_text is not None]
             author_to_numrevs.update(revisions_authors)
             unique_authors = set(revisions_authors)
             author_to_numdocs.update(unique_authors)

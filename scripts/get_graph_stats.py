@@ -19,10 +19,15 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_graph_path':input_graph_path})))
     
-    graph = Graph.Read_Picklez(input_graph_path)
-        
+    graph = Graph.Read_Picklez(input_graph_path)        
     logger.info('loaded graph')
     log_graph(graph)
+        
+    logger.info('calculating connected components')
+    components = graph.components()
+    logger.debug(components)
+    logger.info('size histogram')
+    logger.info(components.size_histogram())
         
         
 if __name__ == '__main__':

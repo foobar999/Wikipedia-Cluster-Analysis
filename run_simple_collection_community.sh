@@ -64,7 +64,6 @@ bzip2 -dkf $CONTRIB_PREFIX-doc-auth-contribs.mm.bz2 $CONTRIB_PREFIX-auth-doc-con
 
 echo "creating graph from contributions"
 ( time python scripts/contribs_to_graph.py --contribs=$CONTRIB_PREFIX-auth-doc-contribs.mm.bz2 --graph=$GRAPH_PREFIX-co-authorship.cpickle.gz ) |& tee $LOG_PREFIX-graph.log
-bzip2 -zf $GRAPH_PREFIX-co-authorship.cpickle
 
 echo "calculating graph stats"
 ( time python scripts/get_graph_stats.py --graph=$GRAPH_PREFIX-co-authorship.cpickle.gz ) |& tee -a $LOG_PREFIX-graph.log

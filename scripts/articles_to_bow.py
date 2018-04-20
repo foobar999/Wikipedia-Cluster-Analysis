@@ -77,7 +77,7 @@ class MediaWikiCorpus(TextCorpus):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=description, epilog='Example: ./{} enwiki-pages-articles.xml.bz2 output/enwiki-corpus --keep-words 1000 --no-below=10 --no-above=0.5 --article-min-tokens 50 --token-len-range 2 20'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--articles-dump", type=argparse.FileType('r'), help='path to input .xml.bz2 articles dump', required=True)
     parser.add_argument("--out-prefix", help='prefix of the generated output files', required=True)
     parser.add_argument("--keep-words", type=int, help='number of most frequent word types to keep (default {})', required=True)

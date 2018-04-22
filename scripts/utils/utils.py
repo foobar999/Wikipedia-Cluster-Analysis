@@ -38,6 +38,10 @@ def is_mainspace_page(page, namespace_prefixes):
     else:
         return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
         
+# registrierter, eingeloggter Nutzer mit ID, Benutzernamen
+def is_valid_contributor(contributor):
+    return contributor.id is not None and contributor.user_text is not None 
+    
 def read_lines(fname):
     with open(fname, 'r') as f:
         return tuple(f.read().splitlines())

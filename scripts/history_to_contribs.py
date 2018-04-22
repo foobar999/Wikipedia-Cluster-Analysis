@@ -6,7 +6,7 @@ from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_logger, number_of_tokens, is_mainspace_page, read_lines
+from utils.utils import init_logger, number_of_tokens, is_mainspace_page, read_lines, is_valid_contributor
 
 # TODO IP ignorieren Flag?
 
@@ -45,23 +45,28 @@ CONTRIBUTION_VALUE_FUNCTIONS = {
 def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
     num_pages_total = 0
     num_pages_mainspace = 0
-    num_revisions_filtered = 0
+    num_revisions_mainspace = 0
+    num_revisions_ms_of_valid_users = 0
     for page in history_dump:
         num_pages_total += 1
         logger.debug('page {}'.format(page.title))
         if is_mainspace_page(page, namespace_prefixes):
             num_pages_mainspace += 1
+            logger.debug('page {} considered mainspace'.format(page.title))
             revisions = tuple(revision for revision in page)
-            num_revisions_filtered += len(revisions)
-            logger.debug('page {} considered mainspace, having {} revisions'.format(page.title, len(revisions)))
-            yield revisions,page.title
-    logger.info('loaded {} pages, {} pages considered mainspace, containing {} revisions'.format(num_pages_total, num_pages_mainspace, num_revisions_filtered))
+            num_revisions_mainspace += len(revisions)
+            logger.debug('page {} having {} revisions'.format(page.title, len(revisions)))
+            revisions_of_valid_users = tuple(revision for revision in revisions if is_valid_contributor(revision.contributor))
+            num_revisions_ms_of_valid_users += len(revisions_of_valid_users)
+            logger.debug('page {} having {} revisions of valid users'.format(page.title, len(revisions_of_valid_users)))
+            yield revisions_of_valid_users,page.title
+    logger.info('loaded {} pages, {} pages considered mainspace, containing {} revisions, {} of valid users'.format(num_pages_total, num_pages_mainspace, num_revisions_mainspace, num_revisions_ms_of_valid_users))
     
     
 # liefert einen Generator ((Autorname für alle Revisionen) für alle Seiten im Mainspace)
 def get_revision_authors_of_pages(history_dump, namespace_prefixes):
     for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
-        yield (revision.contributor.user_text for revision in revisions if revision.contributor.user_text is not None)
+        yield (revision.contributor.user_text for revision in revisions)
     
 
 # liefert einen Generator ((Autor-ID, Revision) für alle Revisionen), wobei das Dictionary den Autornamen enthalten muss

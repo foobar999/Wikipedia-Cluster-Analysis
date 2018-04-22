@@ -60,7 +60,7 @@ def get_filtered_revisions_of_pages(history_dump, min_doc_authors, namespace_pre
             revisions_of_valid_users = tuple(revision for revision in revisions if is_valid_contributor(revision.contributor))
             num_revisions_ms_of_valid_users += len(revisions_of_valid_users)
             logger.debug('page {} having {} revisions of valid users'.format(page.title, len(revisions_of_valid_users)))
-            num_different_authors = len(set(rev.contributor.user_text for rev in revisions_of_valid_users))
+            num_different_authors = len(set(rev.contributor.id for rev in revisions_of_valid_users)) # erhöhr dauer signifikant (~55min -> )
             logger.debug('page {} having {} different authors -> keep?: {}'.format(page.title, num_different_authors, num_different_authors >= min_doc_authors))
             if num_different_authors >= min_doc_authors:
                 num_pages_ms_enough_different_valid_users += 1

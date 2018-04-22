@@ -26,7 +26,7 @@ def log_graph(graph):
         logger.debug('node {} with name {}'.format(i, node['name']))
     for edge in graph.es:
         weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-        logger.debug('edge {}--{}--{}'.format(edge.source, weight, edge.target))
+        logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
     
     
 def number_of_tokens(str):

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO lemmatisierung!!
 # TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
 # - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
 # - am besten mit filter_tokens() vom Dictionary!

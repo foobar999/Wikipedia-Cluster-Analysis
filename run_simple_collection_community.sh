@@ -25,16 +25,16 @@
 #   ich sollte erst filtern, wenn kein mm-dateizugriff mehr nöigt
 
 export DEBUG="DEBUG" # TODO produktiv raus
-PREFIX="simple-collection"
-COLL_PREFIX="collections/$PREFIX"
-mkdir -p "output/contribs"
-CONTRIB_PREFIX="output/contribs/$PREFIX"
-mkdir -p "output/graph"
-GRAPH_PREFIX="output/graph/$PREFIX"
-mkdir -p "output/stats"
-STATS_PREFIX="output/stats/$PREFIX"
-mkdir -p "output/logs"
-LOG_PREFIX="output/logs/$PREFIX"
+PREFIX=simple-collection
+COLL_PREFIX=collections/$PREFIX
+mkdir -p output/contribs
+CONTRIB_PREFIX=output/contribs/$PREFIX
+mkdir -p output/graph
+GRAPH_PREFIX=output/graph/$PREFIX
+mkdir -p output/stats
+STATS_PREFIX=output/stats/$PREFIX
+mkdir -p output/logs
+LOG_PREFIX=output/logs/$PREFIX
 
 NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
 HISTORY=$COLL_PREFIX-pages-meta-history.xml
@@ -81,13 +81,13 @@ echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contrib
 bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS $AUTH_DOC_CONTRIBS
 bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 $AUTH_DOC_CONTRIBS.bz2 # TODO produktiv raus
 
+haschegif
+
 echo "creating graph from contributions"
 ( time python scripts/contribs_to_graph.py --contribs=$AUTH_DOC_CONTRIBS.bz2 --graph=$GRAPH_PREFIX-co-authorship.cpickle.gz ) |& tee $LOG_PREFIX-graph.log
 
 echo "calculating graph stats"
 ( time python scripts/get_graph_stats.py --graph=$GRAPH_PREFIX-co-authorship.cpickle.gz ) |& tee -a $LOG_PREFIX-graph.log
-
-haschegif
 
 echo "calculating stats from history dump"
 ( time python scripts/get_history_stats.py --history-dump=$HISTORY.bz2 --stat-files-prefix=$STATS_PREFIX --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_PREFIX-stats.log

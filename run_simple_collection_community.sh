@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-# TODO contributions -> contribs in anderen scripts
 # graph aufbau optimieren -> cocitation/bib coupling con igraph? https://gist.github.com/tts/4737987 http://igraph.org/python/doc/igraph.Graph-class.html#Incidence http://www.shizukalab.com/toolkits/sna/bipartite https://lists.nongnu.org/archive/html/igraph-help/2013-07/msg00014.html https://github.com/igraph/python-igraph/issues/168
 # TODO ip-adressen ignorieren
 # http://www.shizukalab.com/toolkits/sna/bipartite

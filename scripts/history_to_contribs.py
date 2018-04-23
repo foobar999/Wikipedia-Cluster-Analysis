@@ -117,7 +117,7 @@ def main():
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file; also creates a binary article title file CONTRIBS.metadata.cpickle', required=True)
     parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_CHOICES, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES), required=True)
     parser.add_argument('--min-auth-docs', type=int, help='only consider contributions of authors that contributed to at least MIN_AUTH_DOCS different documents', required=True)
-    parser.add_argument('--min-doc-auths', type=int, help='only consider documents with MIN_DOC_AUTHS different authors')
+    parser.add_argument('--min-doc-auths', type=int, help='only consider documents with MIN_DOC_AUTHS different authors', required=True)
     parser.add_argument("--namespace-prefixes", type=argparse.FileType('r'), help='file of namespace prefixes to ignore')    
         
     args = parser.parse_args()

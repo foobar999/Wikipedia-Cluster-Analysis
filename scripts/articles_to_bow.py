@@ -32,26 +32,30 @@ def get_tokens(text, token_min_len, token_max_len):
     
 def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):
     num_articles_total = 0
-    num_mainspace_articles = 0
-    num_mainspace_long_enough_articles = 0
+    num_articles_mainspace = 0
+    num_articles_mainspace_long_enough = 0
     num_positions = 0
     for page in articles_dump:
         logger.debug('article "{}"'.format(page.title))
         num_articles_total += 1
         if is_mainspace_page(page, namespace_prefixes):
             logger.debug('article "{}" considered mainspace'.format(page.title))
-            num_mainspace_articles += 1
+            num_articles_mainspace += 1
             title, text, pageid = get_page_data(page)
             tokens = get_tokens(text, token_min_len, token_max_len)
             if len(tokens) >= article_min_tokens:
                 logger.debug('article "{}" considered long enough'.format(page.title))
-                num_mainspace_long_enough_articles += 1
+                num_articles_mainspace_long_enough += 1
                 num_positions += len(tokens)
                 if metadata:
                     yield tokens, (pageid, title)
                 else:
                     yield tokens
-    logger.info('loaded {} articles (total), {} articles considered mainspace, {} articles considered mainspace with >= article_min_tokens tokens, {} positions (filtered)'.format(num_articles_total, num_mainspace_articles, num_mainspace_long_enough_articles, num_positions))
+                    
+    logger.info('{} articles total'.format(num_articles_total))
+    logger.info('{} articles mainspace'.format(num_articles_mainspace))
+    logger.info('{} articles mainsoace with >= {} tokens'.format(num_articles_mainspace_long_enough, article_min_tokens))
+    logger.info('{} positions in long enough mainspace articles'.format(num_positions))
     
                     
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):

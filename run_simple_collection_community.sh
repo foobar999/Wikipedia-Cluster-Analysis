@@ -61,8 +61,11 @@ echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$CONTRIB_PREFIX-raw-contribs.mm.bz2 --acc-contribs=$CONTRIB_PREFIX-acc-contribs.mm ) |& tee -a $LOG_PREFIX-contribs.log
 
 echo "thresholding contributions"
-MIN_CONTRIB_VALUE=4
+MIN_CONTRIB_VALUE=1
 ./bash/threshold_contribs.sh $CONTRIB_PREFIX-acc-contribs.mm $MIN_CONTRIB_VALUE > $CONTRIB_PREFIX-doc-auth-contribs.mm
+NUM_CONTRIBS_BEFORE=$(cat $CONTRIB_PREFIX-acc-contribs.mm | awk 'END {print NR-2}')
+NUM_CONTRIBS_AFTER=$(cat $CONTRIB_PREFIX-doc-auth-contribs.mm | awk 'END {print NR-2}')
+echo "thresholded number of contribs from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER" | tee -a $LOG_PREFIX-contribs.log
 
 echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contribvalue) file"
 ./bash/get_swapped_author_doc_contribs.sh $CONTRIB_PREFIX-doc-auth-contribs.mm > $CONTRIB_PREFIX-auth-doc-contribs.mm

@@ -59,7 +59,7 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
     logger.info('{} articles mainspace'.format(num_articles_mainspace))
     logger.info('{} articles mainsoace with >= {} tokens'.format(num_articles_mainspace_long_enough, article_min_tokens))
     logger.info('{} tokens in mainspace articles'.format(num_tokens_ms))
-    logger.info('{} tokens in long enough mainspace articles'.format(num_tokens_ms_le))
+    logger.info('{} tokens in mainspace articles with  >= {} tokens'.format(num_tokens_ms_le, article_min_tokens))
     
                     
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):

@@ -34,19 +34,22 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
     num_articles_total = 0
     num_articles_mainspace = 0
     num_articles_mainspace_long_enough = 0
-    num_positions = 0
+    num_tokens_ms = 0
+    num_tokens_ms_le = 0
     for page in articles_dump:
-        logger.debug('article "{}"'.format(page.title))
+        logger.debug('article {}'.format(page.title))
         num_articles_total += 1
         if is_mainspace_page(page, namespace_prefixes):
-            logger.debug('article "{}" considered mainspace'.format(page.title))
+            logger.debug('article {} considered mainspace'.format(page.title))
             num_articles_mainspace += 1
             title, text, pageid = get_page_data(page)
             tokens = get_tokens(text, token_min_len, token_max_len)
+            logger.debug('article {} having {} tokens'.format(page.title, len(tokens)))
+            num_tokens_ms += len(tokens)
             if len(tokens) >= article_min_tokens:
-                logger.debug('article "{}" considered long enough'.format(page.title))
+                logger.debug('article {} having at least {} tokens'.format(page.title, article_min_tokens))
                 num_articles_mainspace_long_enough += 1
-                num_positions += len(tokens)
+                num_tokens_ms_le += len(tokens)
                 if metadata:
                     yield tokens, (pageid, title)
                 else:
@@ -55,7 +58,8 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
     logger.info('{} articles total'.format(num_articles_total))
     logger.info('{} articles mainspace'.format(num_articles_mainspace))
     logger.info('{} articles mainsoace with >= {} tokens'.format(num_articles_mainspace_long_enough, article_min_tokens))
-    logger.info('{} positions in long enough mainspace articles'.format(num_positions))
+    logger.info('{} tokens in mainspace articles'.format(num_tokens_ms))
+    logger.info('{} tokens in long enough mainspace articles'.format(num_tokens_ms_le))
     
                     
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, namespace_prefixes, metadata):

@@ -47,8 +47,8 @@ AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-auth-doc-contribs.mm
 LOG_CONTRIBS=$LOG_PREFIX-contribs.log
 
 echo "generating XML dumps from JSON description"
-time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-articles.xml $HISTORY
-bzip2 -zkf $COLL_PREFIX-articles.xml $HISTORY 
+time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-pages-articles.xml $HISTORY
+bzip2 -zkf $COLL_PREFIX-pages-articles.xml $HISTORY 
 
 echo "extracting likely namespaces from XML dump"
 NS_MIN_OCCURENCES=1

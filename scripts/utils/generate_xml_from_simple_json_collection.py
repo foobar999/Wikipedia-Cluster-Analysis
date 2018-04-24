@@ -81,7 +81,7 @@ def main():
     print('to XML articles dump "{}"'.format(output_articles_path))
     print('and XML revisions dump "{}"'.format(output_revisions_path))
     with open(input_collection_path, 'r', newline='', encoding='utf-8') as input_collection_file:
-        simple_collection = json.load(input_collection_file)   
+        simple_collection = json.load(input_collection_file, strict=False)   
     
     print('generating XML articles dump file')
     collection_articles = generate_xmldump_base_object()

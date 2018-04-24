@@ -13,9 +13,9 @@ BOW_PREFIX="output/bow/$PREFIX"
 TM_PREFIX="output/topic/$PREFIX"
 LOG_PREFIX="output/logs/$PREFIX"
 
-NUMTOPICS=100
+NUMTOPICS=50
 PASSES=100 # TODO größer?
-ITERATIONS=10000
+ITERATIONS=1000
 ALPHA=$(calc 50/$NUMTOPICS)
 BETA=0.01
 echo "generating lda model"

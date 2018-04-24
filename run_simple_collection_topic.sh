@@ -1,9 +1,7 @@
 #!/bin/bash
 
+# TODO verschiedene clusteringverfahren: trivial, k-means, hierarchisch
 # TODO lemmatisierung!!
-# TODO preprocessing (stopwords,...) https://radimrehurek.com/gensim/corpora/dictionary.html https://radimrehurek.com/gensim/corpora/textcorpus.html
-# - beachte: deutsch braucht andere stopwords! https://github.com/stopwords-iso
-# - am besten mit filter_tokens() vom Dictionary!
 # - stemming? -> könnte ich ja mal untersuchen 
 #   - scheinen eher zu stören https://mimno.infosci.cornell.edu/papers/schofield_tacl_2016.pdf
 # - lemmatisierung? -> könnte ich ja mal versuchen https://radimrehurek.com/gensim/utils.html#gensim.utils.lemmatize braucht nur lemmatize=True und package
@@ -12,10 +10,9 @@
 # - beachte sprachen bei stopwords, stemming, lemmatisierung!
 # - nummern filtern?
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
-# TODO debug: normales dicr, release hashing dict -> sinnvoll, da terme später ziemlich sicher nötig?
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO "required" bei argparse einbauen
-# TODO in allen description enwiki reinschreiben
+# TODO descriptions löschen
 
 set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus

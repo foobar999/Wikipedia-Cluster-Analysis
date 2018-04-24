@@ -13,16 +13,16 @@ BOW_PREFIX="output/bow/$PREFIX"
 LOG_PREFIX="output/logs/$PREFIX"
 
 VOCABULARY_SIZE=1000000
-#NO_BELOW=5  # TODO höher bei großem korpus
-#NO_ABOVE=0.1
-#ARTICLE_MIN_TOKENS=50
-#TOKEN_MIN_LEN=1
-#TOKEN_MAX_LEN=100
-NO_BELOW=1  # TODO höher bei großem korpus
-NO_ABOVE=1
-ARTICLE_MIN_TOKENS=1
+NO_BELOW=5  # TODO höher bei großem korpus
+NO_ABOVE=0.25
+ARTICLE_MIN_TOKENS=50
 TOKEN_MIN_LEN=1
 TOKEN_MAX_LEN=100
+#NO_BELOW=1  # TODO höher bei großem korpus
+#NO_ABOVE=1
+#ARTICLE_MIN_TOKENS=1
+#TOKEN_MIN_LEN=1
+#TOKEN_MAX_LEN=100
 # stopwords werden auch entfernt
 echo "generating bag-of-words corpus files"
 ( time python scripts/articles_to_bow.py --articles-dump=$COLL_PREFIX-pages-articles.xml.bz2 --out-prefix=$BOW_PREFIX-corpus --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --remove-stopwords --namespace-prefixes=output/$PREFIX-namespaces.txt ) |& tee $LOG_PREFIX-wiki-to-bow.log

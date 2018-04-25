@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO soll ich echte minibatch kmeans nehmen? is mehr zu erklären
 # TODO verschiedene clusteringverfahren: trivial, k-means, hierarchisch
 # TODO lemmatisierung!!
 # - stemming? -> könnte ich ja mal untersuchen 

@@ -56,12 +56,13 @@ def argparse_bool(value):
 def log_graph(graph):
     logger.info('{} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     logger.info('density {}'.format(graph.density()))
-    logger.debug(str(graph))    
-    for i, node in enumerate(graph.vs):
-        logger.debug('node {} with name {}'.format(i, node['name']))
-    for edge in graph.es:
-        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-        logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
+    if debug_mode_set():
+        logger.debug(str(graph))
+        for i, node in enumerate(graph.vs):
+            logger.debug('node {} with name {}'.format(i, node['name']))
+        for edge in graph.es:
+            weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
+            logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
         
 # entfernt Knoten ohne Kanten, summiert Mehrfachkanten zwischen Knoten zu 1 Kante auf
 def simplify_graph(graph):

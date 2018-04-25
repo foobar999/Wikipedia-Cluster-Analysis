@@ -56,6 +56,8 @@ def main():
     # erzeugt gewichteten / ungewichteten Graphen, erstmal ohne Kanten
     edge_attrs = {'weight': []} if is_weighted else {}
     bipart_graph = Graph(n=num_docs+num_authors, directed=None, vertex_attrs={'name': node_names, 'type': node_types}, edge_attrs=edge_attrs)
+    
+    # füge Kanten ein
     edges, weights = edges_to_lists(get_edges_from_contribs(contribs), is_weighted)
     logger.debug('adding edges {} with weights {}'.format(edges, weights))
     bipart_graph.add_edges(edges)

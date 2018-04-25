@@ -54,7 +54,7 @@ def argparse_bool(value):
         raise argparse.ArgumentTypeError('Exepected boolean value "y" or "n"')
          
 def log_graph(graph):
-    logger.info('GRAPH with {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
+    logger.info('{} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     logger.info('density {}'.format(graph.density()))
     logger.debug(str(graph))    
     for i, node in enumerate(graph.vs):
@@ -74,9 +74,17 @@ def simplify_graph(graph):
     logger.info('removed nodes with degree==0')
         
         
+# liefert Liste aller Dokumentknoten, Liste aller Autorknoten eines bipartiten Graphen
+def get_bipartite_nodes(bipartite_graph):
+    document_nodes = tuple(nodeid for nodeid,type in enumerate(bipartite_graph.vs['type']) if type==0)
+    author_nodes = tuple(nodeid for nodeid,type in enumerate(bipartite_graph.vs['type']) if type==1)
+    return document_nodes, author_nodes
         
         
-        
+# liefert #Dokumentknoten, #Autorknoten        
+def get_bipartite_node_counts(bipartite_graph):
+    doc_nodes, auth_nodes = get_bipartite_nodes(bipartite_graph)
+    return len(doc_nodes), len(auth_nodes)
         
         
         

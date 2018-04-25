@@ -4,7 +4,7 @@ import argparse
 from pprint import pformat
 from gensim.corpora import MmCorpus
 from igraph import Graph
-from utils.utils import init_logger, log_graph, argparse_bool, simplify_graph
+from utils.utils import init_logger, log_graph, argparse_bool, simplify_graph, get_bipartite_node_counts
 
 logger = init_logger()
 
@@ -65,9 +65,7 @@ def main():
     
     simplify_graph(bipart_graph)
     log_graph(bipart_graph)
-    num_doc_nodes = sum(1 for type in bipart_graph.vs['type'] if type == 0)
-    num_auth_nodes = sum(1 for type in bipart_graph.vs['type'] if type == 1)
-    logger.info('{} document nodes, {} author nodes'.format(num_doc_nodes, num_auth_nodes))
+    logger.info('{} document nodes, {} author nodes'.format(*get_bipartite_node_counts(bipart_graph)))
     
     logger.info('writing graph to {}'.format(output_bipart_graph_path))
     bipart_graph.write_picklez(fname=output_bipart_graph_path)

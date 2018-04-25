@@ -1,0 +1,79 @@
+import os, sys
+import logging
+import argparse
+from pprint import pformat
+from itertools import combinations
+from gensim.utils import smart_open, chunkize_serial
+from gensim.corpora import MmCorpus
+from igraph import Graph
+from utils.utils import init_logger, log_graph, argparse_bool, simplify_graph
+
+logger = init_logger()
+
+# liefert Beiträge aus Korpus als (docid, authorid+offset, value)-Tripel
+# zu jedem authorid-wert wird als offset die anzahl der dokumente hinzuaddiert, damit docids und authorids sich nicht überlappen 
+def get_edges_from_contribs(contribs):
+    authorid_offset = contribs.num_docs
+    for docid, contribs_of_doc in enumerate(contribs):
+        for authorid, contrib_value in contribs_of_doc:
+            yield docid, authorid+authorid_offset, contrib_value
+
+# erzeugt aus Kanten [(v1,v2,w1),...] eine Kantenliste [(v1,v2),...] und eine Gewichtsliste [w1,...] bzw. None bei is_weighted=False
+def edges_to_lists(weighted_edges, is_weighted):
+    edges = []
+    weights = []
+    for v1, v2, weight in weighted_edges:
+        edges.append((v1,v2))
+        weights.append(weight)
+    return edges, weights if is_weighted else None
+            
+     
+def main():
+    parser = argparse.ArgumentParser(description='maps a given document-author-contribution file to a bipartite network of document and author nodes; weighted=y keeps contrib values as edge weights, weighted=n sets edge weights to 1 for contrib values > 0')
+    parser.add_argument('--contribs', type=argparse.FileType('r'), help='path to input contribution MatrixMarket file (.mm/.mm.bz2)', required=True)
+    parser.add_argument('--bipart-graph', type=argparse.FileType('w'), help='path to output pickled, gzipped graph file', required=True)
+    parser.add_argument('--weighted', type=argparse_bool, help='whether to keep weights of contributions or not', required=True)
+    
+    args = parser.parse_args()
+    input_contribs_path = args.contribs.name
+    output_bipart_graph_path = args.bipart_graph.name
+    is_weighted = args.weighted
+    
+    logger.info('running with:\n{}'.format(pformat({'input_contribs_path':input_contribs_path, 'output_bipart_graph_path':output_bipart_graph_path, 'is_weighted':is_weighted})))
+    
+    contribs = MmCorpus(input_contribs_path)
+    num_docs = contribs.num_docs
+    num_authors = contribs.num_terms
+    logger.info('processing contributions of {} documents, {} authors'.format(num_docs, num_authors))
+    
+    # Label der Knoten: Dokumentknoten bekommen Label 'di' mit Dokumentindex i, Autoren analog 'ai'
+    node_names = ['d'+str(n) for n in range(0,num_docs)] + ['a'+str(n) for n in range(0,num_authors)]
+    # bipartiter Graph enthält Dokumente und Autoren als Knoten: Unterscheidung durch 'type'-Information
+    node_types = [0] * num_docs + [1] * num_authors
+    logger.debug('node names {}'.format(node_names))
+    logger.debug('node types {}'.format(node_types))
+    
+    # erzeugt gewichteten / ungewichteten Graphen, erstmal ohne Kanten
+    edge_attrs = {'weight': []} if is_weighted else {}
+    bipart_graph = Graph(n=num_docs+num_authors, directed=None, vertex_attrs={'name': node_names, 'type': node_types}, edge_attrs=edge_attrs)
+    edges, weights = edges_to_lists(get_edges_from_contribs(contribs), is_weighted)
+    logger.debug('adding edges {} with weights {}'.format(edges, weights))
+    bipart_graph.add_edges(edges)
+    if is_weighted:
+        bipart_graph.es['weight'] = weights
+    log_graph(bipart_graph)
+    
+    simplify_graph(bipart_graph)
+    log_graph(bipart_graph)
+    num_doc_nodes = sum(1 for type in bipart_graph.vs['type'] if type == 0)
+    num_auth_nodes = sum(1 for type in bipart_graph.vs['type'] if type == 1)
+    logger.info('{} document nodes, {} author nodes'.format(num_doc_nodes, num_auth_nodes))
+    
+    logger.info('writing graph to {}'.format(output_bipart_graph_path))
+    bipart_graph.write_picklez(fname=output_bipart_graph_path)
+    
+    
+    
+        
+if __name__ == '__main__':
+    main()

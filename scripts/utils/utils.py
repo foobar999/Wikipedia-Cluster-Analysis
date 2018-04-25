@@ -1,6 +1,7 @@
 import logging
 import sys, os
 import csv
+import argparse
 from gensim.utils import tokenize
 
 
@@ -18,17 +19,7 @@ def init_logger():
     return logger
 
 logger = init_logger()
-    
-    
-def log_graph(graph):
-    logger.debug('GRAPH\n{}'.format(str(graph)))    
-    for i, node in enumerate(graph.vs):
-        logger.debug('node {} with name {}'.format(i, node['name']))
-    for edge in graph.es:
-        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-        logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
-    
-    
+        
 def number_of_tokens(str):
     return sum(1 for token in tokenize(str))
     
@@ -55,6 +46,37 @@ def read_rows(csv_filename):
     with open(csv_filename, 'r', newline='', encoding='utf-8') as csv_file:
         csvreader = csv.reader(csv_file, delimiter=' ')
         return [tuple(val for val in row) for row in csvreader]
+        
+def argparse_bool(value):
+    if value in ('y', 'n'):
+        return value == 'y'
+    else:
+        raise argparse.ArgumentTypeError('Exepected boolean value "y" or "n"')
+         
+def log_graph(graph):
+    logger.info('GRAPH with {} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
+    logger.info('density {}'.format(graph.density()))
+    logger.debug(str(graph))    
+    for i, node in enumerate(graph.vs):
+        logger.debug('node {} with name {}'.format(i, node['name']))
+    for edge in graph.es:
+        weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
+        logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
+        
+# entfernt Knoten ohne Kanten, summiert Mehrfachkanten zwischen Knoten zu 1 Kante auf
+def simplify_graph(graph):
+    # summiere mehrfache Kanten auf 
+    graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})
+    logger.info('simplified multiedges to single edges by accumulating')
+    # entferne Knoten ohne inzidente Kanten
+    nodes_without_edges = tuple(n for n, degree in enumerate(graph.degree()) if degree == 0)
+    graph.delete_vertices(nodes_without_edges) 
+    logger.info('removed nodes with degree==0')
+        
+        
+        
+        
+        
         
         
         

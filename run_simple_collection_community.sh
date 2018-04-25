@@ -51,9 +51,12 @@ RAW_CONTRIBS=$CONTRIB_PREFIX-raw-contribs.mm
 TITLES=$CONTRIB_PREFIX.titles.cpickle
 ACC_CONTRIBS=$CONTRIB_PREFIX-acc-contribs.mm
 DOC_AUTH_CONTRIBS=$CONTRIB_PREFIX-doc-auth-contribs.mm
-AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-auth-doc-contribs.mm
+
+BIPARTITE_GRAPH=$GRAPH_PREFIX-doc-auth-bipartite.graph
+COAUTH_GRAPH=$GRAPH_PREFIX-coauth.graph
 
 LOG_CONTRIBS=$LOG_PREFIX-contribs.log
+LOG_GRAPH=$LOG_PREFIX-graph.log
 
 echo "generating XML dumps from JSON description"
 time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.json $COLL_PREFIX-pages-articles.xml $HISTORY
@@ -86,7 +89,11 @@ echo "thresholded number of contribs from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_
 
 echo "creating bipartite graph from contributions"
 WEIGHTED=y
-( time python scripts/contribs_to_bipart_graph.py --contribs=$DOC_AUTH_CONTRIBS.bz2 --bipart-graph=$GRAPH_PREFIX-doc-auth-bipartite.graph.gz --weighted=$WEIGHTED) |& tee $LOG_PREFIX-graph.log
+( time python scripts/contribs_to_bipart_graph.py --contribs=$DOC_AUTH_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
+
+echo "creating co-authorship graph from bipartite graph"
+MODE=mul
+(time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$MODE) |& tee -a $LOG_GRAPH
 
 
 haschegif

@@ -1,8 +1,21 @@
 #!/bin/bash -e
 
+# gegeben: bipartiteter graph aus irgendwelchen beziehungen
+#   möglichkeit: community detection direkt darauf -> eher nix für mich, unüblich
+#   möglichkeit: führe bipartite projektion durch, basierende auf ungewichtetem bipartiten graphen!
+#     möglichkeit: erzeuge ungewichtetes collaboartion network -> vernachlässigt gewichte
+#     möglichkeit: erzeugt gewichteten graphen: gewicht = anzahl gemeinsamer partner auf gegenseite
+#     möglichkeit: gewichtet wie oben, nur teilt durch #max. mögl. nachbarn (siehe netwx, weighted_projected_graph "ratio")
+#     möglichkeit: gewichtet, Gewichte nach newman (siehe netwx, collaboration_weighted_projected_graph)
+#     möglichkeit: gewichtet, mit jaccard o.ä. statt #gemeinsamer gegenseite-knoten http://igraph.org/python/doc/igraph.GraphBase-class.html#similarity_jaccard
+#   basierend auf gewichtetem bipartiten netz: http://igraph.org/python/doc/igraph.GraphBase-class.html#similarity_inverse_log_weighted ?  
+
+# "bipartite modularity" berücksichtigen, da besser für bipartites netz?? https://arxiv.org/pdf/0906.0612.pdf
 # übersicht https://entropictalks.blogspot.de/2017/10/reading-notes-community-detection-in.html
 # bipart graph -> gewichtete projektion https://rstudio-pubs-static.s3.amazonaws.com/317838_4b3a93befa584a2183ab536e798339ca.html
-# graph aufbau optimieren -> cocitation/bib coupling con igraph? https://gist.github.com/tts/4737987 http://igraph.org/python/doc/igraph.Graph-class.html#Incidence http://www.shizukalab.com/toolkits/sna/bipartite https://lists.nongnu.org/archive/html/igraph-help/2013-07/msg00014.html https://github.com/igraph/python-igraph/issues/168
+# graph aufbau optimieren -> cocitation con igraph? https://gist.github.com/tts/4737987 http://igraph.org/python/doc/igraph.Graph-class.html#Incidence http://www.shizukalab.com/toolkits/sna/bipartite https://lists.nongnu.org/archive/html/igraph-help/2013-07/msg00014.html https://github.com/igraph/python-igraph/issues/168
+
+# TODO statt bipartite_projection cocitation http://igraph.org/python/doc/igraph.GraphBase-class.html#cocitation
 # http://www.shizukalab.com/toolkits/sna/bipartite
 # TODO .index-Dateien kicken
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
@@ -18,11 +31,6 @@
 #   macht es sinn, dokumente zum clustering zu nehmen, die fürs topic model rausflogen?
 # TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
 # TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
-# ich machs so:
-#   topicclus,commclus individuell, basierend auf eigenen filterungen
-#   topicclus: filtere mittels whitelist bei clustering die entsprechenden docs
-#   commclus: filtere mittels whitelist bei grapherzeugung?
-#   ich sollte erst filtern, wenn kein mm-dateizugriff mehr nöigt
 
 export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX=simple-collection

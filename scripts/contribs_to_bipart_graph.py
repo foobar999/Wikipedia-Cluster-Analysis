@@ -2,8 +2,6 @@ import os, sys
 import logging
 import argparse
 from pprint import pformat
-from itertools import combinations
-from gensim.utils import smart_open, chunkize_serial
 from gensim.corpora import MmCorpus
 from igraph import Graph
 from utils.utils import init_logger, log_graph, argparse_bool, simplify_graph

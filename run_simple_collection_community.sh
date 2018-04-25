@@ -75,17 +75,9 @@ NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
 NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
 echo "thresholded number of contribs from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER" | tee -a $LOG_CONTRIBS
 
-echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contribvalue) file"
-./bash/get_swapped_author_doc_contribs.sh $DOC_AUTH_CONTRIBS > $AUTH_DOC_CONTRIBS
-bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS $AUTH_DOC_CONTRIBS
-bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 $AUTH_DOC_CONTRIBS.bz2 # TODO produktiv raus
-
-# TODO raus: contribs_to_graph, get_swapped_author_doc_contribs
-
-echo "creating graph from contributions"
+echo "creating bipartite graph from contributions"
 WEIGHTED=y
 ( time python scripts/contribs_to_bipart_graph.py --contribs=$DOC_AUTH_CONTRIBS.bz2 --bipart-graph=$GRAPH_PREFIX-doc-auth-bipartite.graph.gz --weighted=$WEIGHTED) |& tee $LOG_PREFIX-graph.log
-#( time python scripts/contribs_to_graph.py --contribs=$AUTH_DOC_CONTRIBS.bz2 --graph=$GRAPH_PREFIX-co-authorship.cpickle.gz ) |& tee $LOG_PREFIX-graph.log
 
 
 haschegif
@@ -109,6 +101,10 @@ done
 
 
 
+#echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contribvalue) file"
+#./bash/get_swapped_author_doc_contribs.sh $DOC_AUTH_CONTRIBS > $AUTH_DOC_CONTRIBS
+#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS $AUTH_DOC_CONTRIBS
+#bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 $AUTH_DOC_CONTRIBS.bz2 # TODO produktiv raus
 
 
 

@@ -8,7 +8,6 @@ from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
 from utils.utils import init_logger, number_of_tokens, is_mainspace_page, read_lines, is_valid_contributor
 
-# TODO IP ignorieren Flag?
 
 logger = init_logger()
 

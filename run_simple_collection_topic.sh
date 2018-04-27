@@ -1,15 +1,8 @@
 #!/bin/bash
 
+# TODO mal verschiendene maße (insb jsd) ausprobieren, dafür scipy clustering nehmen
 # TODO soll ich echte minibatch kmeans nehmen? is mehr zu erklären
 # TODO verschiedene clusteringverfahren: trivial, k-means, hierarchisch
-# TODO lemmatisierung!!
-# - stemming? -> könnte ich ja mal untersuchen 
-#   - scheinen eher zu stören https://mimno.infosci.cornell.edu/papers/schofield_tacl_2016.pdf
-# - lemmatisierung? -> könnte ich ja mal versuchen https://radimrehurek.com/gensim/utils.html#gensim.utils.lemmatize braucht nur lemmatize=True und package
-#   - package aus rep braucht python 2, für python 3: https://github.com/clips/pattern https://stackoverflow.com/questions/44234796/pattern-package-for-python-3-6-anaconda
-#   - scheint positiven Einfluss zu haben (da gensim das benutzen will, https://arxiv.org/pdf/1608.03995.pdf)
-# - beachte sprachen bei stopwords, stemming, lemmatisierung!
-# - nummern filtern?
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO "required" bei argparse einbauen

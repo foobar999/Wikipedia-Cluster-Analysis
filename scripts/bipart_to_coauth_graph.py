@@ -38,8 +38,7 @@ def main():
     logger.info('applying bipartite projection, multiplicity? {}'.format(calc_multiplicity))
     coauth_graph = bipart_graph.bipartite_projection(types='type', multiplicity=calc_multiplicity, probe1=-1, which=0)
     logger.info('created co-authorship graph')
-    log_graph(coauth_graph)
-        
+    log_graph(coauth_graph)        
         
     # entferne alle Kanten außer den keep_max_edges Kanten mit den größten Gewichten
     logger.info('pruning graph to {} edges'.format(keep_max_edges))

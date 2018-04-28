@@ -34,8 +34,8 @@ LOG_CONTRIBS=$LOG_PREFIX-contribs.log
 
 echo "computing author contributions"
 CONTRIBUTION_VALUE=one
-MIN_AUTH_DOCS=3
-MIN_DOC_AUTHS=3
+MIN_AUTH_DOCS=1
+MIN_DOC_AUTHS=1
 ( time python scripts/history_to_contribs.py --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --min-doc-auths=$MIN_DOC_AUTHS --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
 mv $RAW_CONTRIBS.metadata.cpickle $TITLES # Artikeltitel-Datei umbennen
 bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel

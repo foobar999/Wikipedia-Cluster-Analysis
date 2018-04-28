@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+# TODO implementiere diff_numterms korrekt
+
 # gegeben: bipartiteter graph aus irgendwelchen beziehungen
 #   möglichkeit: community detection direkt darauf -> eher nix für mich, unüblich
 #   möglichkeit: führe bipartite projektion durch, basierende auf ungewichtetem bipartiten graphen!
@@ -17,7 +19,6 @@
 # bipart graph -> gewichtete projektion https://rstudio-pubs-static.s3.amazonaws.com/317838_4b3a93befa584a2183ab536e798339ca.html
 # graph aufbau optimieren -> cocitation con igraph? https://gist.github.com/tts/4737987 http://igraph.org/python/doc/igraph.Graph-class.html#Incidence http://www.shizukalab.com/toolkits/sna/bipartite https://lists.nongnu.org/archive/html/igraph-help/2013-07/msg00014.html https://github.com/igraph/python-igraph/issues/168
 
-# TODO implementiere diff_numterms korrekt
 # TODO .index-Dateien kicken
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden

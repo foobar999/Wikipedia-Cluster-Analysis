@@ -20,13 +20,10 @@ def init_logger():
 
 logger = init_logger()
         
-def get_tokens(text, token_min_len, token_max_len):
+def get_tokens(text, token_min_len=1, token_max_len=100):
     text = filter_wiki(text)
     return tokenize(text, token_min_len, token_max_len, True)        
-        
-def number_of_tokens(str):
-    return sum(1 for token in tokenize(str))
-    
+            
 def is_mainspace_page(page, namespace_prefixes):
     if page.namespace:
         return page.namespace == 0

@@ -6,7 +6,7 @@ from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_logger, number_of_tokens, is_mainspace_page, read_lines, is_valid_contributor
+from utils.utils import init_logger, is_mainspace_page, read_lines, is_valid_contributor, get_tokens
 
 
 logger = init_logger()
@@ -22,10 +22,10 @@ def contrib_value_one(ids_revisions):
 # -> Leerzeichen hinzufügen zählt nicht
 def contrib_value_diff_numterms(ids_revisions):
     authorid,rev = next(ids_revisions)
-    prev_num_toks = number_of_tokens(rev.text)
+    prev_num_toks = len(get_tokens(rev.text))
     yield authorid, prev_num_toks
     for authorid,rev in ids_revisions:
-        num_toks = number_of_tokens(rev.text)
+        num_toks = len(get_tokens(rev.text))
         yield authorid, max(0,num_toks-prev_num_toks)
         prev_num_toks = num_toks
     

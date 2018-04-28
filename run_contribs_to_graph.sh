@@ -28,7 +28,7 @@ WEIGHTED=y
 
 echo "creating co-authorship graph from bipartite graph"
 MODE=mul
-KEEP_MAX_EDGES=1000000
+KEEP_MAX_EDGES=2000000
 (time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$MODE --keep-max-edges=$KEEP_MAX_EDGES) |& tee -a $LOG_GRAPH
 
 

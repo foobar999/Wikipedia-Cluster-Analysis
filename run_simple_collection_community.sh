@@ -88,6 +88,8 @@ TOP_N_CONTRIBS=20
 NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
 NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
 echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
+bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
+bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 # TODO produktiv raus
 
 echo "creating bipartite graph from contributions"
 WEIGHTED=y

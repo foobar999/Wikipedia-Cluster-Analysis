@@ -81,12 +81,12 @@ python scripts/utils/binary_to_text.py pickle $TITLES.bz2 $CONTRIB_PREFIX.titles
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$RAW_CONTRIBS.bz2 --acc-contribs=$ACC_CONTRIBS ) |& tee -a $LOG_CONTRIBS
 
-echo "thresholding contributions"
-MIN_CONTRIB_VALUE=1
-./bash/threshold_contribs.sh $ACC_CONTRIBS $MIN_CONTRIB_VALUE > $DOC_AUTH_CONTRIBS
+echo "pruning top-N contributions"
+TOP_N_CONTRIBS=20
+./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
 NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
 NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
-echo "thresholded number of contribs from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER" | tee -a $LOG_CONTRIBS
+echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
 
 echo "creating bipartite graph from contributions"
 WEIGHTED=y
@@ -94,7 +94,8 @@ WEIGHTED=y
 
 echo "creating co-authorship graph from bipartite graph"
 MODE=mul
-(time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$MODE) |& tee -a $LOG_GRAPH
+KEEP_MAX_EDGES=20
+(time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$MODE --keep-max-edges=$KEEP_MAX_EDGES) |& tee -a $LOG_GRAPH
 
 
 haschegif

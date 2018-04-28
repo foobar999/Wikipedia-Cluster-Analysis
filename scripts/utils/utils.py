@@ -2,7 +2,7 @@ import logging
 import sys, os
 import csv
 import argparse
-from gensim.utils import tokenize
+from gensim.corpora.wikicorpus import filter_wiki, tokenize
 
 
 def debug_mode_set():
@@ -19,6 +19,10 @@ def init_logger():
     return logger
 
 logger = init_logger()
+        
+def get_tokens(text, token_min_len, token_max_len):
+    text = filter_wiki(text)
+    return tokenize(text, token_min_len, token_max_len, True)        
         
 def number_of_tokens(str):
     return sum(1 for token in tokenize(str))

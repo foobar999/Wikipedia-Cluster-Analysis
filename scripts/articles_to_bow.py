@@ -15,10 +15,9 @@ import logging
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
-from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
 from gensim.parsing.preprocessing import STOPWORDS
-from utils.utils import init_logger, is_mainspace_page, read_lines
+from utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
 
 logger = init_logger()
 
@@ -26,10 +25,6 @@ logger = init_logger()
 def get_page_data(page):
     text = str(next(page).text)
     return page.title, text, page.id       
-
-def get_tokens(text, token_min_len, token_max_len):
-    text = filter_wiki(text)
-    return tokenize(text, token_min_len, token_max_len, True)
     
 def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, token_max_len, stopwords, namespace_prefixes, metadata):
     num_articles_total = 0

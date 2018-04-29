@@ -86,7 +86,7 @@ echo "accmulating contributions"
 
 echo "pruning top-N author contributions"
 ./bash/swap_doc_auth_columns.sh $ACC_CONTRIBS > $ACC_AUTH_DOC_CONTRIBS
-TOP_N_CONTRIBS=2
+TOP_N_CONTRIBS=3
 python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONTRIBS --pruned-contribs=$PRUNED_AUTH_DOC_CONTRIBS --top-n-contribs=$TOP_N_CONTRIBS
 ./bash/swap_doc_auth_columns.sh $PRUNED_AUTH_DOC_CONTRIBS > $PRUNED_CONTRIBS
 
@@ -105,7 +105,7 @@ bzip2 -dkf $ACC_CONTRIBS.bz2 $ACC_AUTH_DOC_CONTRIBS.bz2 $PRUNED_AUTH_DOC_CONTRIB
 
 echo "creating bipartite graph from contributions"
 WEIGHTED=y
-( time python scripts/contribs_to_bipart_graph.py --contribs=$DOC_AUTH_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
+( time python scripts/contribs_to_bipart_graph.py --contribs=$PRUNED_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
 
 echo "creating co-authorship graph from bipartite graph"
 MODE=mul

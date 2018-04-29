@@ -90,7 +90,9 @@ TOP_N_CONTRIBS=2
 python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONTRIBS --pruned-contribs=$PRUNED_AUTH_DOC_CONTRIBS --top-n-contribs=$TOP_N_CONTRIBS
 ./bash/swap_doc_auth_columns.sh $PRUNED_AUTH_DOC_CONTRIBS > $PRUNED_CONTRIBS
 
-blubb
+bzip2 -zf $ACC_CONTRIBS $ACC_AUTH_DOC_CONTRIBS $PRUNED_AUTH_DOC_CONTRIBS $PRUNED_CONTRIBS
+bzip2 -dkf $ACC_CONTRIBS.bz2 $ACC_AUTH_DOC_CONTRIBS.bz2 $PRUNED_AUTH_DOC_CONTRIBS.bz2 $PRUNED_CONTRIBS.bz2 # TODO produktiv raus
+
 
 #echo "pruning top-N contributions"
 #TOP_N_CONTRIBS=20
@@ -132,10 +134,6 @@ done
 
 
 
-#echo "transforming (docid,authorid,contribvalue) file to (authorid,docid,contribvalue) file"
-#./bash/get_swapped_author_doc_contribs.sh $DOC_AUTH_CONTRIBS > $AUTH_DOC_CONTRIBS
-#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS $AUTH_DOC_CONTRIBS
-#bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 $AUTH_DOC_CONTRIBS.bz2 # TODO produktiv raus
 
 
 

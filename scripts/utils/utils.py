@@ -57,6 +57,14 @@ def argparse_bool(value):
 def log_graph(graph):
     logger.info('{} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
     logger.info('density {}'.format(graph.density()))
+    components = graph.components()
+    logger.info('number of conn components {}'.format(len(components)))
+    logger.info('conn components sizes histogram')
+    for lval,rval,count in components.size_histogram().bins():
+        if count > 0:
+            logger.info('[{},{}[ : {}'.format(lval, rval,count))
+    degree_distribution = graph.degree_distribution()
+    logger.info('node degrees: mean {}, sd {}'.format(degree_distribution.mean, degree_distribution.sd))
     if debug_mode_set():
         logger.debug(str(graph))
         for i, node in enumerate(graph.vs):

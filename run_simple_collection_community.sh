@@ -93,16 +93,6 @@ python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONT
 bzip2 -zf $ACC_CONTRIBS $ACC_AUTH_DOC_CONTRIBS $PRUNED_AUTH_DOC_CONTRIBS $PRUNED_CONTRIBS
 bzip2 -dkf $ACC_CONTRIBS.bz2 $ACC_AUTH_DOC_CONTRIBS.bz2 $PRUNED_AUTH_DOC_CONTRIBS.bz2 $PRUNED_CONTRIBS.bz2 # TODO produktiv raus
 
-
-#echo "pruning top-N contributions"
-#TOP_N_CONTRIBS=20
-#./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
-#NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
-#NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
-#echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
-#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
-#bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 # TODO produktiv raus
-
 echo "creating bipartite graph from contributions"
 WEIGHTED=y
 ( time python scripts/contribs_to_bipart_graph.py --contribs=$PRUNED_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
@@ -136,6 +126,14 @@ done
 
 
 
+#echo "pruning top-N contributions"
+#TOP_N_CONTRIBS=20
+#./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
+#NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
+#NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
+#echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
+#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
+#bzip2 -dkf $ACC_CONTRIBS.bz2 $DOC_AUTH_CONTRIBS.bz2 # TODO produktiv raus
 
 
 

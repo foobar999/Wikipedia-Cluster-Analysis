@@ -23,8 +23,9 @@ ID2AUTHOR=$CONTRIB_PREFIX-id2author.cpickle
 RAW_CONTRIBS=$CONTRIB_PREFIX-raw-contribs.mm
 TITLES=$CONTRIB_PREFIX.titles.cpickle
 ACC_CONTRIBS=$CONTRIB_PREFIX-acc-contribs.mm
-DOC_AUTH_CONTRIBS=$CONTRIB_PREFIX-doc-auth-contribs.mm
-AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-auth-doc-contribs.mm
+ACC_AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-acc-auth-doc-contribs.mm
+PRUNED_AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-pruned-auth-doc-contribs.mm
+PRUNED_CONTRIBS=$CONTRIB_PREFIX-pruned-contribs.mm
 
 LOG_CONTRIBS=$LOG_PREFIX-contribs.log
 
@@ -43,13 +44,40 @@ MIN_DOC_AUTHS=1
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$RAW_CONTRIBS.bz2 --acc-contribs=$ACC_CONTRIBS ) |& tee -a $LOG_CONTRIBS
 
-echo "pruning top-N contributions"
-TOP_N_CONTRIBS=50000
-./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
-NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
-NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
-echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
-bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
+echo "pruning top-N author contributions"
+./bash/swap_doc_auth_columns.sh $ACC_CONTRIBS > $ACC_AUTH_DOC_CONTRIBS
+TOP_N_CONTRIBS=200
+python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONTRIBS --pruned-contribs=$PRUNED_AUTH_DOC_CONTRIBS --top-n-contribs=$TOP_N_CONTRIBS |& tee -a $LOG_CONTRIBS
+./bash/swap_doc_auth_columns.sh $PRUNED_AUTH_DOC_CONTRIBS > $PRUNED_CONTRIBS
+
+bzip2 -zf $ACC_CONTRIBS $ACC_AUTH_DOC_CONTRIBS $PRUNED_AUTH_DOC_CONTRIBS $PRUNED_CONTRIBS # komprimiere alle angelegten Dateen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#echo "pruning top-N contributions"
+#TOP_N_CONTRIBS=50000
+#./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
+#NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
+#NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
+#echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
+#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
+
+
+
+
 
 
 

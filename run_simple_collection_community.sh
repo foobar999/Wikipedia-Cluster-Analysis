@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-# TODO implementiere diff_numterms korrekt
 
 # gegeben: bipartiteter graph aus irgendwelchen beziehungen
 #   möglichkeit: community detection direkt darauf -> eher nix für mich, unüblich

@@ -7,7 +7,9 @@ from utils.utils import init_logger, log_graph, get_bipartite_node_counts, simpl
 from heapq import nlargest
 
 logger = init_logger()
-            
+           
+# TODO jaccard-option (beachte: jaccard vor prnuning nötig)
+# TODO normalisieren           
      
 def main():
     parser = argparse.ArgumentParser(description='maps a given bipartite graph to a co-authorship graph of documents')
@@ -38,7 +40,7 @@ def main():
     logger.info('applying bipartite projection, multiplicity? {}'.format(calc_multiplicity))
     coauth_graph = bipart_graph.bipartite_projection(types='type', multiplicity=calc_multiplicity, probe1=-1, which=0)
     logger.info('created co-authorship graph')
-    log_graph(coauth_graph)        
+    log_graph(coauth_graph)    
         
     # entferne alle Kanten außer den keep_max_edges Kanten mit den größten Gewichten
     logger.info('pruning graph to {} edges'.format(keep_max_edges))
@@ -49,6 +51,13 @@ def main():
     min_edge_ids = set(range(0, coauth_graph.ecount())) - max_edge_ids
     logger.debug('removing edges: {}'.format(min_edge_ids))
     coauth_graph.delete_edges(min_edge_ids)
+    log_graph(coauth_graph)
+    
+    # normalisiere Kantengewichte
+    _, num_authors = get_bipartite_node_counts(bipart_graph)
+    logger.info('normalizing edge weights, divinding by number of authors {}'.format(num_authors))
+    for edgeid,weight in enumerate(coauth_graph.es['weight']):
+        coauth_graph.es[edgeid]['weight'] /= num_authors
     log_graph(coauth_graph)
     
     # entferne einsame Knoten

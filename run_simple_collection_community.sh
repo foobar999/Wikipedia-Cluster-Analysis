@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# TODO jaccard in paper bzgl. nenner=0 fixen
+# TODO bei jaccard nicht nur nachbarn, sondern inkl. eigenem knoten berücksichtigen??
+# TODO normalisierung in paper, code einbauen
 
 # gegeben: bipartiteter graph aus irgendwelchen beziehungen
 #   möglichkeit: community detection direkt darauf -> eher nix für mich, unüblich
@@ -97,7 +100,7 @@ WEIGHTED=y
 ( time python scripts/contribs_to_bipart_graph.py --contribs=$PRUNED_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
 
 echo "creating co-authorship graph from bipartite graph"
-MODE=mul
+MODE=jac
 KEEP_MAX_EDGES=20
 (time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$MODE --keep-max-edges=$KEEP_MAX_EDGES) |& tee -a $LOG_GRAPH
 

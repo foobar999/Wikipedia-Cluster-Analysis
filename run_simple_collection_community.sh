@@ -1,26 +1,5 @@
 #!/bin/bash -e
 
-# TODO jaccard in paper bzgl. nenner=0 fixen
-# TODO bei jaccard nicht nur nachbarn, sondern inkl. eigenem knoten berücksichtigen??
-# TODO normalisierung in paper, code einbauen
-
-# gegeben: bipartiteter graph aus irgendwelchen beziehungen
-#   möglichkeit: community detection direkt darauf -> eher nix für mich, unüblich
-#   möglichkeit: führe bipartite projektion durch, basierende auf ungewichtetem bipartiten graphen!
-#     möglichkeit: erzeuge ungewichtetes collaboartion network -> vernachlässigt gewichte
-#     möglichkeit: erzeugt gewichteten graphen: gewicht = anzahl gemeinsamer partner auf gegenseite
-#     möglichkeit: gewichtet wie oben, nur teilt durch #max. mögl. nachbarn (siehe netwx, weighted_projected_graph "ratio")
-#     möglichkeit: gewichtet, Gewichte nach newman (siehe netwx, collaboration_weighted_projected_graph)
-#     möglichkeit: gewichtet, mit jaccard o.ä. statt #gemeinsamer gegenseite-knoten http://igraph.org/python/doc/igraph.GraphBase-class.html#similarity_jaccard
-#     - wenn, dann mit parameter "pairs" gleich den dokknoten?
-#     - oder mit incidenzmatrix und scikit (https://rstudio-pubs-static.s3.amazonaws.com/317838_4b3a93befa584a2183ab536e798339ca.html)
-#   basierend auf gewichtetem bipartiten netz: http://igraph.org/python/doc/igraph.GraphBase-class.html#similarity_inverse_log_weighted ?  
-
-# "bipartite modularity" berücksichtigen, da besser für bipartites netz?? https://arxiv.org/pdf/0906.0612.pdf
-# übersicht https://entropictalks.blogspot.de/2017/10/reading-notes-community-detection-in.html
-# bipart graph -> gewichtete projektion https://rstudio-pubs-static.s3.amazonaws.com/317838_4b3a93befa584a2183ab536e798339ca.html
-# graph aufbau optimieren -> cocitation con igraph? https://gist.github.com/tts/4737987 http://igraph.org/python/doc/igraph.Graph-class.html#Incidence http://www.shizukalab.com/toolkits/sna/bipartite https://lists.nongnu.org/archive/html/igraph-help/2013-07/msg00014.html https://github.com/igraph/python-igraph/issues/168
-
 # TODO .index-Dateien kicken
 # TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
 #   TODO filtere author2id dict mit gensim methoden

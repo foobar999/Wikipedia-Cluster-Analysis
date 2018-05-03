@@ -46,7 +46,7 @@ echo "accmulating contributions"
 
 echo "pruning top-N author contributions"
 ./bash/swap_doc_auth_columns.sh $ACC_CONTRIBS > $ACC_AUTH_DOC_CONTRIBS
-TOP_N_CONTRIBS=200
+TOP_N_CONTRIBS=100
 python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONTRIBS --pruned-contribs=$PRUNED_AUTH_DOC_CONTRIBS --top-n-contribs=$TOP_N_CONTRIBS |& tee -a $LOG_CONTRIBS
 ./bash/swap_doc_auth_columns.sh $PRUNED_AUTH_DOC_CONTRIBS > $PRUNED_CONTRIBS
 

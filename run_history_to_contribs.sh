@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
-if (( $# != 2 )); then
-    echo "Usage: $0 IPREFIX CONTRIBUTION_VALUE"
+if (( $# != 3 )); then
+    echo "Usage: $0 IPREFIX CONTRIBUTION_VALUE TOP_N_CONTRIBS"
     exit 1
 fi
 IPREFIX=$1
 CONTRIBUTION_VALUE=$2
+TOP_N_CONTRIBS=$3
 OPREFIX=$IPREFIX-$CONTRIBUTION_VALUE
 
 COLL_PREFIX=collections/$IPREFIX
@@ -42,9 +43,8 @@ bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel
 echo "accmulating contributions"
 ( time python scripts/accumulate_contribs.py --raw-contribs=$RAW_CONTRIBS.bz2 --acc-contribs=$ACC_CONTRIBS ) |& tee -a $LOG_CONTRIBS
 
-echo "pruning top-N author contributions"
+echo "pruning top-$TOP_N_CONTRIBS author contributions"
 ./bash/swap_doc_auth_columns.sh $ACC_CONTRIBS > $ACC_AUTH_DOC_CONTRIBS
-TOP_N_CONTRIBS=100
 python scripts/prune_author_contribs.py --author-doc-contribs=$ACC_AUTH_DOC_CONTRIBS --pruned-contribs=$PRUNED_AUTH_DOC_CONTRIBS --top-n-contribs=$TOP_N_CONTRIBS |& tee -a $LOG_CONTRIBS
 ./bash/swap_doc_auth_columns.sh $PRUNED_AUTH_DOC_CONTRIBS > $PRUNED_CONTRIBS
 

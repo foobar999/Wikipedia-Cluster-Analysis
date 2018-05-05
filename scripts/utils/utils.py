@@ -96,6 +96,20 @@ def get_bipartite_node_counts(bipartite_graph):
     doc_nodes, auth_nodes = get_bipartite_nodes(bipartite_graph)
     return len(doc_nodes), len(auth_nodes)
         
+def log_sparse_histogram(hist):
+    for left,right,count in hist.bins():
+        if count > 0:
+            logger.info('[{},{}[ : {} elements'.format(left, right, count))
+    
+        
+def log_communities(communities, graph):
+    if debug_mode_set():
+        logger.debug('communities: \n{}'.format(communities))
+    logger.info('{} communities'.format(len(communities)))
+    logger.info('size distribution:')
+    log_sparse_histogram(communities.size_histogram())
+    modularity = graph.modularity(communities, weights='weight')    
+    logger.info('modularity: {}'.format(modularity))
         
         
         

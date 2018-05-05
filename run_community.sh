@@ -19,13 +19,13 @@ if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
 fi
 
 CONTRIB_VALUES=(one diff_numterms)
-BIPART_MODES=(mul jac)
+COAUTH_MODES=(mul jac)
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ./run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
-    #CPREFIX=$PREFIX-$CONTRIB_VALUE
-    #for BIPART_MODE in "${BIPART_MODES[@]}"; do 
-    #    ./slave2.sh $CPREFIX $BIPART_MODE
-    #done
+    CPREFIX=$PREFIX-$CONTRIB_VALUE
+    for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 
+        ./run_contribs_to_graph.sh $CPREFIX $COAUTH_MODE
+    done
 done
 
 

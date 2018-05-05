@@ -21,7 +21,7 @@ NAMESPACE_PREFIXES=output/$IPREFIX-namespaces.txt
 HISTORY=$COLL_PREFIX-pages-meta-history.xml
 ID2AUTHOR=$CONTRIB_PREFIX-id2author.txt
 RAW_CONTRIBS=$CONTRIB_PREFIX-raw-contribs.mm
-TITLES=$CONTRIB_PREFIX-titles.cpickle
+TITLES=$CONTRIB_PREFIX-titles.json
 ACC_CONTRIBS=$CONTRIB_PREFIX-acc-contribs.mm
 ACC_AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-acc-auth-doc-contribs.mm
 PRUNED_AUTH_DOC_CONTRIBS=$CONTRIB_PREFIX-pruned-auth-doc-contribs.mm
@@ -37,7 +37,8 @@ echo "computing author contributions"
 MIN_AUTH_DOCS=1
 MIN_DOC_AUTHS=1
 ( time python scripts/history_to_contribs.py --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --min-doc-auths=$MIN_DOC_AUTHS --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
-mv $RAW_CONTRIBS.metadata.cpickle $TITLES # Artikeltitel-Datei umbennen
+#mv $RAW_CONTRIBS.metadata.cpickle $TITLES # Artikeltitel-Datei umbennen
+python ./scripts/utils/binary_to_text.py pickle $RAW_CONTRIBS.metadata.cpickle $TITLES
 bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel
 
 echo "accmulating contributions"

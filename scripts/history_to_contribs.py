@@ -112,7 +112,7 @@ class MetadataCorpus(object):
 def main():
     parser = argparse.ArgumentParser(description='creates an id2author mapping gensim dictionary a document->authorid contributions MatrixMarket file and a binary article title file from a given WikiMedia *-pages-meta-history dump (considering only articles in mainspace!)')
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
-    parser.add_argument('--id2author', type=argparse.FileType('w'), help='path to output binary id2author dictionary (.cpickle/.cpickle.bz2)', required=True)
+    parser.add_argument('--id2author', type=argparse.FileType('w'), help='path to output text id2author dictionary (.txt/.txt.bz2)', required=True)
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file; also creates a binary article title file CONTRIBS.metadata.cpickle', required=True)
     parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_CHOICES, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES), required=True)
     parser.add_argument('--min-auth-docs', type=int, help='only consider contributions of authors that contributed to at least MIN_AUTH_DOCS different documents', required=True)
@@ -138,7 +138,7 @@ def main():
         id2author = Dictionary(get_revision_authors_of_pages(history_dump, min_doc_authors, namespace_prefixes))
         # entferne Autoren, die an weniger als min_author_docs beteiligt
         id2author.filter_extremes(no_below=min_author_docs, no_above=1, keep_n=None, keep_tokens=None)
-        id2author.save(output_id2author_path)
+        id2author.save_as_text(output_id2author_path)
         
     with smart_open(input_history_dump_path) as history_dump_file: 
         logger.info('generating MatrixMarket representation per revision: (docid, authorid, value of revision)')

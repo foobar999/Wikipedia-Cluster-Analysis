@@ -1,10 +1,10 @@
-
 import os, sys
 import logging
 import argparse
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
+from gensim.matutils import MmWriter
 from gensim.corpora import Dictionary, MmCorpus
 from utils.utils import init_logger, is_mainspace_page, read_lines, is_valid_contributor, get_tokens
 
@@ -145,7 +145,8 @@ def main():
         history_dump = xml_dump.Iterator.from_file(history_dump_file)
         revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
         doc_auth_contribs = MetadataCorpus(get_revision_values_of_pages(history_dump, id2author, revision_value_fun, min_doc_authors, namespace_prefixes))
-        MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, metadata=True, progress_cnt=10000)    
+        #MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, metadata=True, progress_cnt=10000) 
+        MmWriter.write_corpus(output_contribs_path, corpus=doc_auth_contribs, num_terms=len(id2author), index=False, progress_cnt=10000, metadata=True)   
     
     
         

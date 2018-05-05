@@ -1,9 +1,10 @@
 import os, sys
 import logging
 import argparse
-from collections import defaultdict
 from pprint import pformat
+from collections import defaultdict
 from gensim.corpora import MmCorpus
+from gensim.matutils import MmWriter
 from utils.utils import init_logger
 
 logger = init_logger()
@@ -29,7 +30,8 @@ def main():
 
     raw_contribs = MmCorpus(input_raw_contribs_dump_path)
     acc_contribs = (accumulate(raw_doc_contribs) for raw_doc_contribs in raw_contribs)
-    MmCorpus.serialize(output_acc_contribs_dump_path, corpus=acc_contribs, progress_cnt=10000)  
+    #MmCorpus.serialize(output_acc_contribs_dump_path, corpus=acc_contribs, progress_cnt=10000)  
+    MmWriter.write_corpus(output_acc_contribs_dump_path, corpus=acc_contribs, index=False, progress_cnt=10000, metadata=False)   
     
         
 if __name__ == '__main__':

@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 # TODO titel nich pickeln, sondern als komprimiertes json speichern oder so
-# TODO index files weg
 # TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
 # TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
 

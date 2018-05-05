@@ -2,6 +2,19 @@
 
 # TODO titel nich pickeln, sondern als komprimiertes json speichern oder so
 # TODO index files weg
+# TODO rausfiltern von dokumenten, an denen nur einer gearbeitet hat -> bringe beide dokumentsätze "in einklang"?
+#   TODO filtere author2id dict mit gensim methoden
+#   muss ich wirklich dokumente rausschmeißen, die nix zum topicmodel beitragen? 
+#     naja: je früher raus, desto besser
+#   eher filterung: entferne dokumente mit weniger als k verschiedenen autoren?
+#     auf jeden fall doks filtern, die genau 1 contributor haben
+#   alternativ: nimm einfach größte zusammenhangskomponente?
+# TODO das topicmodell kann ich mit allen (oder sehr vielen) doks trainieren, ohne was zu filtern
+#   macht auch sinn: ein dokument kann zur themenbildung auch was beitragen, wenn wenige autoren dran arbeiteten
+#   lediglich vor dem topicclustering muss ich die dokumente filtern
+#   macht es sinn, dokumente zum clustering zu nehmen, die fürs topic model rausflogen?
+# TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
+# TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"

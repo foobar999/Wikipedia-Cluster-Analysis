@@ -14,6 +14,7 @@ source $CONFIG
 echo "PREFIX $PREFIX"
 echo "DEBUG $DEBUG"
 echo "TOP_N_CONTRIBS $TOP_N_CONTRIBS"
+echo "KEEP_MAX_EDGES $KEEP_MAX_EDGES"
 if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
     export DEBUG=$DEBUG
 fi
@@ -24,7 +25,7 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ./run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
     CPREFIX=$PREFIX-$CONTRIB_VALUE
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 
-        ./run_contribs_to_graph.sh $CPREFIX $COAUTH_MODE
+        ./run_contribs_to_graph.sh $CPREFIX $COAUTH_MODE $KEEP_MAX_EDGES
     done
 done
 

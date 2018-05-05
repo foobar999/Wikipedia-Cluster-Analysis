@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# TODO titel nich pickeln, sondern als komprimiertes json speichern oder so
+# TODO titles
 # TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
 # TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
 
@@ -26,11 +26,12 @@ COMM_METHODS=(greedy louvain)
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
     CPREFIX=$PREFIX-$CONTRIB_VALUE
+    TITLES=output/contribs/$CPREFIX-titles.json.bz2
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 
         ./bash/run_contribs_to_graph.sh $CPREFIX $COAUTH_MODE $KEEP_MAX_EDGES
         CGPREFIX=$CPREFIX-$COAUTH_MODE
         for COMM_METHOD in "${COMM_METHODS[@]}"; do 
-            ./bash/run_graph_to_community.sh $CGPREFIX $COMM_METHOD
+            ./bash/run_graph_to_community.sh $CGPREFIX $COMM_METHOD $TITLES
         done
     done
 done

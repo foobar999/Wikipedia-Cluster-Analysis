@@ -21,3 +21,4 @@ LOG_COMMUNITIES=$LOG_PREFIX-communities.log
 echo "running community detection"
 USE_GIANT_COMP=n
 (time python scripts/coauth_to_community.py --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --use-giant-comp=$USE_GIANT_COMP) |& tee $LOG_COMMUNITIES
+bzip2 -zf $COMMUNITIES

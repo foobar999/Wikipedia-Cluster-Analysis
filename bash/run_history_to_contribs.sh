@@ -39,6 +39,7 @@ MIN_DOC_AUTHS=1
 ( time python scripts/history_to_contribs.py --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --min-doc-auths=$MIN_DOC_AUTHS --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
 #mv $RAW_CONTRIBS.metadata.cpickle $TITLES # Artikeltitel-Datei umbennen
 python ./scripts/utils/binary_to_text.py pickle $RAW_CONTRIBS.metadata.cpickle $TITLES
+rm -f $RAW_CONTRIBS.metadata.cpickle
 bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel
 
 echo "accmulating contributions"

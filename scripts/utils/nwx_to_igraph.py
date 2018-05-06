@@ -4,12 +4,10 @@ import argparse
 import networkx as nx
 from igraph import Graph
 from pprint import pformat
-from utils import init_logger, log_graph_nwx, log_graph
+from utils import init_logger, log_nwx, log_igraph
 
 logger = init_logger()
-            
-     
-     
+               
      
 def main():
     parser = argparse.ArgumentParser(description='converts a weighted pickle networkx Graph to a pickled igraph graph')
@@ -24,15 +22,16 @@ def main():
     
     logger.info('reading networkx graph from {}'.format(input_nwx_path))
     nwx_graph = nx.read_gpickle(input_nwx_path)
-    log_graph_nwx(nwx_graph)
+    log_nwx(nwx_graph)
     
     logger.info('converting read networkx graph to igraph graph')
     weighted_edges = nwx_graph.edges(data='weight')
     igraph_graph = Graph.TupleList(weighted_edges, directed=False, vertex_name_attr='name', edge_attrs=None, weights=True)
-    log_graph(igraph_graph)
+    log_igraph(igraph_graph)
     
     logger.info('writing graph to {}'.format(output_igraph_path))
     igraph_graph.write_picklez(fname=output_igraph_path)
+    
         
 if __name__ == '__main__':
     main()

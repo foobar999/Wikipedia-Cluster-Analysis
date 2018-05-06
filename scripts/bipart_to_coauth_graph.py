@@ -4,7 +4,7 @@ import argparse
 import networkx as nx
 from networkx import bipartite
 from pprint import pformat
-from utils.utils import init_logger, log_graph_nwx, get_bipartite_nodes, simplify_graph_nwx
+from utils.utils import init_logger, log_nwx, get_bipartite_nodes, simplify_graph_nwx
 from heapq import nsmallest
 
 logger = init_logger()
@@ -39,7 +39,7 @@ def main():
     
     logger.info('reading bipartite graph from {}'.format(input_bipart_path))
     bipart_graph = nx.read_gpickle(input_bipart_path)
-    log_graph_nwx(bipart_graph)
+    log_nwx(bipart_graph)
     doc_nodes, auth_nodes = get_bipartite_nodes(bipart_graph)
     logger.info('{} document nodes, {} author nodes'.format(len(doc_nodes), len(auth_nodes)))
     
@@ -50,13 +50,13 @@ def main():
         coauth_graph = bipartite.generic_weighted_projected_graph(bipart_graph, doc_nodes, weight_function=jaccard)
     elif mode == 'coll':
         coauth_graph = bipartite.collaboration_weighted_projected_graph(bipart_graph, doc_nodes)     
-    log_graph_nwx(coauth_graph)    
+    log_nwx(coauth_graph)    
         
     logger.info('pruning to {} highest edges'.format(keep_max_edges))
     num_edges_to_remove = len(coauth_graph.edges) - keep_max_edges
     min_edges = nsmallest(num_edges_to_remove, coauth_graph.edges(data='weight'), key=lambda edge: edge[2])
     coauth_graph.remove_edges_from(min_edges)
-    log_graph_nwx(coauth_graph)
+    log_nwx(coauth_graph)
         
     simplify_graph_nwx(coauth_graph)
     

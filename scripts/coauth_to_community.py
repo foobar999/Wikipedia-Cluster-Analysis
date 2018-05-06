@@ -5,7 +5,7 @@ import json
 from pprint import pformat
 from igraph import Graph
 from gensim.utils import smart_open
-from utils.utils import init_logger, log_graph, log_communities, argparse_bool
+from utils.utils import init_logger, log_igraph, log_communities, argparse_bool
 
 logger = init_logger()
              
@@ -33,13 +33,13 @@ def main():
     # lade bipartiten Graph
     coauth_graph = Graph.Read_Picklez(input_coauth_graph_path)
     logger.info('read co-authorship graph')
-    log_graph(coauth_graph)
+    log_igraph(coauth_graph)
     
     # ersetze ggf. durch seine größte Zusammenhangskomponente
     if use_giant_comp:
         logger.info('using largest connected component of largest size instead actual graph')
         coauth_graph = coauth_graph.components().giant()
-        log_graph(coauth_graph)        
+        log_igraph(coauth_graph)        
     
     # community detection 
     logger.info('running {} community detection'.format(method))

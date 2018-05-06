@@ -68,15 +68,6 @@ bzip2 -zf $ACC_CONTRIBS $PRUNED_CONTRIBS # komprimiere alle angelegten Dateen
 
 
 
-#echo "pruning top-N contributions"
-#TOP_N_CONTRIBS=50000
-#./bash/get_top_n_contribs.sh $ACC_CONTRIBS $TOP_N_CONTRIBS > $DOC_AUTH_CONTRIBS
-#NUM_CONTRIBS_BEFORE=$(cat $ACC_CONTRIBS | awk 'END {print NR-2}')
-#NUM_CONTRIBS_AFTER=$(cat $DOC_AUTH_CONTRIBS | awk 'END {print NR-2}')
-#echo "extracted $TOP_N_CONTRIBS contribs of max. value: from $NUM_CONTRIBS_BEFORE to $NUM_CONTRIBS_AFTER lines" | tee -a $LOG_CONTRIBS
-#bzip2 -zf $ACC_CONTRIBS $DOC_AUTH_CONTRIBS # komprimiere kumulierte Beiträge, Top-N-Beiträge
-
-
 
 
 

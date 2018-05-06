@@ -86,59 +86,32 @@ def log_graph_data(numnodes, numedges, components, degrees, weighted_degrees):
 def log_graph_data_edges(weighted_edges):
     weighted_edges = ((n1,n2,w) if n1<=n2 else (n2,n1,w) for n1,n2,w in weighted_edges)
     for edge in sorted(weighted_edges):
-        logger.debug(edge)
-    #for edge in graph.es:
-    #weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-    #logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
-        
+        logger.debug(edge)        
          
-def log_graph(graph):
+def log_igraph(graph):
     log_graph_data(graph.vcount(), graph.ecount(), graph.components(), graph.degree(), graph.strength(weights='weight'))  
     if debug_mode_set():
         weighted_edges = ((graph.vs[edge.source]['name'],graph.vs[edge.target]['name'],edge['weight']) for edge in graph.es)
         log_graph_data_edges(weighted_edges)
-            
-    # logger.info('{} nodes, {} edges'.format(graph.vcount(), graph.ecount()))
-    # logger.info('density {}'.format(graph.density()))
-    # components = graph.components()
-    # logger.info('number of conn components {}'.format(len(components)))
-    # logger.info('conn components sizes histogram')
-    # for lval,rval,count in components.size_histogram().bins():
-        # if count > 0:
-            # logger.info('[{},{}[ : {}'.format(lval, rval,count))
-    # degree_distribution = graph.degree_distribution()
-    # logger.info('node degrees: mean {}, sd {}'.format(degree_distribution.mean, degree_distribution.sd))
-    # if debug_mode_set():
-        # logger.debug(str(graph))
-        # for i, node in enumerate(graph.vs):
-            # logger.debug('node {} with name {}'.format(i, node['name']))
-        # for edge in graph.es:
-            # weight = edge['weight'] if 'weight' in edge.attribute_names() else ''
-            # logger.debug('edge {}--{}--{}'.format(graph.vs[edge.source]['name'], weight, graph.vs[edge.target]['name']))
         
-def log_graph_nwx(graph):
+def log_nwx(graph):
     degrees = [deg for node,deg in graph.degree(weight=None)]
     weighted_degrees = [deg for node,deg in graph.degree(weight='weight')]
     log_graph_data(graph.number_of_nodes(), graph.number_of_edges(), nx.connected_components(graph), degrees, weighted_degrees) 
     if debug_mode_set():
         log_graph_data_edges(graph.edges(data='weight'))
-    # if debug_mode_set and len(graph.edges) > 0:
-        # edges = graph.edges(data='weight')
-        # edges = [(n1,n2,w) if n1<=n2 else (n2,n1,w) for n1,n2,w in edges]
-        # logger.debug('\n{}'.format(pformat(sorted(edges))))
-    # logger.info('number of nodes {}'.format(graph.number_of_nodes()))
-    # logger.info('number of edges {}'.format(graph.number_of_edges()))
-    # logger.info('density {}'.format(nx.density(graph)))
-    # degrees = [deg for node,deg in graph.degree(weight=None)]
-    # avg_degree = sum(degrees) / graph.number_of_nodes()
-    # logger.info('average degree {}'.format(avg_degree))
-    # weighted_degrees = [deg for node,deg in graph.degree(weight='weight')]
-    # avg_weighted_degree = sum(weighted_degrees) / graph.number_of_nodes()
-    # logger.info('average weighted degree {}'.format(avg_weighted_degree))
         
+def log_communities(communities, graph):
+    if debug_mode_set():
+        logger.debug('communities: \n{}'.format(communities))
+    logger.info('{} communities'.format(len(communities)))
+    logger.info('size distribution:')
+    log_sparse_histogram(communities.size_histogram())
+    modularity = graph.modularity(communities, weights='weight')    
+    logger.info('modularity: {}'.format(modularity))
         
 # entfernt Knoten ohne Kanten, summiert Mehrfachkanten zwischen Knoten zu 1 Kante auf
-def simplify_graph(graph):
+def simplify_graph_igraph(graph):
     # summiere mehrfache Kanten auf 
     graph.simplify(multiple=True, loops=True, combine_edges={'weight': 'sum'})
     logger.info('simplified multiedges to single edges by accumulating')
@@ -146,6 +119,11 @@ def simplify_graph(graph):
     nodes_without_edges = tuple(n for n, degree in enumerate(graph.degree()) if degree == 0)
     graph.delete_vertices(nodes_without_edges) 
     logger.info('removed nodes with degree==0')
+        
+# entfernt Knoten ohne Kanten
+def simplify_graph_nwx(graph):
+    logger.info('simplifying graph: removing isolated nodes')
+    graph.remove_nodes_from(set(nx.isolates(graph)))
         
         
 # liefert Liste aller Dokumentknoten, Liste aller Autorknoten eines bipartiten Graphen
@@ -164,19 +142,8 @@ def get_bipartite_node_counts(bipartite_graph):
     return len(doc_nodes), len(auth_nodes)
             
         
-def log_communities(communities, graph):
-    if debug_mode_set():
-        logger.debug('communities: \n{}'.format(communities))
-    logger.info('{} communities'.format(len(communities)))
-    logger.info('size distribution:')
-    log_sparse_histogram(communities.size_histogram())
-    modularity = graph.modularity(communities, weights='weight')    
-    logger.info('modularity: {}'.format(modularity))
         
                 
-def simplify_graph_nwx(graph):
-    logger.info('simplifying graph: removing isolated nodes')
-    graph.remove_nodes_from(set(nx.isolates(graph)))
         
         
         

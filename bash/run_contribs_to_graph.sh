@@ -24,8 +24,7 @@ COAUTH_GRAPH=$GRAPH_PREFIX-coauth.graph
 LOG_GRAPH=$LOG_PREFIX-graph.log
 
 echo "creating bipartite graph from contributions"
-WEIGHTED=y
-( time python scripts/contribs_to_bipart_graph.py --contribs=$PRUNED_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz --weighted=$WEIGHTED) |& tee $LOG_GRAPH
+( time python scripts/contribs_to_bipart_graph.py --contribs=$PRUNED_CONTRIBS.bz2 --bipart-graph=$BIPARTITE_GRAPH.gz) |& tee $LOG_GRAPH
 
 echo "creating co-authorship graph from bipartite graph"
 (time python scripts/bipart_to_coauth_graph.py --bipart-graph=$BIPARTITE_GRAPH.gz --coauth-graph=$COAUTH_GRAPH.gz --mode=$COAUTH_MODE --keep-max-edges=$KEEP_MAX_EDGES) |& tee -a $LOG_GRAPH

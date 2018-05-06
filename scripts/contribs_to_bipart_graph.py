@@ -5,6 +5,7 @@ from pprint import pformat
 from gensim.corpora import MmCorpus
 import networkx as nx
 from networkx import bipartite
+from heapq import nsmallest
 from utils.utils import init_logger, argparse_bool, simplify_graph_nwx, get_bipartite_node_counts, log_nwx
 
 logger = init_logger()
@@ -21,12 +22,14 @@ def main():
     parser = argparse.ArgumentParser(description='maps a given document-author-contribution file to a weighted bipartite network of document and author nodes')
     parser.add_argument('--contribs', type=argparse.FileType('r'), help='path to input contribution MatrixMarket file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--bipart-graph', type=argparse.FileType('w'), help='path to output graph (.graph/.graph.bz2) file', required=True)
+    parser.add_argument('--top-n-contribs', type=int, help='keep at most N highest contribs per author', required=True)
     
     args = parser.parse_args()
     input_contribs_path = args.contribs.name
     output_bipart_graph_path = args.bipart_graph.name
+    top_n_contribs = args.top_n_contribs
     
-    logger.info('running with:\n{}'.format(pformat({'input_contribs_path':input_contribs_path, 'output_bipart_graph_path':output_bipart_graph_path})))
+    logger.info('running with:\n{}'.format(pformat({'input_contribs_path':input_contribs_path, 'output_bipart_graph_path':output_bipart_graph_path, 'top_n_contribs':top_n_contribs})))
     
     contribs = MmCorpus(input_contribs_path)
     num_docs = contribs.num_docs
@@ -42,10 +45,20 @@ def main():
     log_nwx(bipart_graph)
     logger.info('bipartite? {}'.format(bipartite.is_bipartite(bipart_graph))) 
     
+    logger.info('pruning to top {} edges per author'.format(top_n_contribs))
+    for auth_node in auth_nodes:
+        logger.debug('author {}'.format(auth_node))
+        auth_edges = bipart_graph[auth_node]
+        auth_edges = tuple((neighbor,weight['weight']) for neighbor,weight in auth_edges.items())
+        logger.debug('incident edges \n{}'.format(pformat(auth_edges)))
+        num_remove = len(auth_edges) - top_n_contribs
+        author_min_edges = nsmallest(num_remove, auth_edges, key=lambda edge: edge[1])
+        logger.debug('removing edges \n{}'.format(pformat(author_min_edges)))
+        bipart_graph.remove_edges_from((auth_node,neighbor) for neighbor,weight in author_min_edges)
     # entferne isolierte Knoten
     simplify_graph_nwx(bipart_graph)
     log_nwx(bipart_graph)
-    
+        
     logger.info('writing graph to {}'.format(output_bipart_graph_path))
     nx.write_gpickle(bipart_graph, output_bipart_graph_path)
    

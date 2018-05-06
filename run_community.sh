@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# TODO nwx zeug richtig benennen
+# TODO normierung raus, da winzige werte und newman eh nicht normiert?
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
@@ -19,11 +19,13 @@ if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
     export DEBUG=$DEBUG
 fi
 
-CONTRIB_VALUES=(one diff_numterms)
-COAUTH_MODES=(mul jac)
-COMM_METHODS=(greedy louvain)
+#CONTRIB_VALUES=(one diff_numterms)
+CONTRIB_VALUES=(one )
+COAUTH_MODES=(mul jac coll)
+#COMM_METHODS=(greedy louvain)
+COMM_METHODS=(louvain)
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-    ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
+    #./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
     CPREFIX=$PREFIX-$CONTRIB_VALUE
     TITLES=output/contribs/$CPREFIX-titles.json.bz2
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 

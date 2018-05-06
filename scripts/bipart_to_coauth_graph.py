@@ -13,8 +13,10 @@ logger = init_logger()
 def jaccard(graph, v1, v2):
     neighbors1, neighbors2 = set(graph[v1]), set(graph[v2])
     counter = len(neighbors1 & neighbors2)
+    if counter == 0:
+        return 0
     denominator = len(neighbors1) + len(neighbors2) - counter
-    return 0 if denominator == 0 else counter / denominator
+    return counter / denominator
      
      
 def main():
@@ -48,6 +50,7 @@ def main():
         coauth_graph = bipartite.weighted_projected_graph(bipart_graph, doc_nodes, ratio=True)
     elif mode == 'jac':
         coauth_graph = bipartite.generic_weighted_projected_graph(bipart_graph, doc_nodes, weight_function=jaccard)
+        #coauth_graph = bipartite.overlap_weighted_projected_graph(bipart_graph, doc_nodes, jaccard=True)
     elif mode == 'coll':
         coauth_graph = bipartite.collaboration_weighted_projected_graph(bipart_graph, doc_nodes)     
     log_nwx(coauth_graph)    

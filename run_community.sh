@@ -1,8 +1,6 @@
 #!/bin/bash -e
 
-# TODO titles
-# TODO pageid-basierte Filterung mit titel-basierter filterung vergleichen
-# TODO per if-abfrage prüfen, ob pageid bereits vorhanden?
+# TODO nwx zeug richtig benennen
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"

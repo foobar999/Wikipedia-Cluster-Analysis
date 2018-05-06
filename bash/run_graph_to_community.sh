@@ -1,13 +1,14 @@
 #!/bin/bash -e
 
 
-if (( $# != 3 )); then
-    echo "Usage: $0 IPREFIX COMM_METHOD TITLES"
+if (( $# != 4 )); then
+    echo "Usage: $0 IPREFIX COMM_METHOD USE_GIANT_COMP TITLES"
     exit 1
 fi
 IPREFIX=$1
 COMM_METHOD=$2
-TITLES=$3
+USE_GIANT_COMP=$3
+TITLES=$4
 OPREFIX=$IPREFIX-$COMM_METHOD
 
 CONTRIB_PREFIX=output/contribs/$IPREFIX
@@ -23,7 +24,6 @@ TITLE_COMMUNITIES=$COMM_PREFIX-titlecommunities.json
 LOG_COMMUNITIES=$LOG_PREFIX-communities.log
 
 echo "running community detection"
-USE_GIANT_COMP=n
 (time python scripts/coauth_to_community.py --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --use-giant-comp=$USE_GIANT_COMP) |& tee $LOG_COMMUNITIES
 bzip2 -zf $COMMUNITIES
 

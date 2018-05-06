@@ -16,6 +16,7 @@ echo "PREFIX $PREFIX"
 echo "DEBUG $DEBUG"
 echo "TOP_N_CONTRIBS $TOP_N_CONTRIBS"
 echo "KEEP_MAX_EDGES $KEEP_MAX_EDGES"
+echo "USE_GIANT_COMP $USE_GIANT_COMP"
 if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
     export DEBUG=$DEBUG
 fi
@@ -31,7 +32,7 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
         ./bash/run_contribs_to_graph.sh $CPREFIX $COAUTH_MODE $KEEP_MAX_EDGES
         CGPREFIX=$CPREFIX-$COAUTH_MODE
         for COMM_METHOD in "${COMM_METHODS[@]}"; do 
-            ./bash/run_graph_to_community.sh $CGPREFIX $COMM_METHOD $TITLES
+            ./bash/run_graph_to_community.sh $CGPREFIX $COMM_METHOD $USE_GIANT_COMP $TITLES
         done
     done
 done

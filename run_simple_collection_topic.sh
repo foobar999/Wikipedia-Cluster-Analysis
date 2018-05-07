@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # TODO mal verschiendene maße (insb jsd) ausprobieren, dafür scipy clustering nehmen
 # TODO soll ich echte minibatch kmeans nehmen? is mehr zu erklären
@@ -6,9 +6,8 @@
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 # TODO "required" bei argparse einbauen
-# TODO descriptions löschen
+# TODO epilogs
 
-set -e  # Abbruch bei Fehler
 export DEBUG="DEBUG" # TODO produktiv raus
 PREFIX=simple-collection
 COLL_PREFIX=collections/$PREFIX
@@ -27,8 +26,8 @@ time python scripts/utils/generate_xml_from_simple_json_collection.py $PREFIX.js
 bzip2 -zkf $COLL_PREFIX-pages-articles.xml $COLL_PREFIX-pages-meta-history.xml # gensim erfordert grundsätzlich .xml.bz2-Dateien
 
 echo "extracting likely namespaces from XML dump"
-NS_MIN_OCCURENCES=1
-( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-pages-articles.xml.bz2 $NS_MIN_OCCURENCES | tee $NAMESPACE_PREFIXES_FILE )|& tee $LOG_PREFIX-namespaces.log
+#NS_MIN_OCCURENCES=1
+#( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-pages-articles.xml.bz2 $NS_MIN_OCCURENCES | tee $NAMESPACE_PREFIXES_FILE )|& tee $LOG_PREFIX-namespaces.log
 
 
 VOCABULARY_SIZE=100

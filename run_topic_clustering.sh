@@ -27,10 +27,13 @@ echo "NO_ABOVE $NO_ABOVE"
 echo "ARTICLE_MIN_TOKENS $ARTICLE_MIN_TOKENS"
 echo "PASSES $PASSES"
 echo "NUM_TOPICS $NUM_TOPICS"
+echo "ALPHA $ALPHA"
+echo "BETA $BETA"
 NUM_CLUSTERS=($NUM_CLUSTERS) # splitte String zu Array
 echo "NUM_CLUSTERS ${NUM_CLUSTERS[@]}"
 
 ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
+./bash/run_bow_to_topic.sh $PREFIX $NUM_TOPICS $PASSES $ALPHA $BETA
 
 #CONTRIB_VALUES=(one diff_numterms)
 # CONTRIB_VALUES=(one )

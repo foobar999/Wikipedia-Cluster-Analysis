@@ -30,7 +30,7 @@ echo "NUM_TOPICS $NUM_TOPICS"
 NUM_CLUSTERS=($NUM_CLUSTERS) # splitte String zu Array
 echo "NUM_CLUSTERS ${NUM_CLUSTERS[@]}"
 
-./run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
+./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
 
 #CONTRIB_VALUES=(one diff_numterms)
 # CONTRIB_VALUES=(one )

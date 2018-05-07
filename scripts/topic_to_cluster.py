@@ -1,6 +1,7 @@
 import os, sys
 import argparse
 import logging
+import json 
 from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
@@ -17,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description='clusters documents of a corpus with k-means by applying a trained topic model to the corpus')
     parser.add_argument('--bow', type=argparse.FileType('r'), help='path to text-based input MatrixMarket bow corpus file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--tm', type=argparse.FileType('r'), help='path to binary input topic model file', required=True)
-    parser.add_argument('--cluster-labels', type=argparse.FileType('w'), help='path to output binary cluster labels file (.cpickle/.cpickle.bz2)', required=True)
+    parser.add_argument('--cluster-labels', type=argparse.FileType('w'), help='path to output JSON cluster labels file', required=True)
     cluster_methods = {
         'kmeans': 'minibatch kmeans algorithm with kmeans++',
         'aggl': 'hierarchicalm agglomerative clustering'
@@ -49,12 +50,14 @@ def main():
     logger.info('running k-means on {} documents, {} topics, generating {} clusters'.format(bow.num_docs,tm.num_topics,num_clusters))
     logger.info(kmeans)
     cluster_labels = kmeans.fit_predict(dense)
-    logger.info('labels')
-    logger.info(cluster_labels)
-    with smart_open(output_cluster_labels_path, 'wb') as ofile:
-        np.save(ofile, cluster_labels)
-    
-    
+    logger.info('{} labels'.format(len(cluster_labels)))
+    logger.debug(cluster_labels)
+    #with smart_open(output_cluster_labels_path, 'wb') as ofile:
+    #    np.save(ofile, cluster_labels)
+    cluster_labels = dict(enumerate(cluster_labels.tolist()))
+    logger.info('writing labels to {}'.format(output_cluster_labels_path))
+    with open(output_cluster_labels_path, 'w') as output_cluster_labels_file:
+        json.dump(cluster_labels, output_cluster_labels_file, indent=1)
     
 if __name__ == '__main__':
     main()

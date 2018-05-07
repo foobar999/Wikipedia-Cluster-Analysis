@@ -1,13 +1,12 @@
 #!/bin/bash -e
 
-# TODO auch hier .index nicht speichern
+# TODO aufpassen beim topicmodel laden, dass auch das richtige model geladen
 # TODO mal verschiendene maße (insb jsd) ausprobieren, dafür scipy clustering nehmen
 # TODO soll ich echte minibatch kmeans nehmen? is mehr zu erklären
 # TODO verschiedene clusteringverfahren: trivial, k-means, hierarchisch
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
 # TODO time auf stunden umrechnen / besseres zeitmesskommando finden
-# TODO "required" bei argparse einbauen
-# TODO epilogs
+
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"

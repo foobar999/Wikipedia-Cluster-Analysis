@@ -38,7 +38,7 @@ def main():
     logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_tm_path':input_tm_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters, 'batch_size':batch_size})))
         
     if cluster_method != 'kmeans':
-        logger.info('{} not implemented'.format(cluster_method))
+        logger.error('{} not implemented'.format(cluster_method))
         return 1
         
     bow = MmCorpus(input_bow_path)
@@ -52,12 +52,9 @@ def main():
     cluster_labels = kmeans.fit_predict(dense)
     logger.info('{} labels'.format(len(cluster_labels)))
     logger.debug(cluster_labels)
-    #with smart_open(output_cluster_labels_path, 'wb') as ofile:
-    #    np.save(ofile, cluster_labels)
-    cluster_labels = dict(enumerate(cluster_labels.tolist()))
     logger.info('writing labels to {}'.format(output_cluster_labels_path))
     with open(output_cluster_labels_path, 'w') as output_cluster_labels_file:
-        json.dump(cluster_labels, output_cluster_labels_file, indent=1)
+        json.dump(cluster_labels.tolist(), output_cluster_labels_file, indent=1)
     
 if __name__ == '__main__':
     main()

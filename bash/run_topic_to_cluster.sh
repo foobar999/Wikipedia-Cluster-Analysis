@@ -20,5 +20,8 @@ LOG_CLUSTER=$LOG_PREFIX.log
 
 BATCHSIZE=1000
 echo "computing $NUM_CLUSTERS clusters with $METHOD"
-( time python scripts/topic_to_cluster.py --bow=$BOW --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD --num-clusters=$NUM_CLUSTERS --batch-size=$BATCHSIZE ) |& tee $LOG_CLUSTER
-bzip2 -zf $CLUSTER_LABELS
+(time python scripts/topic_to_cluster.py --bow=$BOW --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD --num-clusters=$NUM_CLUSTERS --batch-size=$BATCHSIZE) |& tee $LOG_CLUSTER
+#bzip2 -zf $CLUSTER_LABELS
+
+echo "evaluating clustering"
+(time python scripts/evaluate_dense_clustering.py --bow=$BOW --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS) |& tee -a $LOG_CLUSTER

@@ -23,7 +23,7 @@ BOW_ID2WORD=$BOW_CORPUS_PREFIX-id2word.txt # TODO speichere dict als txt
 LOG_BOW=$LOG_PREFIX-articles-to-bow.log
 
 VOCABULARY_SIZE=1000000
-TOKEN_MIN_LEN=1
+TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=100
 echo "generating bag-of-words corpus files"
 ( time python scripts/articles_to_bow.py --articles-dump=$ARTICLES_DUMP.bz2 --out-prefix=$BOW_CORPUS_PREFIX --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --remove-stopwords --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_BOW

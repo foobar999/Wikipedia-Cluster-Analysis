@@ -41,13 +41,16 @@ def main():
         logger.error('{} not implemented'.format(cluster_method))
         return 1
         
+    logger.info('loading bow corpus from {}'.format(input_bow_path))
     bow = MmCorpus(input_bow_path)
+    logger.info('loading topic model from {}'.format(input_tm_path))
     tm = LdaMulticore.load(input_tm_path)
+    logger.info('combining both to dense document-topic-matrix')
     dense = corpus2dense(tm[bow], tm.num_topics, bow.num_docs).T  # TODO das wird nicht gestreamt -> probleme?
     logger.debug('dense array:\n{}'.format(dense))
     verbose = 'DEBUG' in os.environ
-    kmeans = MiniBatchKMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, batch_size=batch_size, verbose=verbose, compute_labels=True)
     logger.info('running k-means on {} documents, {} topics, generating {} clusters'.format(bow.num_docs,tm.num_topics,num_clusters))
+    kmeans = MiniBatchKMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, batch_size=batch_size, verbose=verbose, compute_labels=True)
     logger.info(kmeans)
     cluster_labels = kmeans.fit_predict(dense)
     logger.info('{} labels'.format(len(cluster_labels)))

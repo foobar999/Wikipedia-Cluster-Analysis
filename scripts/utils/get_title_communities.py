@@ -32,7 +32,10 @@ def main():
     logger.info('{} communities'.format(len(communities)))
     logger.debug('communities \n{}'.format(communities))
         
-    title_communities = {titles[doc_id[1:]]: comm_label for doc_id,comm_label in communities.items()}
+    if isinstance(communities,dict):
+        title_communities = {titles[doc_id[1:]]: comm_label for doc_id,comm_label in communities.items()}
+    else:
+        title_communities = {titles[str(doc_id)]: comm_label for doc_id,comm_label in enumerate(communities)}
     logger.info('generated {} title_communities'.format(len(title_communities)))
     logger.debug('title_communities \n{}'.format(title_communities))
         

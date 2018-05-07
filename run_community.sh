@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+# TODO ich sollte das mit der max. komponente eher machen
 # TODO normierung raus, da winzige werte und newman eh nicht normiert?
 
 if (( $# != 1 )); then
@@ -25,7 +26,7 @@ COAUTH_MODES=(mul jac coll)
 #COMM_METHODS=(greedy louvain)
 COMM_METHODS=(louvain)
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-    #./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
+    ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
     CPREFIX=$PREFIX-$CONTRIB_VALUE
     TITLES=output/contribs/$CPREFIX-titles.json.bz2
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 
@@ -38,20 +39,3 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
 done
 
 
-
-# test_parameter_set () {
-    # PARAMETER=$1
-    # REQUIRED=$2
-    # if [ -z "$PARAMETER" ]; then
-        # echo "$PARAMETER is unset"
-        # if [ "$REQUIRED" = "required" ]; then
-            # echo "$PARAMETER is required -> aborting"
-            # exit 1
-        # fi
-    # else 
-        # echo "$PARAMETER is set to ${!PARAMETER}"
-    # fi
-# }
-
-#test_parameter_set TOP_N_CONTRIBS required
-#test_parameter_set DEBUG required

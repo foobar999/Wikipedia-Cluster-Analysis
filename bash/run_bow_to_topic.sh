@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 if (( $# != 6 )); then
-    echo "Usage: $0 IPREFIX $OPIC_MODEL NUM_TOPICS PASSES ALPHA BETA"
+    echo "Usage: $0 IPREFIX TOPIC_MODEL NUM_TOPICS PASSES ALPHA BETA"
     exit 1
 fi
 

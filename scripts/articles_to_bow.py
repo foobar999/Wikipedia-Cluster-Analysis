@@ -3,9 +3,8 @@
 description = """
 creates from a given .xml.bz2 MediaWiki dump multiple prefixed gensim files (only mainspace articles):
 1. a text-based <PREFIX>.mm bag-of-words corpus representation file
-2. a binary <PREFIX>.mm.index file of the corpus
-3. a binary <PREFIX>-id2word.txt text-based id-to-word dictionary file
-4. a binary <PREFIX>.mm.metadata.cpickle file which maps internal gensim document IDs to article titles and page IDs of th dump
+2. a binary <PREFIX>-id2word.txt text-based id-to-word dictionary file
+3. a binary <PREFIX>.mm.metadata.cpickle file which maps internal gensim document IDs to article titles of the dump
 """
 
 import os
@@ -15,6 +14,7 @@ import logging
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
+from gensim.matutils import MmWriter
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
 from gensim.parsing.preprocessing import STOPWORDS
 from utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
@@ -51,7 +51,7 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
                 num_articles_mainspace_long_enough += 1
                 num_tokens_mainspace_nonstop_thresh += len(tokens_filtered)
                 if metadata:
-                    yield tokens_filtered, (pageid, title)
+                    yield tokens_filtered, title
                 else:
                     yield tokens_filtered
                     
@@ -60,7 +60,7 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
     logger.info('{} articles mainspace with >= {} non-stopword tokens'.format(num_articles_mainspace_long_enough, article_min_tokens))
     logger.info('{} tokens in mainspace articles'.format(num_tokens_mainspace))
     logger.info('{} non-stopword tokens in mainspace articles'.format(num_tokens_mainspace_nonstop))
-    logger.info('{} non-stopword tokens in mainspace articles with  >= {} tokens'.format(num_tokens_mainspace_nonstop_thresh, article_min_tokens))
+    logger.info('{} non-stopword tokens in mainspace articles with >= {} tokens'.format(num_tokens_mainspace_nonstop_thresh, article_min_tokens))
     
                     
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, token_max_len, stopwords, namespace_prefixes, metadata):
@@ -122,7 +122,8 @@ def main():
     logger.info('generating bag of words corpus')
     corpus.metadata = True
     output_corpus_path = output_prefix + '.mm'
-    MmCorpus.serialize(output_corpus_path, corpus, progress_cnt=10000, metadata=True)
+    #MmCorpus.serialize(output_corpus_path, corpus, progress_cnt=10000, metadata=True)
+    MmWriter.write_corpus(output_corpus_path, corpus=corpus, index=False, progress_cnt=10000, metadata=True)  
         
     
     

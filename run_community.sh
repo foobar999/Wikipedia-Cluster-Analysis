@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+# TODO zu verwendente Dinge parametrirbar  machen
 # TODO ich sollte das mit der max. komponente eher machen
 # TODO normierung raus, da winzige werte und newman eh nicht normiert?
 

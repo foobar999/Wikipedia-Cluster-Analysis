@@ -21,9 +21,14 @@ def valid_gensim_prior(prior):
             raise argparse.ArgumentTypeError('{} not float nor in {}'.format(prior, possible_prior_modes))
 
 def main():
-    parser = argparse.ArgumentParser(description='trains an lda model from a given bag-of-words corpus file and an id2word dictionary; no corpus data, only the trained model is saved, to save space')
+    parser = argparse.ArgumentParser(description='trains a topic model from a given bag-of-words corpus file and an id2word dictionary; no corpus data, only the trained model is saved, to save space')
     parser.add_argument('--bow', type=argparse.FileType('r'), help='path to input text-based MatrixMarket bow corpus file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--id2word', type=argparse.FileType('r'), help='path to input text-based id2word dictionary file (.txt/.txt.bz2)', required=True)
+    model_types = {
+        'lda': 'latent dirichlet allocation',
+        'at': 'author-topic model'
+    }
+    parser.add_argument('--model-type', choices=model_types, help='topic model to use', required=True)
     parser.add_argument('--model-prefix', type=argparse.FileType('w'), help='prefix of output binary lda model files', required=True)
     parser.add_argument('--num-topics', type=int, help='number of latent topics', required=True)
     parser.add_argument('--passes', type=int, help='set number of passes of each document', required=True)
@@ -34,12 +39,17 @@ def main():
     args = parser.parse_args()
     input_bow_path = args.bow.name
     input_id2word_path = args.id2word.name
+    model_type = args.model_type
     output_model_prefix = args.model_prefix.name
     num_topics = args.num_topics
     passes,iterations = args.passes,args.iterations
     alpha, beta = args.alpha, args.beta
     
-    logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_id2word_path':input_id2word_path, 'output_model_prefix':output_model_prefix, 'num_topics':num_topics, 'passes':passes, 'iterations':iterations, 'alpha':alpha, 'beta':beta})))
+    logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_id2word_path':input_id2word_path, 'model_type':model_type,  'output_model_prefix':output_model_prefix, 'num_topics':num_topics, 'passes':passes, 'iterations':iterations, 'alpha':alpha, 'beta':beta})))
+        
+    if model_type != 'lda':
+        logger.info('{} not implemented'.format(model_type))
+        return -1
         
     corpus = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)    

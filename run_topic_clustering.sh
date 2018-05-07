@@ -26,15 +26,20 @@ echo "NO_BELOW $NO_BELOW"
 echo "NO_ABOVE $NO_ABOVE"
 echo "ARTICLE_MIN_TOKENS $ARTICLE_MIN_TOKENS"
 echo "PASSES $PASSES"
+TOPIC_MODELS=($TOPIC_MODELS) # splitte String zu Array
+echo "TOPIC_MODELS ${TOPIC_MODELS[@]}"
 echo "NUM_TOPICS $NUM_TOPICS"
 echo "ALPHA $ALPHA"
 echo "BETA $BETA"
-NUM_CLUSTERS=($NUM_CLUSTERS) # splitte String zu Array
+NUM_CLUSTERS=($NUM_CLUSTERS) 
 echo "NUM_CLUSTERS ${NUM_CLUSTERS[@]}"
 
 ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
-./bash/run_bow_to_topic.sh $PREFIX $NUM_TOPICS $PASSES $ALPHA $BETA
-
+for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
+    ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
+    TPREFIX=$PREFIX-$TOPIC_MODEL
+done
+    
 #CONTRIB_VALUES=(one diff_numterms)
 # CONTRIB_VALUES=(one )
 # COAUTH_MODES=(mul jac coll)

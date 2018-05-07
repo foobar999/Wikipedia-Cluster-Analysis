@@ -4,7 +4,7 @@ description = """
 creates from a given .xml.bz2 MediaWiki dump multiple prefixed gensim files (only mainspace articles):
 1. a text-based <PREFIX>.mm bag-of-words corpus representation file
 2. a binary <PREFIX>.mm.index file of the corpus
-3. a binary <PREFIX>.id2word.cpickle pickled id-to-word dictionary file
+3. a binary <PREFIX>-id2word.txt text-based id-to-word dictionary file
 4. a binary <PREFIX>.mm.metadata.cpickle file which maps internal gensim document IDs to article titles and page IDs of th dump
 """
 
@@ -116,8 +116,8 @@ def main():
     corpus.dictionary = Dictionary(corpus.get_texts())
     corpus.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
     corpus.dictionary.compactify()
-    output_id2word_path = output_prefix + '.id2word.cpickle'
-    corpus.dictionary.save(output_id2word_path)    
+    output_id2word_path = output_prefix + '-id2word.txt'
+    corpus.dictionary.save_as_text(output_id2word_path)    
     
     logger.info('generating bag of words corpus')
     corpus.metadata = True

@@ -18,7 +18,7 @@ ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml
 BOW_CORPUS_PREFIX=$BOW_PREFIX-bow
 BOW_MODEL=$BOW_CORPUS_PREFIX.mm
 BOW_TITLES=$BOW_CORPUS_PREFIX-titles.json
-BOW_ID2WORD=$BOW_CORPUS_PREFIX-id2word.cpickle # TODO speichere dict als txt
+BOW_ID2WORD=$BOW_CORPUS_PREFIX-id2word.txt # TODO speichere dict als txt
 
 LOG_BOW=$LOG_PREFIX-articles-to-bow.log
 
@@ -29,7 +29,6 @@ echo "generating bag-of-words corpus files"
 ( time python scripts/articles_to_bow.py --articles-dump=$ARTICLES_DUMP.bz2 --out-prefix=$BOW_CORPUS_PREFIX --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --remove-stopwords --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_BOW
 python ./scripts/utils/binary_to_text.py pickle $BOW_CORPUS_PREFIX.mm.metadata.cpickle $BOW_TITLES # erzeuge aus binärer Metadatendatei eine JSON-Datei
 rm -f $BOW_CORPUS_PREFIX.mm.metadata.cpickle # entferne binäre Metadatendatei
-mv $BOW_CORPUS_PREFIX.id2word.cpickle $BOW_ID2WORD # benenne id2word-dict um
 bzip2 -zf $BOW_MODEL $BOW_TITLES $BOW_ID2WORD # komprimiere Korpus, Dictionary, docID-Mapping
 
 

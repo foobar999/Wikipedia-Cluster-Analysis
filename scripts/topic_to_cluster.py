@@ -7,16 +7,16 @@ from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
 from gensim.utils import smart_open
-from sklearn.cluster import MiniBatchKMeans, AgglomerativeClustering
+from sklearn.cluster import KMeans, AgglomerativeClustering
 from utils.utils import init_logger, debug_mode_set
 import numpy as np
  
 logger = init_logger()
  
  
-def get_cluster_model(cluster_method, num_clusters, batch_size):
+def get_cluster_model(cluster_method, num_clusters):
     if cluster_method == 'kmeans':
-        return MiniBatchKMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, batch_size=batch_size, verbose=debug_mode_set(), compute_labels=True)
+        return KMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, verbose=False)
     if cluster_method.startswith('aggl'):
         linkages = {
             'aggl-ward': 'ward',
@@ -31,13 +31,12 @@ def main():
     parser.add_argument('--tm', type=argparse.FileType('r'), help='path to binary input topic model file', required=True)
     parser.add_argument('--cluster-labels', type=argparse.FileType('w'), help='path to output JSON cluster labels file', required=True)
     cluster_methods = {
-        'kmeans': 'minibatch kmeans algorithm with kmeans++',
+        'kmeans': 'kmeans algorithm with kmeans++',
         'aggl-ward': 'hierarchical agglomerative ward clustering',
         'aggl-avg': 'hierarchical agglomerative average clustering',
     }
     parser.add_argument('--cluster-method', choices=cluster_methods, help='clustering algorithm: ' + str(cluster_methods), required=True)
     parser.add_argument('--num-clusters', type=int, help='number of clusters to create', required=True)
-    parser.add_argument('--batch-size', type=int, help='size of mini batches (only for kmeans; ignored for agglomerative)', required=True)
     
     args = parser.parse_args()
     input_bow_path = args.bow.name
@@ -45,9 +44,8 @@ def main():
     output_cluster_labels_path = args.cluster_labels.name
     cluster_method = args.cluster_method
     num_clusters = args.num_clusters
-    batch_size = args.batch_size
     
-    logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_tm_path':input_tm_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters, 'batch_size':batch_size})))
+    logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_tm_path':input_tm_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters})))
                 
     logger.info('loading bow corpus from {}'.format(input_bow_path))
     bow = MmCorpus(input_bow_path)
@@ -58,7 +56,7 @@ def main():
     logger.debug('dense array:\n{}'.format(dense))
     
     logger.info('cluestering on {} documents, {} topics, generating {} clusters'.format(bow.num_docs, tm.num_topics, num_clusters))
-    cluster_model = get_cluster_model(cluster_method, num_clusters, batch_size)
+    cluster_model = get_cluster_model(cluster_method, num_clusters)
     logger.info('clustering model:\n{}'.format(cluster_model))
     
     cluster_labels = cluster_model.fit_predict(dense)

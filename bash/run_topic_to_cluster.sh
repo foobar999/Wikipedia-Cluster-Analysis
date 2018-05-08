@@ -22,9 +22,8 @@ CLUSTER_LABELS=$CLUS_PREFIX.json
 TITLE_CLUSTER_LABELS=$CLUS_PREFIX-titleclusters.json
 LOG_CLUSTER=$LOG_PREFIX.log
 
-BATCHSIZE=1000
 echo "computing $NUM_CLUSTERS clusters with $METHOD"
-(time python scripts/topic_to_cluster.py --bow=$BOW_MODEL.bz2 --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD --num-clusters=$NUM_CLUSTERS --batch-size=$BATCHSIZE) |& tee $LOG_CLUSTER
+(time python scripts/topic_to_cluster.py --bow=$BOW_MODEL.bz2 --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD --num-clusters=$NUM_CLUSTERS) |& tee $LOG_CLUSTER
 
 echo "evaluating clustering"
 (time python scripts/evaluate_dense_clustering.py --bow=$BOW_MODEL.bz2 --tm=$TM_PREFIX --cluster-labels=$CLUSTER_LABELS) |& tee -a $LOG_CLUSTER

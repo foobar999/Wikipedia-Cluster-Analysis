@@ -7,25 +7,37 @@ from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
 from gensim.utils import smart_open
-from sklearn.cluster import MiniBatchKMeans
-from utils.utils import init_logger
+from sklearn.cluster import MiniBatchKMeans, AgglomerativeClustering
+from utils.utils import init_logger, debug_mode_set
 import numpy as np
  
 logger = init_logger()
  
+ 
+def get_cluster_model(cluster_method, num_clusters, batch_size):
+    if cluster_method == 'kmeans':
+        return MiniBatchKMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, batch_size=batch_size, verbose=debug_mode_set(), compute_labels=True)
+    if cluster_method.startswith('aggl'):
+        linkages = {
+            'aggl-ward': 'ward',
+            'aggl-avg': 'average'
+        }
+        return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity='euclidean')
+ 
 
 def main():
-    parser = argparse.ArgumentParser(description='clusters documents of a corpus with k-means by applying a trained topic model to the corpus')
+    parser = argparse.ArgumentParser(description='clusters documents of a corpus euclidean-based by applying a trained topic model to the corpus')
     parser.add_argument('--bow', type=argparse.FileType('r'), help='path to text-based input MatrixMarket bow corpus file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--tm', type=argparse.FileType('r'), help='path to binary input topic model file', required=True)
     parser.add_argument('--cluster-labels', type=argparse.FileType('w'), help='path to output JSON cluster labels file', required=True)
     cluster_methods = {
         'kmeans': 'minibatch kmeans algorithm with kmeans++',
-        'aggl': 'hierarchicalm agglomerative clustering'
+        'aggl-ward': 'hierarchical agglomerative ward clustering',
+        'aggl-avg': 'hierarchical agglomerative average clustering',
     }
     parser.add_argument('--cluster-method', choices=cluster_methods, help='clustering algorithm: ' + str(cluster_methods), required=True)
     parser.add_argument('--num-clusters', type=int, help='number of clusters to create', required=True)
-    parser.add_argument('--batch-size', type=int, help='size of mini batches', required=True)
+    parser.add_argument('--batch-size', type=int, help='size of mini batches (only for kmeans; ignored for agglomerative)', required=True)
     
     args = parser.parse_args()
     input_bow_path = args.bow.name
@@ -36,11 +48,7 @@ def main():
     batch_size = args.batch_size
     
     logger.info('running with:\n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_tm_path':input_tm_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters, 'batch_size':batch_size})))
-        
-    if cluster_method != 'kmeans':
-        logger.error('{} not implemented'.format(cluster_method))
-        return 1
-        
+                
     logger.info('loading bow corpus from {}'.format(input_bow_path))
     bow = MmCorpus(input_bow_path)
     logger.info('loading topic model from {}'.format(input_tm_path))
@@ -48,11 +56,12 @@ def main():
     logger.info('combining both to dense document-topic-matrix')
     dense = corpus2dense(tm[bow], tm.num_topics, bow.num_docs).T  # TODO das wird nicht gestreamt -> probleme?
     logger.debug('dense array:\n{}'.format(dense))
-    verbose = 'DEBUG' in os.environ
-    logger.info('running k-means on {} documents, {} topics, generating {} clusters'.format(bow.num_docs,tm.num_topics,num_clusters))
-    kmeans = MiniBatchKMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, batch_size=batch_size, verbose=verbose, compute_labels=True)
-    logger.info(kmeans)
-    cluster_labels = kmeans.fit_predict(dense)
+    
+    logger.info('cluestering on {} documents, {} topics, generating {} clusters'.format(bow.num_docs, tm.num_topics, num_clusters))
+    cluster_model = get_cluster_model(cluster_method, num_clusters, batch_size)
+    logger.info('clustering model:\n{}'.format(cluster_model))
+    
+    cluster_labels = cluster_model.fit_predict(dense)
     logger.info('{} labels'.format(len(cluster_labels)))
     logger.debug(cluster_labels)
     logger.info('writing labels to {}'.format(output_cluster_labels_path))

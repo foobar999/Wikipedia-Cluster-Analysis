@@ -20,7 +20,8 @@ def get_cluster_model(cluster_method, num_clusters):
     if cluster_method.startswith('aggl'):
         linkages = {
             'aggl-ward': 'ward',
-            'aggl-avg': 'average'
+            'aggl-avg': 'average',
+            'aggl-compl': 'complete'
         }
         return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity='euclidean')
  
@@ -34,6 +35,7 @@ def main():
         'kmeans': 'kmeans algorithm with kmeans++',
         'aggl-ward': 'hierarchical agglomerative ward clustering',
         'aggl-avg': 'hierarchical agglomerative average clustering',
+        'aggl-compl': 'hierarchical agglomerative complete clustering',
     }
     parser.add_argument('--cluster-method', choices=cluster_methods, help='clustering algorithm: ' + str(cluster_methods), required=True)
     parser.add_argument('--num-clusters', type=int, help='number of clusters to create', required=True)

@@ -18,10 +18,16 @@ def load_clustering(clustering_path):
         logger.debug('loaded clustering \n{}'.format(clustering))
         logger.info('loaded clustering of {} documents'.format(len(clustering)))
         return clustering
-                      
+                 
+score_funs = {
+    'adjusted-rand': adjusted_rand_score,
+    'fowlkes-mallows': fowlkes_mallows_score,
+    'normalized-mutual-info': normalized_mutual_info_score,
+    'adjusted-mutual-info': adjusted_mutual_info_score
+}         
      
 def main():
-    parser = argparse.ArgumentParser(description='calculates multiple clustering comparison scores of two clusterings/communitiy structures documenttitle->clusterlabel (comparison bases of intersection based on equal documenttitles)')
+    parser = argparse.ArgumentParser(description='calculates a clustering comparison score of two clusterings/communitiy structures documenttitle->clusterlabel (comparison bases of intersection based on equal documenttitles)')
     parser.add_argument('--clusterings', nargs=2, type=argparse.FileType('r'), metavar=('CLUS1','CLUS2'), help='path to two titleclsuterings files (.json/.json.bz2)', required=True)
     
     args = parser.parse_args()
@@ -45,12 +51,6 @@ def main():
     intsect_labels1 = np.array(intsect_labels1)
     intsect_labels2 = np.array(intsect_labels2)
     
-    score_funs = {
-        'ari': adjusted_rand_score,
-        'fmri': fowlkes_mallows_score,
-        'nmi': normalized_mutual_info_score,
-        'ami': adjusted_mutual_info_score
-    }    
     for score_name, score_fun in score_funs.items():
         score = score_fun(intsect_labels1, intsect_labels2)
         output = '{} {}'.format(score_name, score)

@@ -27,6 +27,8 @@ echo "COAUTH_MODES ${COAUTH_MODES[@]}"
 COMM_METHODS=($COMM_METHODS)
 echo "COMM_METHODS ${COMM_METHODS[@]}"
 
+mkdir -p output/comparisons
+COMP_PREFIX=output/comparisons/$PREFIX
 
 # TODO sklearn benutzt ln statt log2 !!!
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
@@ -42,7 +44,8 @@ for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
                         # Communities Dokumenttitel -> Communitylabel
                         TITLECOMMUNITIES=output/communities/$COMM_PREFIX-titlecommunities.json.bz2
                         #echo "comparing $TCC_TITLECLUSTERS and $TITLECOMMUNITIES"
-                        python scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES
+                        COMP_FILE=$COMP_PREFIX-$TOPIC_MODEL-$CLUSTER_METHOD-$CLUSTER_NUM-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
+                        python scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES > $COMP_FILE
                     done
                 done
             done

@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 # TODO sklearn benutzt ln statt log2 !!!
-# TODO logging
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
@@ -34,6 +33,8 @@ echo "COMP_MEASURES ${COMP_MEASURES[@]}"
 
 mkdir -p output/comparisons
 COMP_PREFIX=output/comparisons/$PREFIX
+mkdir -p output/logs/comparisons
+LOG_PREFIX=output/logs/comparisons/$PREFIX
 
 echo "clearing score files of scores ${COMP_MEASURES[@]}"
 for COMP_MEASURE in "${COMP_MEASURES[@]}"; do 
@@ -57,7 +58,8 @@ for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
                         TITLECOMMUNITIES=output/communities/$COMM_PREFIX-titlecommunities.json.bz2
                         echo "comparing $CLUS_PARAMS and $COMM_PARAMS"
                         #COMP_FILE=$COMP_PREFIX-$TOPIC_MODEL-$CLUSTER_METHOD-$CLUSTER_NUM-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
-                        OUTPUT=$(python scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES)
+                        LOG_FILE=$LOG_PREFIX-$CLUS_PARAMS-$COMM_PREFIX.log
+                        OUTPUT=$(python scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2> >(tee $LOG_FILE >&2))
                         for COMP_MEASURE in "${COMP_MEASURES[@]}"; do 
                             SCORE="$(echo "${OUTPUT}" | grep $COMP_MEASURE | cut -d' ' -f2-)"
                             SCORE_FILE=$COMP_PREFIX-$COMP_MEASURE.txt

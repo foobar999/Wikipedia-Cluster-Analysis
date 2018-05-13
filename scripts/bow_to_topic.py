@@ -51,12 +51,12 @@ def main():
         logger.info('{} not implemented'.format(model_type))
         return -1
         
-    corpus = MmCorpus(input_bow_path)
+    bow = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)    
     model = LdaModel if 'DEBUG' in os.environ else LdaMulticore
-    lda_model = model(corpus=corpus, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None)    
+    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None)
     
-    # TODO id2word nicht mitspeichern?
+    logger.info('saving model with output prefix {}'.format(output_model_prefix))
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten    
     
     max_printed_terms = 10

@@ -1,11 +1,10 @@
 #!/bin/bash -e
 
+# TODO pyclustering nehmen?
+# TODO aggl.clustering mit kneighbors_graph() ?
+# TODO speichern der dichten matrix mit savez_compressed
 # TODO aufpassen beim topicmodel laden, dass auch das richtige model geladen
-# TODO mal verschiendene maße (insb jsd) ausprobieren, dafür scipy clustering nehmen
-# TODO soll ich echte minibatch kmeans nehmen? is mehr zu erklären
-# TODO verschiedene clusteringverfahren: trivial, k-means, hierarchisch
 # TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
-# TODO time auf stunden umrechnen / besseres zeitmesskommando finden
 
 
 if (( $# != 1 )); then
@@ -35,8 +34,9 @@ echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
 CLUSTER_NUMS=($CLUSTER_NUMS) 
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
 
-./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
+
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
+./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
     ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
     TPREFIX=$PREFIX-$TOPIC_MODEL

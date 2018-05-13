@@ -53,6 +53,12 @@ def read_rows(csv_filename):
         csvreader = csv.reader(csv_file, delimiter=' ')
         return [tuple(val for val in row) for row in csvreader]
         
+def save_npz(ofname, mat):
+    np.savez_compressed(ofname, arr=mat)
+    
+def load_npz(ifname):
+    return np.load(ifname)['arr']
+    
 def argparse_bool(value):
     if value in ('y', 'n'):
         return value == 'y'

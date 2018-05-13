@@ -22,6 +22,7 @@ BOW_MODEL=$BOW_CORPUS_PREFIX.mm
 BOW_ID2WORD=$BOW_CORPUS_PREFIX-id2word.txt 
 
 MODEL_PREFIX=$TM_PREFIX
+DOC_TOPICS_FILE=$TM_PREFIX-document-topics.npz
 LOG_TOPIC=$LOG_PREFIX.log
 
 ITERATIONS=$(( 10*$PASSES ))
@@ -29,6 +30,8 @@ echo "generating $TOPIC_MODEL model"
 ( time python scripts/bow_to_topic.py --bow=$BOW_MODEL.bz2 --id2word=$BOW_ID2WORD.bz2 --model-type=$TOPIC_MODEL --model-prefix=$MODEL_PREFIX --num-topics=$NUM_TOPICS --passes=$PASSES --iterations=$ITERATIONS --alpha=$ALPHA --beta=$BETA ) |& tee $LOG_TOPIC
 # TODO .bz2 oder nicht???
 
+echo "generating dense document-topic-file"
+( time python scripts/utils/get_dense_document_topics.py --bow=$BOW_MODEL.bz2 --model-prefix=$MODEL_PREFIX --document-topics=$DOC_TOPICS_FILE ) |& tee -a $LOG_TOPIC
 
 
 

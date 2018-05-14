@@ -33,9 +33,9 @@ LOG_CONTRIBS=$LOG_PREFIX-contribs.log
 #( time ./bash/get_likely_namespaces.sh $HISTORY.bz2 $NS_MIN_OCCURENCES | tee $NAMESPACE_PREFIXES )|& tee $LOG_PREFIX-namespaces.log
 
 echo "computing author contributions"
-MIN_AUTH_DOCS=1
-MIN_DOC_AUTHS=1
-( time python scripts/history_to_contribs.py --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --min-auth-docs=$MIN_AUTH_DOCS --min-doc-auths=$MIN_DOC_AUTHS --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
+#MIN_AUTH_DOCS=1
+#MIN_DOC_AUTHS=1
+( time python scripts/history_to_contribs.py --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
 python ./scripts/utils/binary_to_text.py pickle $RAW_CONTRIBS.metadata.cpickle $TITLES # Dokumenttitel-Datei zu JSON konvertierne & umbenennen
 rm -f $RAW_CONTRIBS.metadata.cpickle # gepickelte Dokumenttitel-Datei entfernen
 bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel

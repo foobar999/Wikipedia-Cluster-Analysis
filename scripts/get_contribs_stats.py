@@ -18,10 +18,11 @@ def render_hist(data, of_path, xlabel, ylabel):
     logger.info('min {} max {}'.format(data.min(), data.max()))
     logger.debug('data\n{}'.format(data))
     logger.debug('itemfreq\n{}'.format(itemfreq(data)))
-    plt.figure(figsize=(10,5))
+    plt.figure(figsize=(5,2.5))
     plt.hist(data, bins=np.arange(min(data),max(data)+2)-0.5, edgecolor='black', linewidth=1, color='dodgerblue')
     #plt.xlim(0,max(data))
-    plt.xticks(range(max(data)+1))
+    xticks = range(0,max(data)+1,2) if max(data) >= 10 else range(0,max(data)+1) # hack
+    plt.xticks(xticks)
     plt.xlim([min(data)-1, max(data)+1])
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)

@@ -24,7 +24,7 @@ def main():
     parser.add_argument('--bipart-graph', type=argparse.FileType('r'), help='path to input pickled networkx bipart graph file (.graph/.graph.bz2)', required=True)
     parser.add_argument('--coauth-graph', type=argparse.FileType('w'), help='path to output pickled networkx coauth graph file (.graph/.graph.bz2)', required=True)
     modes = {
-        'mul': 'weight of edges between d1 and d2 is the number of authors contributing to both, normalized by number of authors',
+        'mul': 'weight of edges between d1 and d2 is the number of authors contributing to both',
         'jac': 'weight of edges between d1 and d2 is the jaccard similarity of shared authors',
         'coll': 'weight of edges between d1 and d2 is newmans collaboration weight',
     }
@@ -47,7 +47,7 @@ def main():
     
     logger.info('running one-mode {} projection'.format(mode))
     if mode == 'mul':
-        coauth_graph = bipartite.weighted_projected_graph(bipart_graph, doc_nodes, ratio=True)
+        coauth_graph = bipartite.weighted_projected_graph(bipart_graph, doc_nodes, ratio=False)
     elif mode == 'jac':
         coauth_graph = bipartite.generic_weighted_projected_graph(bipart_graph, doc_nodes, weight_function=jaccard)
         #coauth_graph = bipartite.overlap_weighted_projected_graph(bipart_graph, doc_nodes, jaccard=True)

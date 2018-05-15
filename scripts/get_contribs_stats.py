@@ -51,12 +51,14 @@ def main():
     parser = argparse.ArgumentParser(description='calculated various stats and of a given document-author-contribs file')
     parser.add_argument('--acc-contribs', type=argparse.FileType('r'), help='path to input MatrixMarket acc contributions file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--img-prefix', help='prefix of output generated img files', required=True)
+    parser.add_argument('--quantile-order', type=float, help='quantile of histrograms to consider', required=True)
     
     args = parser.parse_args()
     input_acc_contribs_dump_path = args.acc_contribs.name
     output_image_prefix = args.img_prefix
+    quantile_order = args.quantile_order
     
-    logger.info('running with:\n{}'.format(pformat({'input_acc_contribs_dump_path':input_acc_contribs_dump_path, 'output_image_prefix':output_image_prefix})))
+    logger.info('running with:\n{}'.format(pformat({'input_acc_contribs_dump_path':input_acc_contribs_dump_path, 'output_image_prefix':output_image_prefix, 'quantile_order':quantile_order})))
         
     acc_contribs = MmCorpus(input_acc_contribs_dump_path)
     logger.info('reading corpus to sparse csr matrix')
@@ -64,7 +66,6 @@ def main():
     logger.info('generated sparse matrix of shape {}'.format(csr_corpus.shape))
     logger.debug('sparse matrix \n{}'.format(csr_corpus))    
     
-    quantile_order = 0.95
     logger.info('calculating authors-per-docs-distribution')
     num_authors_per_doc = sp.find((csr_corpus > 0).sum(1))[2]
     num_authors_per_doc = apply_quantile(num_authors_per_doc, quantile_order)

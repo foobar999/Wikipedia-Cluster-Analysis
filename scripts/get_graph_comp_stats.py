@@ -39,7 +39,7 @@ def main():
     logger.info('component size distribution of {}-quantile'.format(quantile_order))
     logger.info('frequencies:\n{}'.format(itemfreq(components_sizes.data)))    
     components_sizes = apply_quantile(components_sizes, quantile_order)
-    xlabel = 'Größe Zusammenhangskomponente'
+    xlabel = 'Knotenanzahl Zusammenhangskomponente'
     ylabel = 'Häufigkeit'
     render_hist(components_sizes[:], output_img_path, xlabel, ylabel)
     

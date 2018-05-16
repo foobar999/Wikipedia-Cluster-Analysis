@@ -26,7 +26,14 @@ def main():
     
     logger.info('converting read networkx graph to igraph graph')
     weighted_edges = nwx_graph.edges(data='weight')
-    igraph_graph = Graph.TupleList(weighted_edges, directed=False, vertex_name_attr='name', edge_attrs=None, weights=True)
+    # beachte: Knoten n mit deg(n)=0 verschwinden hier!
+    #igraph_graph = Graph.TupleList(weighted_edges, directed=False, vertex_name_attr='name', edge_attrs=None, weights=True)
+    node_name_ids = {node: id for id,node in enumerate(nwx_graph.nodes())}
+    edge_weights = (((n1,n2),w) for n1,n2,w in weighted_edges)
+    edges, weights = zip(*edge_weights)
+    edges = [(node_name_ids[n1],node_name_ids[n2]) for n1,n2 in edges]
+    igraph_graph = Graph(n=len(node_name_ids), edges=list(edges), directed=False, vertex_attrs={'name': list(nwx_graph.nodes())}, edge_attrs={'weight': list(weights)})
+    
     log_igraph(igraph_graph)
     
     logger.info('writing graph to {}'.format(output_igraph_path))

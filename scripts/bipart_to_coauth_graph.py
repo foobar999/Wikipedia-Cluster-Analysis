@@ -60,8 +60,9 @@ def main():
     min_edges = nsmallest(num_edges_to_remove, coauth_graph.edges(data='weight'), key=lambda edge: edge[2])
     coauth_graph.remove_edges_from(min_edges)
     log_nwx(coauth_graph)
-        
-    simplify_graph_nwx(coauth_graph)
+     
+    # ich lass das hier mal weg, dafür mach ich das mit den Zusammenhangskomponenten
+    #simplify_graph_nwx(coauth_graph)
     
     logger.info('writing graph to {}'.format(output_coauth_graph_path))
     nx.write_gpickle(coauth_graph, output_coauth_graph_path)

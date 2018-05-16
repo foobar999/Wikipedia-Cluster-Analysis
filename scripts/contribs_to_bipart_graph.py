@@ -6,7 +6,7 @@ from gensim.corpora import MmCorpus
 import networkx as nx
 from networkx import bipartite
 from heapq import nsmallest
-from utils.utils import init_logger, argparse_bool, simplify_graph_nwx, get_bipartite_node_counts, log_nwx
+from utils.utils import init_logger, argparse_bool, simplify_graph_nwx, get_bipartite_nodes, get_bipartite_node_counts, log_nwx
 
 logger = init_logger()
           
@@ -45,6 +45,14 @@ def main():
     log_nwx(bipart_graph)
     logger.info('bipartite? {}'.format(bipartite.is_bipartite(bipart_graph))) 
     
+    simplify_graph_nwx(bipart_graph)
+    logger.info('actual numbers after simplifying: {} docs, {} authors, {} edges'.format(*get_bipartite_node_counts(bipart_graph), len(bipart_graph.edges)))
+    max_degree_author = max(bipart_graph.degree(auth_nodes), key=lambda node_deg: node_deg[1])
+    logger.info('author {} having max degree of {}'.format(*max_degree_author))   
+    
+    # aktalisiere variablen -> warum muss ich das machen?
+    doc_nodes, auth_nodes = get_bipartite_nodes(bipart_graph)
+    
     logger.info('pruning to top {} edges per author'.format(top_n_contribs))
     for auth_node in auth_nodes:
         logger.debug('author {}'.format(auth_node))
@@ -55,10 +63,22 @@ def main():
         author_min_edges = nsmallest(num_remove, auth_edges, key=lambda edge: edge[1])
         logger.debug('removing edges \n{}'.format(pformat(author_min_edges)))
         bipart_graph.remove_edges_from((auth_node,neighbor) for neighbor,weight in author_min_edges)
+    
+    # keep_max_edges = 10000
+    # logger.info('pruning to {} highest edges'.format(keep_max_edges))
+    # num_edges_to_remove = len(bipart_graph.edges) - keep_max_edges
+    # min_edges = nsmallest(num_edges_to_remove, bipart_graph.edges(data='weight'), key=lambda edge: edge[2])
+    # bipart_graph.remove_edges_from(min_edges)
+    # log_nwx(bipart_graph)
+    
+    max_degree_author = max(bipart_graph.degree(auth_nodes), key=lambda node_deg: node_deg[1])
+    logger.info('author {} having max degree of {}'.format(*max_degree_author))
+    
     # entferne isolierte Knoten
     simplify_graph_nwx(bipart_graph)
     log_nwx(bipart_graph)
-        
+    logger.info('new number of documents {}, authors {}'.format(*get_bipartite_node_counts(bipart_graph)))
+    
     logger.info('writing graph to {}'.format(output_bipart_graph_path))
     nx.write_gpickle(bipart_graph, output_bipart_graph_path)
    

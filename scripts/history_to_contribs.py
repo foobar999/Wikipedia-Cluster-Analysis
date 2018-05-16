@@ -29,15 +29,27 @@ def contrib_value_diff_numterms(ids_revisions):
         yield authorid, max(0,num_toks-prev_num_toks)
         prev_num_toks = num_toks
     
+def contrib_value_absdiff(ids_revisions):
+    authorid,rev = next(ids_revisions)
+    prev_num_toks = len(get_tokens(rev.text))
+    yield authorid, prev_num_toks
+    for authorid,rev in ids_revisions:
+        num_toks = len(get_tokens(rev.text))
+        yield authorid, abs(num_toks-prev_num_toks)
+        prev_num_toks = num_toks
+
+    
 CONTRIBUTION_VALUE_CHOICES = {
     'one': '1 per contribution',
-    'diff_numterms': 'max(0, difference of number of terms to previous contrib'
+    'diff_numterms': 'max(0, difference of number of terms to previous contrib',
+    'absdiff': 'absolute difference of number of terms to previous contrib'
 }
     
 # liefert zu einem Generator von Paaren (AutorID,Revision) einen Generator von (AutorID,Beitragswert(Revision))
 CONTRIBUTION_VALUE_FUNCTIONS = {
     'one': contrib_value_one,
-    'diff_numterms': contrib_value_diff_numterms
+    'diff_numterms': contrib_value_diff_numterms,
+    'absdiff': contrib_value_absdiff
 }
 
 # liefert einen Generator ((Revisionen als Tupel, Seitentitel) für alle Seiten im Mainspace)

@@ -9,11 +9,11 @@ CONFIG=$1
 source $CONFIG
 
 CONTRIB_PREFIX=output/contribs/$PREFIX
+GRAPH_PREFIX=output/graph/$PREFIX
 STATS_PREFIX=output/stats/$PREFIX
 
 CONTRIB_VALUES=($CONTRIB_VALUES) # splitte String zu Array
 echo "CONTRIB_VALUES ${CONTRIB_VALUES[@]}"
-
 
 QUANTILE=0.95
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
@@ -22,3 +22,15 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     echo "visualising stats from $ACC_CONTRIBS to oprefix $IMG_PREFIX"
     python scripts/get_contribs_stats.py --acc-contribs=$ACC_CONTRIBS --img-prefix=$IMG_PREFIX --quantile-order=$QUANTILE
 done
+
+QUANTILE=0.99
+for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
+    # beschränkung hier auf "mul", da eh immer das gleiche
+    COAUTH_MODE=mul
+    GRAPH_FILE=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
+    IMG_FILE=$STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-components.pdf
+    echo "visualising stats from $ACC_CONTRIBS to oprefix $IMG_PREFIX"
+    python scripts/get_graph_comp_stats.py --graph=$GRAPH_FILE --img=$IMG_FILE --quantile-order=$QUANTILE
+done
+
+ 

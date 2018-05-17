@@ -2,8 +2,8 @@ import os, sys
 import logging
 import argparse
 import json
+import bz2
 from pprint import pformat
-from gensim.utils import smart_open
 from utils import init_logger
 
 logger = init_logger()
@@ -22,9 +22,9 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_titlecomms_path':output_titlecomms_path})))
     
-    with smart_open(input_titles_path, 'rb') as input_titles_file:
+    with bz2.open(input_titles_path, 'rt') as input_titles_file:
         titles = json.load(input_titles_file)
-    with smart_open(input_communities_path, 'rb') as input_communities_file:
+    with bz2.open(input_communities_path, 'rt') as input_communities_file:
         communities = json.load(input_communities_file)
         
     logger.info('{} titles'.format(len(titles)))

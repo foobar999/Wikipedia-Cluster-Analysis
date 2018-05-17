@@ -59,7 +59,7 @@ for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
                         echo "comparing $CLUS_PARAMS and $COMM_PARAMS"
                         #COMP_FILE=$COMP_PREFIX-$TOPIC_MODEL-$CLUSTER_METHOD-$CLUSTER_NUM-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
                         LOG_FILE=$LOG_PREFIX-$CLUS_PARAMS-$COMM_PREFIX.log
-                        OUTPUT=$(python scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2> >(tee $LOG_FILE >&2))
+                        OUTPUT=$(python3 scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2> >(tee $LOG_FILE >&2))
                         for COMP_MEASURE in "${COMP_MEASURES[@]}"; do 
                             SCORE="$(echo "${OUTPUT}" | grep $COMP_MEASURE | cut -d' ' -f2-)"
                             SCORE_FILE=$COMP_PREFIX-$COMP_MEASURE.txt

@@ -24,10 +24,10 @@ TITLE_COMMUNITIES=$COMM_PREFIX-titlecommunities.json
 LOG_COMMUNITIES=$LOG_PREFIX-communities.log
 
 echo "running community detection"
-(time python scripts/coauth_to_community.py --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --use-giant-comp=$USE_GIANT_COMP) |& tee $LOG_COMMUNITIES
+(time python3 scripts/coauth_to_community.py --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --use-giant-comp=$USE_GIANT_COMP) |& tee $LOG_COMMUNITIES
 bzip2 -zf $COMMUNITIES
 
 echo "creating title->communitylabel mapping file"
-python ./scripts/utils/get_title_communities.py  --communities=$COMMUNITIES.bz2 --titles=$TITLES --titlecomms=$TITLE_COMMUNITIES
+python3 ./scripts/utils/get_title_communities.py  --communities=$COMMUNITIES.bz2 --titles=$TITLES --titlecomms=$TITLE_COMMUNITIES
 bzip2 -zf $TITLE_COMMUNITIES
 

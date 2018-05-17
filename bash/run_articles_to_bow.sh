@@ -26,8 +26,8 @@ VOCABULARY_SIZE=1000000
 TOKEN_MIN_LEN=2
 TOKEN_MAX_LEN=100
 echo "generating bag-of-words corpus files"
-( time python scripts/articles_to_bow.py --articles-dump=$ARTICLES_DUMP.bz2 --out-prefix=$BOW_CORPUS_PREFIX --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --remove-stopwords --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_BOW
-python ./scripts/utils/binary_to_text.py pickle $BOW_CORPUS_PREFIX.mm.metadata.cpickle $BOW_TITLES # erzeuge aus binärer Metadatendatei eine JSON-Datei
+( time python3 scripts/articles_to_bow.py --articles-dump=$ARTICLES_DUMP.bz2 --out-prefix=$BOW_CORPUS_PREFIX --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-len-range $TOKEN_MIN_LEN $TOKEN_MAX_LEN --remove-stopwords --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_BOW
+python3 ./scripts/utils/binary_to_text.py pickle $BOW_CORPUS_PREFIX.mm.metadata.cpickle $BOW_TITLES # erzeuge aus binärer Metadatendatei eine JSON-Datei
 rm -f $BOW_CORPUS_PREFIX.mm.metadata.cpickle # entferne binäre Metadatendatei
 bzip2 -zf $BOW_MODEL $BOW_TITLES $BOW_ID2WORD # komprimiere Korpus, Dictionary, docID-Mapping
 

@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 # TODO ich sollte das mit der max. komponente eher machen
-# TODO normierung raus, da winzige werte und newman eh nicht normiert?
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"

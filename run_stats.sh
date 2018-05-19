@@ -10,10 +10,15 @@ source $CONFIG
 
 CONTRIB_PREFIX=output/contribs/$PREFIX
 GRAPH_PREFIX=output/graph/$PREFIX
+COMM_PREFIX=output/communities/$PREFIX
 STATS_PREFIX=output/stats/$PREFIX
 
-CONTRIB_VALUES=($CONTRIB_VALUES) # splitte String zu Array
+CONTRIB_VALUES=($CONTRIB_VALUES)
 echo "CONTRIB_VALUES ${CONTRIB_VALUES[@]}"
+COAUTH_MODES=($COAUTH_MODES)
+echo "COAUTH_MODES ${COAUTH_MODES[@]}"
+COMM_METHODS=($COMM_METHODS)
+echo "COMM_METHODS ${COMM_METHODS[@]}"
 
 QUANTILE=0.95
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
@@ -33,4 +38,13 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     python3 scripts/get_graph_comp_stats.py --graph=$GRAPH_FILE --img=$IMG_FILE --quantile-order=$QUANTILE
 done
 
- 
+for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
+    for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
+        for COMM_METHOD in "${COMM_METHODS[@]}"; do
+            COMM_FILE=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
+            IMG_FILE=$STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-community-sizes.pdf
+            python3 scripts/get_community_stats.py --communities=$COMM_FILE --img=$IMG_FILE
+        done
+    done
+done
+

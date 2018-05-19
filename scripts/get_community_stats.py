@@ -36,9 +36,10 @@ def main():
     counts[::-1].sort()
    
     plt.rc('font',family='Calibri')     
+    plt.figure(figsize=(6,3))
     plt.xlabel('Communities')
     plt.ylabel('Anzahl Knoten')
-    plt.scatter(np.arange(len(counts)), counts, c='b')
+    plt.scatter(np.arange(len(counts)), counts, c='b', s=7.5)
     logger.info('writing to {}'.format(output_img_path))
     plt.savefig(output_img_path, bbox_inches='tight')
     

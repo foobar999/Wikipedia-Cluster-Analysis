@@ -20,6 +20,7 @@ echo "COAUTH_MODES ${COAUTH_MODES[@]}"
 COMM_METHODS=($COMM_METHODS)
 echo "COMM_METHODS ${COMM_METHODS[@]}"
 
+
 QUANTILE=0.95
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ACC_CONTRIBS=$CONTRIB_PREFIX-$CONTRIB_VALUE-acc-contribs.mm.bz2
@@ -47,4 +48,3 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
         done
     done
 done
-

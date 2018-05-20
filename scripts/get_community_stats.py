@@ -36,7 +36,7 @@ def main():
     counts[::-1].sort()
    
     plt.rc('font',family='Calibri')     
-    plt.figure(figsize=(6,3))
+    plt.figure(figsize=(6,2))
     plt.xlabel('Communities')
     plt.ylabel('Anzahl Knoten')
     plt.scatter(np.arange(len(counts)), counts, c='b', s=7.5)

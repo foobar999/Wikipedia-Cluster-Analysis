@@ -25,3 +25,4 @@ LOG_ART_STATS=$STATS_PREFIX-articles-stats.log
 NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
 TOKEN_MIN_LEN=2
 python3 scripts/get_articles_stats.py --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee  $LOG_ART_STATS
+cat $LOG_ART_STATS | grep "stats\|density"

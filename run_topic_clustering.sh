@@ -38,13 +38,13 @@ echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
-    ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
+    #./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
     TPREFIX=$PREFIX-$TOPIC_MODEL
-    for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            ./bash/run_topic_to_cluster.sh $TPREFIX $CLUSTER_METHOD $CLUSTER_NUM $BOW_CORPUS_PREFIX
-        done
-    done
+    #for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    #    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+    #        ./bash/run_topic_to_cluster.sh $TPREFIX $CLUSTER_METHOD $CLUSTER_NUM $BOW_CORPUS_PREFIX
+    #    done
+    #done
 done
 
 

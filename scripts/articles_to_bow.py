@@ -117,7 +117,10 @@ def main():
     stopwords = STOPWORDS if remove_stopwords else ()
     corpus = MediaWikiCorpus(input_articles_path, article_min_tokens, token_min_len, stopwords, namespace_prefixes)
     corpus.dictionary = Dictionary(corpus.get_texts())
-    corpus.dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_words)
+    logger.info('filtering dictionary: removing terms in less than {} docs'.format(no_below))
+    corpus.dictionary.filter_extremes(no_below=no_below, no_above=1, keep_n=keep_words)
+    logger.info('filtering dictionary: removing terms in more than {} of all docs'.format(no_above))
+    corpus.dictionary.filter_extremes(no_below=0, no_above=no_above, keep_n=keep_words)
     corpus.dictionary.compactify()
     output_id2word_path = output_prefix + '-id2word.txt'
     corpus.dictionary.save_as_text(output_id2word_path)    

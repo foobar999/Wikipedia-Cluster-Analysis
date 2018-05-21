@@ -16,11 +16,13 @@ def get_corpus_stats(corpus, id2word):
     num_docs = 0
     num_nnz = 0
     num_terms = len(id2word)
+    sum_elements = 0
     for doc in corpus:
         num_docs += 1
         bow = id2word.doc2bow(doc)
         num_nnz += len(bow)
-    logger.info("%ix%i matrix, density=%.3f%% (%i/%i)", num_docs, num_terms, 100.0 * num_nnz / (num_docs * num_terms), num_nnz, num_docs * num_terms) 
+        sum_elements += sum(cnt for id,cnt in bow)
+    logger.info("%ix%i matrix, density=%.3f%% (%i/%i), sum_elements %i", num_docs, num_terms, 100.0 * num_nnz / (num_docs * num_terms), num_nnz, num_docs * num_terms, sum_elements) 
     logger.info('')
    
 

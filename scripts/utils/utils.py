@@ -2,6 +2,7 @@ import logging
 import sys, os
 import csv
 import argparse
+import bz2
 from pprint import pformat
 import networkx as nx
 from igraph import Histogram
@@ -146,11 +147,24 @@ def get_bipartite_node_counts(bipartite_graph):
     doc_nodes, auth_nodes = get_bipartite_nodes(bipartite_graph)
     return len(doc_nodes), len(auth_nodes)
             
-        
-        
+# lädt die als .json.bz2-datei vorliegenden Labels eines Clusterings / einer Communitystruktur
+def load_cluster_labels(labels_path):
+    logger.info('loading cluster labels from {}'.format(labels_path))
+    with bz2.open(labels_path, 'rt') as labels_file:
+        cluster_labels = json.load(labels_file)
+    logger.info('loaded {} cluster labels'.format(len(cluster_labels)))
+    num_clusters = len(set(cluster_labels) - set([-1]))
+    logger.info('number of clusters (excluding noise) {}'.format(num_clusters))
+    logger.info('number of noise labels {}'.format(sum(1 if ele < 0 else 0 for ele in cluster_labels)))
+    return cluster_labels
                 
-        
-        
+# lädt die als .npz vorliegende dichte Dokument-Topic-Matrix
+def load_document_topics(document_topics_path):        
+    logger.info('loading dense document-topics from {}'.format(document_topics_path))
+    document_topics = load_npz(document_topics_path)
+    logger.info('loaded document-topics-matrix of shape {}'.format(document_topics.shape))
+    logger.debug('document-topics-matrix \n{}'.format(document_topics))
+    return document_topics
         
         
         

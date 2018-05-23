@@ -1,6 +1,6 @@
 import logging
 import sys, os
-import csv
+import csv, json
 import argparse
 import bz2
 from pprint import pformat

@@ -9,6 +9,7 @@ CONFIG=$1
 source $CONFIG
 
 COLL_PREFIX=collections/$PREFIX
+TM_PREFIX=output/topic/$PREFIX
 STATS_PREFIX=output/stats/$PREFIX
 
 echo "PREFIX $PREFIX"
@@ -26,3 +27,16 @@ NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
 TOKEN_MIN_LEN=2
 python3 scripts/get_articles_stats.py --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee  $LOG_ART_STATS
 cat $LOG_ART_STATS | grep "stats\|density"
+
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOC_TOP_IMG=$STATS_PREFIX-lda-document-topics.pdf
+python3 scripts/get_document_viz.py --document-topics=$DOCUMENT_TOPICS --img-file=$DOC_TOP_IMG
+
+
+
+
+
+
+
+
+

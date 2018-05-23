@@ -1,16 +1,31 @@
 #!/bin/bash -e
 
-if (( $# != 4 )); then
-    echo "Usage: $0 IPREFIX METHOD NUM_CLUSTERS BOW_CORPUS_PREFIX"
+if [ $# != 4 ] && [ $# != 5 ]; then
+    echo "num args must be 4 or 5"
     exit 1
 fi
 
 IPREFIX=$1
-METHOD=$2
-NUM_CLUSTERS=$3
-OPREFIX=$IPREFIX-$METHOD-$NUM_CLUSTERS
-BOW_CORPUS_PREFIX=$4
-
+BOW_CORPUS_PREFIX=$2
+METHOD=$3
+if [ $METHOD == "dbscan" ]; then
+    if [ $# != 5 ]; then
+        echo "Usage: $0 IPREFIX BOW_CORPUS_PREFIX dbscan EPSILON MIN_SAMPLES"
+        exit 1
+    fi
+    EPSILON=$4
+    MIN_SAMPLES=$5
+    OPREFIX=$IPREFIX-$METHOD-$EPSILON-$MIN_SAMPLES
+else
+    if [ $# != 4 ]; then
+        echo "Usage: $0 IPREFIX BOW_CORPUS_PREFIX METHOD NUM_CLUSTERS"
+        exit 1
+    fi
+    NUM_CLUSTERS=$4
+    OPREFIX=$IPREFIX-$METHOD-$NUM_CLUSTERS
+fi
+   
+    
 TM_PREFIX=output/topic/$IPREFIX
 CLUS_PREFIX=output/clusters/$OPREFIX
 LOG_PREFIX=output/logs/$OPREFIX
@@ -22,8 +37,13 @@ CLUSTER_LABELS=$CLUS_PREFIX.json
 TITLE_CLUSTER_LABELS=$CLUS_PREFIX-titleclusters.json
 LOG_CLUSTER=$LOG_PREFIX.log
 
-echo "computing $NUM_CLUSTERS clusters with $METHOD"
-(time python3 scripts/topic_to_cluster.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD --num-clusters=$NUM_CLUSTERS) |& tee $LOG_CLUSTER
+if [ $METHOD == "dbscan" ]; then
+    ARGS=" --eps=$EPSILON --min-samples=$MIN_SAMPLES "
+else
+    ARGS=" --num-clusters=$NUM_CLUSTERS "
+fi
+echo "computing clusters with $METHOD"
+(time python3 scripts/topic_to_cluster.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD $ARGS) |& tee $LOG_CLUSTER
 bzip2 -zf $CLUSTER_LABELS
 
 echo "evaluating clustering"

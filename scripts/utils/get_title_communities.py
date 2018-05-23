@@ -35,8 +35,8 @@ def main():
     if isinstance(communities,dict):
         title_communities = {titles[doc_id[1:]]: comm_label for doc_id,comm_label in communities.items()}
     else:
-        title_communities = {titles[str(doc_id)]: comm_label for doc_id,comm_label in enumerate(communities)}
-    logger.info('generated {} title_communities'.format(len(title_communities)))
+        title_communities = {titles[str(doc_id)]: comm_label for doc_id,comm_label in enumerate(communities) if comm_label >= 0}
+    logger.info('generated {} title_communities and removed noise'.format(len(title_communities)))
     logger.debug('title_communities \n{}'.format(title_communities))
         
     logger.info('saving to {}'.format(output_titlecomms_path))

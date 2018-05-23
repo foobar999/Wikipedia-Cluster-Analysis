@@ -57,7 +57,7 @@ def save_npz(ofname, mat):
     np.savez_compressed(ofname, arr=mat)
     
 def load_npz(ifname):
-    return np.load(ifname)['arr']
+    return np.load(ifname, mmap_mode='r')['arr']
     
 def argparse_bool(value):
     if value in ('y', 'n'):

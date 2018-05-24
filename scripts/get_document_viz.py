@@ -4,6 +4,7 @@ import logging
 import json
 from pprint import pformat
 from sklearn import decomposition
+from sklearn.preprocessing import Normalizer
 import matplotlib.pyplot as plt
 import numpy as np
 from utils.utils import init_logger, load_npz, load_cluster_labels, load_document_topics
@@ -14,6 +15,7 @@ logger = init_logger()
 def transform_pca(document_topics):
     logger.info('running pca')
     pca = decomposition.PCA(n_components=2)
+    #pca = decomposition.PCA(n_components=3)
     documents_2d = pca.fit_transform(document_topics)
     logger.debug('pca res\n{}'.format(documents_2d))
     return documents_2d
@@ -31,13 +33,18 @@ def main():
     logger.info('running with:\n{}'.format(pformat({'input_document_topics_path':input_document_topics_path,'output_img_path':output_img_path})))
 
     document_topics = load_document_topics(input_document_topics_path)
+    #document_topics = Normalizer(norm='l2', copy=True).transform(document_topics)
     documents_2d = transform_pca(document_topics)
 
+    #from mpl_toolkits.mplot3d import Axes3D
+    #ax = plt.figure().gca(projection='3d')
+    #ax.scatter(documents_2d[:,0], documents_2d[:,1], documents_2d[:,2], c='dodgerblue', s=1, rasterized=True)
+    #plt.show()
     logger.info('plotting pca documents')
-    plt.scatter(documents_2d[:,0], documents_2d[:,1], c='dodgerblue', s=1)
+    plt.scatter(documents_2d[:,0], documents_2d[:,1], c='dodgerblue', s=1, rasterized=True)
     logger.info('saving img to {}'.format(output_img_path))
-    plt.savefig(output_img_path, bbox_inches='tight')
-
+    plt.savefig(output_img_path, bbox_inches='tight', dpi=400)
+    
 
 if __name__ == '__main__':
     main()

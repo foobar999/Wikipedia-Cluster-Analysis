@@ -5,6 +5,8 @@ import json
 import bz2
 from pprint import pformat
 from sklearn import decomposition
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from get_document_viz import transform_pca

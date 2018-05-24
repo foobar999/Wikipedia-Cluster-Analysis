@@ -5,6 +5,8 @@ import json
 from pprint import pformat
 from sklearn import decomposition
 from sklearn.preprocessing import Normalizer
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from utils.utils import init_logger, load_npz, load_cluster_labels, load_document_topics
@@ -19,7 +21,7 @@ def transform_pca(document_topics):
     documents_2d = pca.fit_transform(document_topics)
     logger.debug('pca res\n{}'.format(documents_2d))
     return documents_2d
-    
+
 
 def main():
     parser = argparse.ArgumentParser(description='plots the pca-transformed dense document-topic-vectors')

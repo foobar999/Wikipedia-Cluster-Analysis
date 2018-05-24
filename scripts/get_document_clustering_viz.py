@@ -17,7 +17,7 @@ logger = init_logger()
 
 
 def main():
-    parser = argparse.ArgumentParser(description='plots a k-distance graph of a given dataset')
+    parser = argparse.ArgumentParser(description='plots documents 2d by using pca')
     parser.add_argument('--document-topics', type=argparse.FileType('r'), help='path to input document-topic-file (.npz)', required=True)
     parser.add_argument('--cluster-labels', type=argparse.FileType('r'), help='path to input cluster labels .json.bz2 file ', required=True)
     parser.add_argument('--img-file', type=argparse.FileType('w'), help='path to output im file', required=True)
@@ -37,10 +37,10 @@ def main():
     non_noise = documents_2d[cluster_labels >= 0]
     non_noise_labels = cluster_labels[cluster_labels >= 0]
     noise = documents_2d[cluster_labels < 0]
-    plt.scatter(noise[:,0], noise[:,1], c='k', s=1) # plotte noise schwarz 
-    plt.scatter(non_noise[:,0], non_noise[:,1], c=non_noise_labels, cmap='prism', s=1) # plotte nicht-noise je nach labels
+    plt.scatter(noise[:,0], noise[:,1], c='k', s=1, rasterized=True) # plotte noise schwarz 
+    plt.scatter(non_noise[:,0], non_noise[:,1], c=non_noise_labels, cmap='prism', s=1, rasterized=True) # plotte nicht-noise je nach labels
     logger.info('saving img to {}'.format(output_img_path))
-    plt.savefig(output_img_path, bbox_inches='tight')
+    plt.savefig(output_img_path, bbox_inches='tight', dpi=400)
 
 
 if __name__ == '__main__':

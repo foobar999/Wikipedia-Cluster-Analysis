@@ -6,6 +6,7 @@ from gensim.corpora import MmCorpus, Dictionary
 from gensim.models import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
 from utils.utils import init_logger
+import numpy as np
 
 logger = init_logger()
 
@@ -54,7 +55,7 @@ def main():
     bow = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)    
     model = LdaModel if 'DEBUG' in os.environ else LdaMulticore
-    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None)
+    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None, minimum_probability=0.00001, minimum_phi_value=0.00001)
     
     logger.info('saving model with output prefix {}'.format(output_model_prefix))
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten    
@@ -63,7 +64,20 @@ def main():
     topics = lda_model.show_topics(num_topics=num_topics, num_words=max_printed_terms, log=False, formatted=True)
     for topicid,phi in topics:
         logger.info(phi)
+        
+    theta_sums = [None] * bow.num_docs
+    for doc,doc_topics in enumerate(lda_model[bow]):
+        theta_sums[doc] = sum(theta for term,theta in doc_topics)
+    theta_sums = np.array(theta_sums)
+    logger.info('mean theta sum {}'.format(np.mean(theta_sums)))
+    logger.info('stddev theta sum {}'.format(np.std(theta_sums)))
     
+    phi = lda_model.get_topics()
+    logger.info('phi shape {}'.format(phi.shape))
+    phi_sums = phi.sum(1)
+    logger.info('phi sums shape {}'.format(phi_sums.shape))
+    logger.info('mean phi sum {}'.format(np.mean(phi_sums)))
+    logger.info('stddev phi sum {}'.format(np.std(phi_sums)))
     
     
 if __name__ == '__main__':

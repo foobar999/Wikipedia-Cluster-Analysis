@@ -55,7 +55,7 @@ def main():
     bow = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)    
     model = LdaModel if 'DEBUG' in os.environ else LdaMulticore
-    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None, minimum_probability=0.00001, minimum_phi_value=0.00001)
+    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None, minimum_probability=0, minimum_phi_value=0)
     
     logger.info('saving model with output prefix {}'.format(output_model_prefix))
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten    

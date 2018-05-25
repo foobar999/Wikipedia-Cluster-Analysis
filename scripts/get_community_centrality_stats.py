@@ -34,6 +34,7 @@ def betweenness(comm_subgraph):
 # siehe "Scientific collaboration networks. II. Shortest paths, weighted networks, and centrality"
 # "In this simple calculation we assumed that the distance between authors is just the inverse of the weight of their collaborative tie"
 # Invertierung der Kantengewichte
+# berechnung der kürzesten wege dauert deutlich länger, da im ungewichteten graphen mit breitensuche bestimmbar!
 def weighted_betweenness(comm_subgraph):
     comm_subgraph.es['weight'] = [1/w for w in comm_subgraph.es['weight']]
     N = comm_subgraph.vcount()

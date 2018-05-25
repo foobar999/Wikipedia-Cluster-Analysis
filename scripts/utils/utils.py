@@ -166,6 +166,30 @@ def load_document_topics(document_topics_path):
     logger.debug('document-topics-matrix \n{}'.format(document_topics))
     return document_topics
         
+# lädt die Communitylabels als Datei
+def load_communities(communities_path):
+    logger.info('loading communities from {}'.format(communities_path))
+    with bz2.open(communities_path, 'rt') as communities_file:
+        communities = json.load(communities_file)
+        
+    logger.info('loaded {} labels'.format(len(communities)))
+    logger.info('loaded {} different labels'.format(len(set(communities))))
+    logger.debug('communities:\n{}'.format(communities))
+    return communities
+       
+# lädt eine Titeldatei
+def load_titles(titles_path):
+    logger.info('loading titles from {}'.format(titles_path))
+    with bz2.open(titles_path, 'rt') as titles_file:
+        titles = json.load(titles_file)
+    logger.info('loaded {} titles'.format(len(titles)))
+    return titles
+       
+       
+       
+       
+       
+       
         
         
         

@@ -74,7 +74,8 @@ def find_max_nodes_per_community(community_structure, considered_communities, ti
         logger.info('extracted subgraph for community {}: {} nodes, {} edges'.format(comm_id, comm_subgraph.vcount(), comm_subgraph.ecount())) 
         max_weight_node_names = get_top_nodes_of_communities(comm_subgraph, J, weighting_fun)  
         log_titles_of_max_nodes(max_weight_node_names, titles)
-     
+    logger.info('')
+    
      
 def main():
     parser = argparse.ArgumentParser(description='calculated various centrality-related stats (only the giant component of the graph considered!')

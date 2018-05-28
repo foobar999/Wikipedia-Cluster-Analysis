@@ -30,6 +30,7 @@ echo "EPSILONS ${EPSILONS[@]}"
 MIN_SAMPLES=($MIN_SAMPLES)
 echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
+
 ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
 LOG_ART_STATS=$STATS_PREFIX-articles-stats.log
 NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
@@ -38,8 +39,10 @@ python3 scripts/get_articles_stats.py --articles-dump=$ARTICLES_DUMP --no-below=
 cat $LOG_ART_STATS | grep "stats\|density"
 
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOC_TOP_IMG=$STATS_PREFIX-lda-document-topics.pdf
-python3 scripts/get_document_viz.py --document-topics=$DOCUMENT_TOPICS --img-file=$DOC_TOP_IMG
+DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
+TOPIC_AVG_PROBS_IMG=$STATS_PREFIX-lda-topic-avg-probs.pdf
+TOPIC_AVG_PROBS_CDF_IMG=$STATS_PREFIX-lda-topic-probs-avg-cdf.pdf
+python3 scripts/get_document_viz.py --document-topics=$DOCUMENT_TOPICS --doc-data=$DOC_DATA_IMG --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD

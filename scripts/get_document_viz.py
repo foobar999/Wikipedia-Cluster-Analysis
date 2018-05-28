@@ -72,6 +72,11 @@ def main():
     avg_prop_cdf = np.cumsum(average_topic_props)
     scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Wahrscheinlichkeit')
     
+    K = 5
+    logger.info('calculating {} topic indices of highest probability'.format(K))
+    top_k_topics = average_topic_props.argsort()[-K:][::-1]
+    logger.info('max topics:\n indices \n{} \n props \n{}'.format(top_k_topics, average_topic_props[top_k_topics]))
+    
 
 if __name__ == '__main__':
     main()

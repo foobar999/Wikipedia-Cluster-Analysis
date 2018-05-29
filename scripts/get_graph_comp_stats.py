@@ -1,11 +1,13 @@
 import os, sys
 import logging
 import argparse
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from pprint import pprint, pformat
 from igraph import Graph
 import numpy as np
 from scipy.stats import itemfreq
-import matplotlib.pyplot as plt
 from get_contribs_stats import apply_quantile, render_hist
 from utils.utils import init_logger, log_igraph
 

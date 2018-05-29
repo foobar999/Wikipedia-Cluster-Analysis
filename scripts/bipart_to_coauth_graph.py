@@ -1,11 +1,12 @@
 import os, sys
 import logging
 import argparse
+from heapq import nsmallest
+from pprint import pformat
+from math import log10
 import networkx as nx
 from networkx import bipartite
-from pprint import pformat
 from utils.utils import init_logger, log_nwx, get_bipartite_nodes, simplify_graph_nwx
-from heapq import nsmallest
 
 logger = init_logger()
             
@@ -17,6 +18,11 @@ def jaccard(graph, v1, v2):
         return 0
     denominator = len(neighbors1) + len(neighbors2) - counter
     return counter / denominator
+    
+def dot_product(graph, v1, v2):
+    nbrs1, nbrs2 = graph[v1], graph[v2]
+    common_nbrs = set(nbrs1) & set(nbrs2)
+    return sum(nbrs1[n]['weight']*nbrs2[n]['weight'] for n in common_nbrs)    
      
      
 def main():
@@ -27,6 +33,8 @@ def main():
         'mul': 'weight of edges between d1 and d2 is the number of authors contributing to both',
         'jac': 'weight of edges between d1 and d2 is the jaccard similarity of shared authors',
         'coll': 'weight of edges between d1 and d2 is newmans collaboration weight',
+        'dot': 'dot product of weighted author vectors of d1 and d2',
+        'logdot': 'dot product of weighted author vectors of d1 and d2, each weighted log10-ed',
     }
     parser.add_argument('--mode', choices=modes, help='co-authorship generation mode: ' + str(modes), required=True)
     parser.add_argument('--keep-max-edges', type=int, help='number of edges with highest weights to keep', required=True)
@@ -53,6 +61,11 @@ def main():
         #coauth_graph = bipartite.overlap_weighted_projected_graph(bipart_graph, doc_nodes, jaccard=True)
     elif mode == 'coll':
         coauth_graph = bipartite.collaboration_weighted_projected_graph(bipart_graph, doc_nodes)     
+    elif mode in ('dot', 'logdot'):
+        if mode == 'logdot':
+            for v1,v2,data in bipart_graph.edges(data=True):
+                data['weight'] = log10(data['weight']+1)
+        coauth_graph = bipartite.generic_weighted_projected_graph(bipart_graph, doc_nodes, weight_function=dot_product)
     log_nwx(coauth_graph)    
         
     logger.info('pruning to {} highest edges'.format(keep_max_edges))

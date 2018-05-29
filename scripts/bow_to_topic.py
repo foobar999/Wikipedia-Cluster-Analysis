@@ -55,7 +55,7 @@ def main():
     bow = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)    
     model = LdaModel if 'DEBUG' in os.environ else LdaMulticore
-    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=None, minimum_probability=0.0001, minimum_phi_value=0.0001)
+    lda_model = model(corpus=bow, num_topics=num_topics, id2word=id2word, passes=passes, iterations=iterations, chunksize=2000, alpha=alpha, eta=beta, eval_every=10, minimum_probability=0.0001, minimum_phi_value=0.0001)
     
     logger.info('saving model with output prefix {}'.format(output_model_prefix))
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten    
@@ -66,7 +66,7 @@ def main():
     #    logger.info(phi)
     for topicid in range(num_topics):
         logger.info('topic nr. {}: {}'.format(topicid, lda_model.print_topic(topicid, topn=max_printed_terms)))
-        
+    
     theta_sums = [None] * bow.num_docs
     for doc,doc_topics in enumerate(lda_model[bow]):
         theta_sums[doc] = sum(theta for term,theta in doc_topics)

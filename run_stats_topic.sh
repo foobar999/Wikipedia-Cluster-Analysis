@@ -40,10 +40,10 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # cat $LOG_ART_STATS | grep "stats\|density"
 
 # durchschnittliche Wahrscheinlichkeiten
-BOW=$BOW_PREFIX-bow.mm.bz2
-TOPIC_MODEL=$TM_PREFIX-lda
-LOG_TOPIC_FILE=$STATS_PREFIX-lda-topic-avg-probs.log
-python3 scripts/get_topic_stats.py --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+# BOW=$BOW_PREFIX-bow.mm.bz2
+# TOPIC_MODEL=$TM_PREFIX-lda
+# LOG_TOPIC_FILE=$STATS_PREFIX-lda-topic-avg-probs.log
+# python3 scripts/get_topic_stats.py --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
@@ -55,11 +55,11 @@ python3 scripts/get_document_avg_viz.py --document-topics=$DOCUMENT_TOPICS --top
 DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
 python3 scripts/get_document_2d_transformed.py --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
-# 2D-Plot
+# 2D-Plot Dokumente
 DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
 python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
-# Cluster-Plots
+# 2D-Plot Cluster-gelabelte Dokumente
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
     IMGPREFIX=$STATS_PREFIX-lda-$CLUSTER_METHOD

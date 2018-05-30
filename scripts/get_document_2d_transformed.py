@@ -2,6 +2,7 @@ import os, sys
 import argparse
 import logging
 from sklearn import decomposition
+from sklearn.manifold import TSNE
 from utils.utils import init_logger, load_document_topics, save_npz
 
 logger = init_logger()
@@ -17,10 +18,11 @@ def main():
     output_documents_2d_path = args.documents_2d.name
 
     document_topics = load_document_topics(input_document_topics_path)
-    model = decomposition.PCA(n_components=2)
+    #model = decomposition.PCA(n_components=2)
+    model = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300) 
     logger.info('running 2d-transformation with model {}'.format(model))
     documents_2d = model.fit_transform(document_topics)
-    logger.debug('pca res\n{}'.format(documents_2d))
+    logger.debug('2d-transformation res\n{}'.format(documents_2d))
     
     logger.info('saving 2d-documents to {}'.format(output_documents_2d_path))
     save_npz(output_documents_2d_path, documents_2d)

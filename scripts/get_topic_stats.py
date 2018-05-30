@@ -1,7 +1,7 @@
 import os, sys
 import argparse
 import logging
-from collections import OrderedDict
+from collections import defaultdict
 from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
@@ -35,15 +35,43 @@ def main():
     document_topic_probs = document_topic_probs.tocsr()
     
     topics_avg = document_topic_probs.sum(axis=0) / bow.num_docs
+    topics_max = document_topic_probs.max(axis=0).todense().tolist()[0]
     logger.debug('avg {} shape {}'.format(topics_avg, topics_avg.shape))
-       
+    logger.debug('max {} len {}'.format(topics_max, len(topics_max)))
     topics_avg = list(enumerate(topics_avg.tolist()[0]))
     topics_avg.sort(key=lambda t:t[1], reverse=True)
+    
     num_printed_terms = 10
     logger.info('my most important topics')
     for topicid, topic_avg_prob in topics_avg:
-        logger.info('topic ID={0}, prob={1:.4f}: terms {2}'.format(topicid, topic_avg_prob, model.print_topic(topicid, topn=num_printed_terms)))
+        logger.info('topic ID={0}, prob={1:.4f}, maxprob={2:.4f}, terms:\n{3}'.format(topicid, topic_avg_prob, topics_max[topicid], model.print_topic(topicid, topn=num_printed_terms)))
         
+    num_top_topics = min(5, len(topics_avg))
+    num_top_terms = 20
+    top_topics = [topicid for topicid,topic_avg in topics_avg][:num_top_topics]
+    logger.info('calculating stats of top-{}-topics {}'.format(num_top_topics, top_topics))
+    term_topics = defaultdict(list) # mapping termid->topicids für alle termids, die in top-k von irgendwelchen topics enthalten
+    for topicid in top_topics:
+        for termid, prob in model.get_topic_terms(topicid, topn=num_top_terms):
+            term_topics[termid].append(topicid)
+    term_topics = dict(term_topics)
+    logger.info('with top-{}-terms per topic'.format(num_top_terms))
+        
+    num_different_docs_per_topic = {topicid: 0 for topicid in top_topics}
+    sum_bow_values_per_topic = {topicid: 0 for topicid in top_topics}
+    for docid, document_term_bow in enumerate(bow):
+        doc_topics = set()
+        for termid, bow_value in document_term_bow:
+            if termid in term_topics:
+                for topicid in term_topics[termid]:
+                    doc_topics.add(topicid)
+                    sum_bow_values_per_topic[topicid] += bow_value
+        for topicid in doc_topics:
+            num_different_docs_per_topic[topicid] += 1
+    
+    for topicid in top_topics:
+        logger.info('top-{}-terms of topic {} have total have {} total occurences'.format(num_top_terms, topicid, sum_bow_values_per_topic[topicid]))
+        logger.info('top-{}-terms of topic {} in {} different documents'.format(num_top_terms, topicid, num_different_docs_per_topic[topicid]))
     
     
 if __name__ == '__main__':

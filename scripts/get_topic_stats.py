@@ -49,13 +49,12 @@ def main():
     num_top_topics = min(5, len(topics_avg))
     num_top_terms = 20
     top_topics = [topicid for topicid,topic_avg in topics_avg][:num_top_topics]
-    logger.info('calculating stats of top-{}-topics {}'.format(num_top_topics, top_topics))
+    logger.info('calculating stats of top-{}-topics {} with top-{}-terms per topic'.format(num_top_topics, top_topics, num_top_terms))
     term_topics = defaultdict(list) # mapping termid->topicids für alle termids, die in top-k von irgendwelchen topics enthalten
     for topicid in top_topics:
         for termid, prob in model.get_topic_terms(topicid, topn=num_top_terms):
             term_topics[termid].append(topicid)
     term_topics = dict(term_topics)
-    logger.info('with top-{}-terms per topic'.format(num_top_terms))
         
     num_different_docs_per_topic = {topicid: 0 for topicid in top_topics}
     sum_bow_values_per_topic = {topicid: 0 for topicid in top_topics}
@@ -70,8 +69,8 @@ def main():
             num_different_docs_per_topic[topicid] += 1
     
     for topicid in top_topics:
-        logger.info('top-{}-terms of topic {} have total have {} total occurences'.format(num_top_terms, topicid, sum_bow_values_per_topic[topicid]))
-        logger.info('top-{}-terms of topic {} in {} different documents'.format(num_top_terms, topicid, num_different_docs_per_topic[topicid]))
+        logger.info('top-{}-terms of topic {} occure {} times in collection'.format(num_top_terms, topicid, int(sum_bow_values_per_topic[topicid])))
+        logger.info('top-{}-terms of topic {} occure {} different documents'.format(num_top_terms, topicid, num_different_docs_per_topic[topicid]))
     
     
 if __name__ == '__main__':

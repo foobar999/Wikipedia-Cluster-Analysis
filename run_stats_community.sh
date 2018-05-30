@@ -39,6 +39,15 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     python3 scripts/get_graph_comp_stats.py --graph=$GRAPH_FILE --img=$IMG_FILE --quantile-order=$QUANTILE
 done
 
+# bestimme je Dokumenttitel Autoren
+for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
+    BIPART_GRAPH=$GRAPH_PREFIX-$CONTRIB_VALUE-doc-auth-bipartite.graph.bz2
+    ID2AUTHOR=$CONTRIB_PREFIX-$CONTRIB_VALUE-id2author.txt.bz2
+    TITLES=$CONTRIB_PREFIX-$CONTRIB_VALUE-titles.json.bz2
+    TITLE2AUTHORNAMES=$STATS_PREFIX-$CONTRIB_VALUE-title2authornames.json
+    python3 scripts/utils/get_authors_of_titles_pruned.py --bipart-graph=$BIPART_GRAPH --id2author=$ID2AUTHOR --titles=$TITLES --title2authornames=$TITLE2AUTHORNAMES
+done
+
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
         for COMM_METHOD in "${COMM_METHODS[@]}"; do

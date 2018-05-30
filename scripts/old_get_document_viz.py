@@ -61,21 +61,20 @@ def main():
     logger.info('saving img to {}'.format(output_doc_data_path))
     plt.savefig(output_doc_data_path, bbox_inches='tight', dpi=400)
     
-    logger.info('calculating average probability per topic')
-    average_topic_props = np.average(document_topics, axis=0)
-    logger.info('shape of average res {}'.format(average_topic_props.shape))
-    average_topic_props[::-1].sort()
-    #x = np.cumsum(average_topic_props)
-    logger.info('sum over averages {}'.format(average_topic_props.sum()))    
-    scatter_plot(average_topic_props, output_topic_avg_probs_path, 'Topic', 'Ø Anteil')
+    # logger.info('calculating average probability per topic')
+    # average_topic_props = np.average(document_topics, axis=0)
+    # logger.info('shape of average res {}'.format(average_topic_props.shape))
+    # average_topic_props[::-1].sort()
+    # logger.info('sum over averages {}'.format(average_topic_props.sum()))    
+    # scatter_plot(average_topic_props, output_topic_avg_probs_path, 'Topic', 'Ø Anteil')
     
-    avg_prop_cdf = np.cumsum(average_topic_props)
-    scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Anteil')
+    # avg_prop_cdf = np.cumsum(average_topic_props)
+    # scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Anteil')
     
-    K = 5
-    logger.info('calculating {} topic indices of highest probability'.format(K))
-    top_k_topics = average_topic_props.argsort()[-K:][::-1]
-    logger.info('max topics:\n indices \n{} \n props \n{}'.format(top_k_topics, average_topic_props[top_k_topics]))
+    # K = 5
+    # logger.info('calculating {} topic indices of highest probability'.format(K))
+    # top_k_topics = average_topic_props.argsort()[-K:][::-1]
+    # logger.info('max topics:\n indices \n{} \n props \n{}'.format(top_k_topics, average_topic_props[top_k_topics]))
     
 
 if __name__ == '__main__':

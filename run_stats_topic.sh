@@ -32,12 +32,12 @@ MIN_SAMPLES=($MIN_SAMPLES)
 echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 # Preprocessing-Auswirkungen
-ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-LOG_ART_STATS=$STATS_PREFIX-articles-stats.log
-NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-TOKEN_MIN_LEN=2
-python3 scripts/get_articles_stats.py --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
-cat $LOG_ART_STATS | grep "stats\|density"
+# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+# LOG_ART_STATS=$STATS_PREFIX-articles-stats.log
+# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+# TOKEN_MIN_LEN=2
+# python3 scripts/get_articles_stats.py --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
+# cat $LOG_ART_STATS | grep "stats\|density"
 
 # durchschnittliche Wahrscheinlichkeiten
 BOW=$BOW_PREFIX-bow.mm.bz2
@@ -45,12 +45,19 @@ TOPIC_MODEL=$TM_PREFIX-lda
 LOG_TOPIC_FILE=$STATS_PREFIX-lda-topic-avg-probs.log
 python3 scripts/get_topic_stats.py --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
-# PCA, durchschn. W'keit-Plots
+# avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
 TOPIC_AVG_PROBS_IMG=$STATS_PREFIX-lda-topic-avg-probs.pdf
 TOPIC_AVG_PROBS_CDF_IMG=$STATS_PREFIX-lda-topic-probs-avg-cdf.pdf
-python3 scripts/get_document_viz.py --document-topics=$DOCUMENT_TOPICS --doc-data=$DOC_DATA_IMG --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+python3 scripts/get_document_avg_viz.py --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+
+# 2D-Transformation
+DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
+python3 scripts/get_document_2d_transformed.py --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+
+# 2D-Plot
+DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
+python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # Cluster-Plots
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
@@ -59,16 +66,16 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     if [ $CLUSTER_METHOD == "dbscan" ]; then
         for EPSILON in "${EPSILONS[@]}"; do
             for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-                CLUS_FILE=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-                IMG_FILE=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
-                python3 scripts/get_document_clustering_viz.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUS_FILE --img-file=$IMG_FILE
+                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
+                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
+                python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
             done
         done
     else
         for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            CLUS_FILE=$CMPREFIX-$CLUSTER_NUM.json.bz2
-            IMG_FILE=$IMGPREFIX-$CLUSTER_NUM.pdf
-            python3 scripts/get_document_clustering_viz.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUS_FILE --img-file=$IMG_FILE
+            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+            python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
         done
     fi
 done

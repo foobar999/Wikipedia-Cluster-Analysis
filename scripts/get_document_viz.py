@@ -67,10 +67,10 @@ def main():
     average_topic_props[::-1].sort()
     #x = np.cumsum(average_topic_props)
     logger.info('sum over averages {}'.format(average_topic_props.sum()))    
-    scatter_plot(average_topic_props, output_topic_avg_probs_path, 'Topic', 'Ø Wahrscheinlichkeit')
+    scatter_plot(average_topic_props, output_topic_avg_probs_path, 'Topic', 'Ø Anteil')
     
     avg_prop_cdf = np.cumsum(average_topic_props)
-    scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Wahrscheinlichkeit')
+    scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Anteil')
     
     K = 5
     logger.info('calculating {} topic indices of highest probability'.format(K))

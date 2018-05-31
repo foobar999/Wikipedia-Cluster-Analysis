@@ -95,6 +95,7 @@ def main():
         for title in central_titles:
             logger.info(title)
         matrix[1:,i] = central_titles
+        logger.info('')
     strf = StringIO()
     np.savetxt(strf, matrix, delimiter=";", fmt="%s")
     logger.info('CSV \n{}'.format(strf.getvalue()))

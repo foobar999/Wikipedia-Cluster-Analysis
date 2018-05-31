@@ -52,8 +52,8 @@ TOPIC_AVG_PROBS_CDF_IMG=$STATS_PREFIX-lda-topic-probs-avg-cdf.pdf
 python3 scripts/get_document_avg_viz.py --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
-DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
-python3 scripts/get_document_2d_transformed.py --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+#DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
+#python3 scripts/get_document_2d_transformed.py --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
 DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf

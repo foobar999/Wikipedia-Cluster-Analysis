@@ -84,12 +84,13 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # done
 
 # silhouetten-plot
+# nur Vielfache von 25, maximal 250
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
     CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
     ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 % 25 == 0 && $1 <= 250)  {print} }' > $CLUSTER_SILHOUETTE_CSV
     CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    python3 scripts/utils/get_csv_plot.py --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+    python3 scripts/utils/get_silhouette_plot.py --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
 done
 
 # zentralste Dokumente je Cluster

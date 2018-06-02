@@ -17,9 +17,14 @@ def get_cluster_model(cluster_method, num_clusters, eps, min_samples):
         linkages = {
             'aggl-ward': 'ward',
             'aggl-avg': 'average',
-            'aggl-compl': 'complete'
+            'aggl-avg-cos': 'average',
         }
-        return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity='euclidean')
+        affinites = {
+            'aggl-ward': 'euclidean',
+            'aggl-avg': 'euclidean',
+            'aggl-avg-cos': 'cosine',
+        }
+        return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity=affinites[cluster_method], memory='output/.cache')
     if cluster_method == 'dbscan':
         return DBSCAN(eps=eps, min_samples=min_samples, metric='euclidean', algorithm='auto', leaf_size=50, n_jobs=-1)
  
@@ -33,7 +38,7 @@ def main():
         'dbscan': 'DBSCAN algorithm',
         'aggl-ward': 'hierarchical agglomerative ward clustering',
         'aggl-avg': 'hierarchical agglomerative average clustering',
-        'aggl-compl': 'hierarchical agglomerative complete clustering',
+        'aggl-avg-cos': 'hierarchical agglomerative average clustering with cosine distance',
     }
     cm = parser.add_argument('--cluster-method', choices=cluster_methods, help='clustering algorithm: ' + str(cluster_methods), required=True)
     parser.add_argument('--num-clusters', type=int, help='number of clusters to create')

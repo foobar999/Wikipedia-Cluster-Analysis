@@ -55,12 +55,12 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # python3 scripts/get_document_avg_viz.py --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
-#DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
+DOCUMENTS_2D=$STATS_PREFIX-documents-2d.npz
 #python3 scripts/get_document_2d_transformed.py --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
-# DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
-# python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
+DOC_DATA_IMG=$STATS_PREFIX-lda-document-data.pdf
+python3 scripts/get_document_2d_viz.py --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
 # for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
@@ -85,13 +85,13 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 # silhouetten-plot
 # nur Vielfache von 25, maximal 250
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
-    CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
-    ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 % 25 == 0 && $1 <= 250)  {print} }' > $CLUSTER_SILHOUETTE_CSV
-    CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    python3 scripts/utils/get_silhouette_plot.py --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
-done
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    # CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
+    # CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
+    # ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 % 25 == 0 && $1 <= 250)  {print} }' > $CLUSTER_SILHOUETTE_CSV
+    # CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
+    # python3 scripts/utils/get_silhouette_plot.py --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+# done
 
 # zentralste Dokumente je Cluster
 # K=5

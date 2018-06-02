@@ -19,7 +19,7 @@ def main():
 
     document_topics = load_document_topics(input_document_topics_path)
     #model = decomposition.PCA(n_components=2)
-    model = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300) 
+    model = TSNE(n_components=2, verbose=1, perplexity=100, n_iter=1000) 
     logger.info('running 2d-transformation with model {}'.format(model))
     documents_2d = model.fit_transform(document_topics)
     logger.debug('2d-transformation res\n{}'.format(documents_2d))

@@ -27,7 +27,7 @@ LOG_TOPIC=$LOG_PREFIX.log
 
 ITERATIONS=$(( 10*$PASSES ))
 echo "generating $TOPIC_MODEL model"
-( time python3 -m scripts.cluster.bow_to_topic --bow=$BOW_MODEL.bz2 --id2word=$BOW_ID2WORD.bz2 --model-type=$TOPIC_MODEL --model-prefix=$MODEL_PREFIX --num-topics=$NUM_TOPICS --passes=$PASSES --iterations=$ITERATIONS --alpha=$ALPHA --beta=$BETA ) |& tee $LOG_TOPIC
+# ( time python3 -m scripts.cluster.bow_to_topic --bow=$BOW_MODEL.bz2 --id2word=$BOW_ID2WORD.bz2 --model-type=$TOPIC_MODEL --model-prefix=$MODEL_PREFIX --num-topics=$NUM_TOPICS --passes=$PASSES --iterations=$ITERATIONS --alpha=$ALPHA --beta=$BETA ) |& tee $LOG_TOPIC
 # TODO .bz2 oder nicht???
 
 echo "generating dense document-topic-file"

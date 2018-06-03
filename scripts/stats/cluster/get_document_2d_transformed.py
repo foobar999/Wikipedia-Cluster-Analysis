@@ -3,7 +3,8 @@ import argparse
 import logging
 from sklearn import decomposition
 from sklearn.manifold import TSNE
-from scripts.utils.utils import init_logger, load_document_topics, save_npz
+from scripts.utils.utils import init_logger, save_npz
+from scripts.utils.documents import load_document_topics
 
 logger = init_logger()
 

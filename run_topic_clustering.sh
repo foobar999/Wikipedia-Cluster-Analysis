@@ -1,11 +1,5 @@
 #!/bin/bash -e
 
-# TODO pyclustering nehmen?
-# TODO aggl.clustering mit kneighbors_graph() ?
-# TODO speichern der dichten matrix mit savez_compressed
-# TODO aufpassen beim topicmodel laden, dass auch das richtige model geladen
-# TODO index wird bisher nichtgelesen, da datei mit .bz2 umbenannt -> später Performanceverlust deshalb? -> mit und ohne kompression testen
-
 
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
@@ -39,9 +33,9 @@ MIN_SAMPLES=($MIN_SAMPLES)
 echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
-#./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
+./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
-    #./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
+    ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
     TPREFIX=$PREFIX-$TOPIC_MODEL
     for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
         if [ $CLUSTER_METHOD == "dbscan" ]; then

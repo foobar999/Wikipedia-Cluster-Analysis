@@ -7,7 +7,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-from scripts.utils.utils import init_logger, load_document_topics
+from scripts.utils.utils import init_logger
+from scripts.utils.documents import load_document_topics
 
 logger = init_logger()
 

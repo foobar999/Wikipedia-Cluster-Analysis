@@ -48,12 +48,12 @@ MIN_SAMPLES=($MIN_SAMPLES)
 echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 # Preprocessing-Auswirkungen
-# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-# LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
-# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-# TOKEN_MIN_LEN=2
-# python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
-# cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
+ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
+NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+TOKEN_MIN_LEN=2
+python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
+cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
 BOW=$BOW_PREFIX-bow.mm.bz2
@@ -69,7 +69,7 @@ python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMEN
 
 # 2D-Transformation
 DOCUMENTS_2D=$STATS_PLOTS_2D_PREFIX-documents-2d.npz
-# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
 DOC_DATA_IMG=$STATS_PLOTS_2D_PREFIX-lda-document-data.pdf

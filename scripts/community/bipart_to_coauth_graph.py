@@ -6,7 +6,8 @@ from pprint import pformat
 from math import log10
 import networkx as nx
 from networkx import bipartite
-from scripts.utils.utils import init_logger, log_nwx, get_bipartite_nodes, simplify_graph_nwx
+from scripts.utils.utils import init_logger
+from scripts.utils.graph import log_nwx, get_bipartite_nodes, simplify_graph_nwx
 
 logger = init_logger()
             

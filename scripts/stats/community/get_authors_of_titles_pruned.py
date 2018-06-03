@@ -5,7 +5,8 @@ import json
 import networkx as nx
 from collections import defaultdict
 from gensim.corpora import Dictionary
-from scripts.utils.utils import init_logger, log_nwx, load_titles, get_bipartite_nodes
+from scripts.utils.utils import init_logger, load_titles
+from scripts.utils.graph import log_nwx, get_bipartite_nodes
 
 logger = init_logger()
                

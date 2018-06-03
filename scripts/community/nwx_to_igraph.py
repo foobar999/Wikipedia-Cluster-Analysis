@@ -4,7 +4,8 @@ import argparse
 import networkx as nx
 from igraph import Graph
 from pprint import pformat
-from scripts.utils.utils import init_logger, log_nwx, log_igraph
+from scripts.utils.utils import init_logger
+from scripts.utils.graph import log_nwx, log_igraph
 
 logger = init_logger()
                

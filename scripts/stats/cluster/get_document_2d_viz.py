@@ -5,7 +5,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-from scripts.utils.utils import init_logger, load_cluster_labels, load_npz
+from scripts.utils.utils import init_logger, load_npz
+from scripts.utils.documents import load_cluster_labels
 
 logger = init_logger()
 

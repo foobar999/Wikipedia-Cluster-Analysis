@@ -7,7 +7,8 @@ from pprint import pformat
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.parsing.preprocessing import STOPWORDS
 from scripts.cluster.articles_to_bow import get_filtered_articles_data_from_path
-from scripts.utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
+from scripts.utils.utils import init_logger, read_lines
+from scripts.utils.documents import is_mainspace_page, get_tokens
 
 logger = init_logger()
 

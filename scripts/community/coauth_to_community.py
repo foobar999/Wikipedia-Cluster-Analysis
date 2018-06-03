@@ -5,7 +5,8 @@ import json
 from pprint import pformat
 from igraph import Graph
 from gensim.utils import smart_open
-from scripts.utils.utils import init_logger, log_igraph, log_communities, argparse_bool
+from scripts.utils.utils import init_logger, argparse_bool
+from scripts.utils.graph import log_igraph, log_communities
 
 logger = init_logger()
              

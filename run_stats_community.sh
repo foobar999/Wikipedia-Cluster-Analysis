@@ -58,18 +58,18 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     done
 done
 
-NUM_COMMS_EQUIDIST=5
-NUM_MAX_CEN_NODES_PER_COMM=5
-COMM_METHOD="louvain"
-echo "calculating centrality stats"
-for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-    TITLES=$CONTRIB_PREFIX-$CONTRIB_VALUE-titles.json.bz2
-    for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
-        COAUTH_GRAPH=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
-        COMM=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
-        LOG_CENTRALITIES=$STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-centralities.log
-        python3 -m scripts.stats.community.get_community_centrality_stats --coauth-graph=$COAUTH_GRAPH --communities=$COMM --titles=$TITLES --K=$NUM_COMMS_EQUIDIST --J=$NUM_MAX_CEN_NODES_PER_COMM |& tee $LOG_CENTRALITIES
-    done
-done 
+# NUM_COMMS_EQUIDIST=5
+# NUM_MAX_CEN_NODES_PER_COMM=5
+# COMM_METHOD="louvain"
+# echo "calculating centrality stats"
+# for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
+    # TITLES=$CONTRIB_PREFIX-$CONTRIB_VALUE-titles.json.bz2
+    # for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
+        # COAUTH_GRAPH=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
+        # COMM=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
+        # LOG_CENTRALITIES=$STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-centralities.log
+        # python3 -m scripts.stats.community.get_community_centrality_stats --coauth-graph=$COAUTH_GRAPH --communities=$COMM --titles=$TITLES --K=$NUM_COMMS_EQUIDIST --J=$NUM_MAX_CEN_NODES_PER_COMM |& tee $LOG_CENTRALITIES
+    # done
+# done 
 
 

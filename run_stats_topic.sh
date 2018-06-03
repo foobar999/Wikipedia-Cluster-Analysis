@@ -48,12 +48,12 @@ MIN_SAMPLES=($MIN_SAMPLES)
 echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 # Preprocessing-Auswirkungen
-ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
-NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-TOKEN_MIN_LEN=2
-python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
-cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
+# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+# LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
+# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+# TOKEN_MIN_LEN=2
+# python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
+# cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
 BOW=$BOW_PREFIX-bow.mm.bz2
@@ -69,32 +69,32 @@ python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMEN
 
 # 2D-Transformation
 DOCUMENTS_2D=$STATS_PLOTS_2D_PREFIX-documents-2d.npz
-python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
 DOC_DATA_IMG=$STATS_PLOTS_2D_PREFIX-lda-document-data.pdf
 python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-    IMGPREFIX=$STATS_PLOTS_2D_PREFIX-lda-$CLUSTER_METHOD
-    if [ $CLUSTER_METHOD == "dbscan" ]; then
-        for EPSILON in "${EPSILONS[@]}"; do
-            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
-                python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-            done
-        done
-    else
-        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-            python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-        done
-    fi
-done
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    # IMGPREFIX=$STATS_PLOTS_2D_PREFIX-lda-$CLUSTER_METHOD
+    # if [ $CLUSTER_METHOD == "dbscan" ]; then
+        # for EPSILON in "${EPSILONS[@]}"; do
+            # for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
+                # CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
+                # DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
+                # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+            # done
+        # done
+    # else
+        # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+            # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+            # DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+            # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+        # done
+    # fi
+# done
 
 # silhouetten-plot
 # nur Vielfache von 25, maximal 300
@@ -109,28 +109,28 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
 done
 
 # zentralste Dokumente je Cluster
-K=5
-J=5
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-    if [ $CLUSTER_METHOD == "dbscan" ]; then
-        for EPSILON in "${EPSILONS[@]}"; do
-            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-                LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$EPSILON-$MIN_SAMPLE-central-titles.log
-                python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
-            done
-        done
-    else
-        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-            LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
-            python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
-        done
-    fi
-done
+# K=5
+# J=5
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    # if [ $CLUSTER_METHOD == "dbscan" ]; then
+        # for EPSILON in "${EPSILONS[@]}"; do
+            # for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
+                # CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
+                # LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$EPSILON-$MIN_SAMPLE-central-titles.log
+                # python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
+            # done
+        # done
+    # else
+        # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+            # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+            # LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
+            # python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
+        # done
+    # fi
+# done
 
 
 

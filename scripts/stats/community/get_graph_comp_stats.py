@@ -8,8 +8,8 @@ from pprint import pprint, pformat
 from igraph import Graph
 import numpy as np
 from scipy.stats import itemfreq
-from get_contribs_stats import apply_quantile, render_hist
-from utils.utils import init_logger, log_igraph
+from scripts.stats.community.get_contribs_stats import apply_quantile, render_hist
+from scripts.utils.utils import init_logger, log_igraph
 
 logger = init_logger()
 

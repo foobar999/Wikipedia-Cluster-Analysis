@@ -6,7 +6,7 @@ import bz2
 from pprint import pformat
 import numpy as np
 from sklearn.metrics import silhouette_score, calinski_harabaz_score
-from utils.utils import init_logger, load_npz
+from scripts.utils.utils import init_logger, load_npz
  
 logger = init_logger()
 

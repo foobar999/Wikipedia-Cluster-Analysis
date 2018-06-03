@@ -5,8 +5,8 @@ from pprint import pformat
 from gensim.corpora import MmCorpus, Dictionary
 from gensim.models import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
-from utils.utils import init_logger
 import numpy as np
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
 

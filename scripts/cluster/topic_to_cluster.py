@@ -4,8 +4,8 @@ import logging
 import json 
 from pprint import pformat
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
-from utils.utils import init_logger, debug_mode_set, load_npz
 import numpy as np
+from scripts.utils.utils import init_logger, debug_mode_set, load_npz
  
 logger = init_logger()
  

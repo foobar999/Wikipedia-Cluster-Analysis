@@ -6,7 +6,7 @@ from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from scipy.sparse import dok_matrix
-from utils.utils import init_logger
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
 

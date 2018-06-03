@@ -43,14 +43,14 @@ else
     ARGS=" --num-clusters=$NUM_CLUSTERS "
 fi
 echo "computing clusters with $METHOD"
-(time python3 scripts/topic_to_cluster.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD $ARGS) |& tee $LOG_CLUSTER
+(time python3 -m scripts.cluster.topic_to_cluster --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD $ARGS) |& tee $LOG_CLUSTER
 bzip2 -zf $CLUSTER_LABELS
 
 echo "evaluating clustering"
-(time python3 scripts/evaluate_dense_clustering.py --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2) |& tee -a $LOG_CLUSTER
+(time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2) |& tee -a $LOG_CLUSTER
 
 echo "generating documenttitle->clusterlabel mappings"
-python3 scripts/utils/get_title_communities.py --communities=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --titlecomms=$TITLE_CLUSTER_LABELS
+python3 -m scripts.utils.get_title_communities --communities=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --titlecomms=$TITLE_CLUSTER_LABELS
 bzip2 -zf $TITLE_CLUSTER_LABELS
 
 

@@ -5,7 +5,7 @@ import math
 from io import StringIO
 import numpy as np
 from scipy.spatial.distance import cdist
-from utils import init_logger, load_document_topics, load_cluster_labels, load_titles
+from scripts.utils.utils import init_logger, load_document_topics, load_cluster_labels, load_titles
 
 logger = init_logger()
 

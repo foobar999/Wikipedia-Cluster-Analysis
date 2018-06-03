@@ -6,7 +6,7 @@ from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.matutils import MmWriter
 from gensim.corpora import Dictionary, MmCorpus
-from utils.utils import init_logger, is_mainspace_page, read_lines, is_valid_contributor, get_tokens
+from scripts.utils.utils import init_logger, is_mainspace_page, read_lines, is_valid_contributor, get_tokens
 
 
 logger = init_logger()

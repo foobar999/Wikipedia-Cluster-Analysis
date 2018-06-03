@@ -4,7 +4,7 @@ import argparse
 import json
 import bz2
 from pprint import pformat
-from utils import init_logger
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
              

@@ -5,7 +5,7 @@ from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.matutils import corpus2dense
-from utils import init_logger, save_npz
+from scripts.utils.utils import init_logger, save_npz
 
 logger = init_logger()
 

@@ -4,11 +4,11 @@ import argparse
 import json
 import bz2
 from pprint import pformat
-from utils.utils import init_logger
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
              

@@ -5,12 +5,12 @@ from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.matutils import corpus2csc
 from scipy.stats import itemfreq
-from utils.utils import init_logger
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import scipy.sparse as sp
 import numpy as np
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
 

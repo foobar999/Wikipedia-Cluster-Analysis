@@ -3,7 +3,7 @@ import logging
 import argparse
 from pprint import pformat
 from gensim.utils import pickle, unpickle
-from utils.utils import init_logger
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
 

@@ -6,7 +6,7 @@ from gensim.corpora import MmCorpus
 import networkx as nx
 from networkx import bipartite
 from heapq import nsmallest
-from utils.utils import init_logger, argparse_bool, simplify_graph_nwx, get_bipartite_nodes, get_bipartite_node_counts, log_nwx
+from scripts.utils.utils import init_logger, argparse_bool, simplify_graph_nwx, get_bipartite_nodes, get_bipartite_node_counts, log_nwx
 
 logger = init_logger()
           

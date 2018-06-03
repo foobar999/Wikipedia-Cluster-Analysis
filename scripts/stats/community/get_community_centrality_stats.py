@@ -7,7 +7,7 @@ from pprint import pformat
 from igraph import Graph, VertexClustering
 import numpy as np
 from io import StringIO
-from utils.utils import init_logger, log_igraph, load_communities, load_titles
+from scripts.utils.utils import init_logger, log_igraph, load_communities, load_titles
 
 logger = init_logger()
 

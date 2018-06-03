@@ -17,7 +17,7 @@ from gensim.utils import smart_open
 from gensim.matutils import MmWriter
 from gensim.corpora import Dictionary, MmCorpus, TextCorpus
 from gensim.parsing.preprocessing import STOPWORDS
-from utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
+from scripts.utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
 
 logger = init_logger()
 

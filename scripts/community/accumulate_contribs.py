@@ -5,7 +5,7 @@ from pprint import pformat
 from collections import defaultdict
 from gensim.corpora import MmCorpus
 from gensim.matutils import MmWriter
-from utils.utils import init_logger
+from scripts.utils.utils import init_logger
 
 logger = init_logger()
 

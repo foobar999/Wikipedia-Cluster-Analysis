@@ -6,8 +6,8 @@ from collections import Counter
 from pprint import pformat
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.parsing.preprocessing import STOPWORDS
-from utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
-from articles_to_bow import get_filtered_articles_data_from_path
+from scripts.cluster.articles_to_bow import get_filtered_articles_data_from_path
+from scripts.utils.utils import init_logger, is_mainspace_page, read_lines, get_tokens
 
 logger = init_logger()
 

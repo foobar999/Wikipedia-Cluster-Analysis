@@ -1,11 +1,10 @@
 import os, sys
 import argparse
-import logging
 import json
 import bz2
-from pprint import pformat
 import numpy as np
 from sklearn.metrics import silhouette_score, calinski_harabaz_score
+from sklearn.metrics.pairwise import _VALID_METRICS 
 from scripts.utils.utils import init_logger, load_npz
  
 logger = init_logger()
@@ -15,12 +14,12 @@ def main():
     parser = argparse.ArgumentParser(description='calculates silhouette coefficient of a given clustering and its document-topic-matrix')
     parser.add_argument('--document-topics', type=argparse.FileType('r'), help='path to input document-topic-file (.npz)', required=True)
     parser.add_argument('--cluster-labels', type=argparse.FileType('r'), help='path to input .json.bz2 cluster labels file', required=True)
+    parser.add_argument('--metric', choices=_VALID_METRICS, help='distance function to use', required=True)
     
     args = parser.parse_args()
     input_document_topics_path = args.document_topics.name
     input_cluster_labels_path = args.cluster_labels.name
-    
-    logger.info('running with:\n{}'.format(pformat({'input_document_topics_path':input_document_topics_path, 'input_cluster_labels_path':input_cluster_labels_path})))
+    metric = args.metric
     
     logger.info('loading dense document-topics from {}'.format(input_document_topics_path))
     document_topics = load_npz(input_document_topics_path)
@@ -35,8 +34,8 @@ def main():
     labels = np.asarray(labels_list)
     
     logger.info('calclating unsupervised evaluation metrics')
-    sil_score = silhouette_score(document_topics, labels, metric='euclidean') # groß=gut
-    logger.info('euclidean silhouette coefficient: {}'.format(sil_score))
+    sil_score = silhouette_score(document_topics, labels, metric=metric) # groß=gut
+    logger.info('{} silhouette coefficient: {}'.format(metric, sil_score))
     ch_score = calinski_harabaz_score(document_topics, labels) # between-scatter durch within-scatter inkl. Straftermen -> groß=gut
     logger.info('calinski harabaz score: {}'.format(ch_score))
     

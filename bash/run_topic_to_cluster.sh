@@ -47,7 +47,12 @@ echo "computing clusters with $METHOD"
 bzip2 -zf $CLUSTER_LABELS
 
 echo "evaluating clustering"
-(time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2) |& tee -a $LOG_CLUSTER
+if [[ $METHOD =~ .*cos ]]; then
+    METRIC="cosine"
+else
+    METRIC="euclidean"
+fi
+(time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2 --metric=$METRIC) |& tee -a $LOG_CLUSTER
 
 echo "generating documenttitle->clusterlabel mappings"
 python3 -m scripts.utils.get_title_communities --communities=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --titlecomms=$TITLE_CLUSTER_LABELS

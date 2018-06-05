@@ -11,6 +11,7 @@ source $CONFIG
 COLL_PREFIX=collections/$PREFIX
 BOW_PREFIX=output/bow/$PREFIX
 TM_PREFIX=output/topic/$PREFIX
+DOC_FILTERED_PREFIX=output/doc_filtered/$PREFIX
 CLUS_PREFIX=output/clusters/$PREFIX
 LOG_PREFIX=output/logs/$PREFIX
 
@@ -40,6 +41,7 @@ echo "NO_ABOVE $NO_ABOVE"
 echo "ARTICLE_MIN_TOKENS $ARTICLE_MIN_TOKENS"
 CLUSTER_METHODS=($CLUSTER_METHODS)
 echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
+echo "CONTAMINATION $CONTAMINATION"
 CLUSTER_NUMS=($CLUSTER_NUMS) 
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
 EPSILONS=($EPSILONS)
@@ -56,24 +58,35 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
-BOW=$BOW_PREFIX-bow.mm.bz2
-TOPIC_MODEL=$TM_PREFIX-lda
-LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+# BOW=$BOW_PREFIX-bow.mm.bz2
+#  TOPIC_MODEL=$TM_PREFIX-lda
+#  LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+#  python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
-TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
-python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
+# TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
+# python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
 DOCUMENTS_2D=$STATS_PLOTS_2D_PREFIX-documents-2d.npz
 # python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
-# 2D-Plot Dokumente
+# 2D-Plot Dokumente, ungefiltert
 DOC_DATA_IMG=$STATS_PLOTS_2D_PREFIX-lda-document-data.pdf
 python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
+
+# 2D-Plot Dokumente, gefiltert
+METRICS=(euclidean cosine)
+for METRIC in "${METRICS[@]}"; do
+    DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-lda-document-outlier-scores-$METRIC.json.bz2
+    DOC_2D_FILT=$STATS_PLOTS_2D_PREFIX-documents-2d-filtered-$METRIC.npz
+    python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
+    
+    DOC_2D_FILT_IMG=$STATS_PLOTS_2D_PREFIX-documents-2d-filtered-$METRIC.pdf
+    python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
+done
 
 # 2D-Plot Cluster-gelabelte Dokumente
 # for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do

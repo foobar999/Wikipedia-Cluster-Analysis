@@ -21,9 +21,12 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 STATS_AVG_PREFIX=output/stats/cluster_avg
 mkdir -p $STATS_AVG_PREFIX
 STATS_AVG_PREFIX=$STATS_AVG_PREFIX/$PREFIX
-STATS_PLOTS_2D_DIR=output/stats/cluster_plots_2d
-mkdir -p $STATS_PLOTS_2D_DIR
-STATS_PLOTS_2D_PREFIX=$STATS_PLOTS_2D_DIR/$PREFIX
+STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
+mkdir -p $STATS_DOC_PLOTS_DIR
+STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
+CLUSTER_PLOTS_DIR=output/stats/cluster_plots
+mkdir -p $CLUSTER_PLOTS_DIR
+CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
 STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
 mkdir -p $STATS_SILHOUETTES_DIR
 STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
@@ -64,50 +67,50 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 #  python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
-# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 # TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
 # TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
 # python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
-DOCUMENTS_2D=$STATS_PLOTS_2D_PREFIX-documents-2d.npz
-# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-documents-2d.npz
+python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente, ungefiltert
-DOC_DATA_IMG=$STATS_PLOTS_2D_PREFIX-lda-document-data.pdf
+DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
 python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Dokumente, gefiltert
 METRICS=(euclidean cosine)
 for METRIC in "${METRICS[@]}"; do
     DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-lda-document-outlier-scores-$METRIC.json.bz2
-    DOC_2D_FILT=$STATS_PLOTS_2D_PREFIX-documents-2d-filtered-$METRIC.npz
+    DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-documents-2d-filtered-$METRIC.npz
     python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
     
-    DOC_2D_FILT_IMG=$STATS_PLOTS_2D_PREFIX-documents-2d-filtered-$METRIC.pdf
+    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-documents-2d-filtered-$METRIC.pdf
     python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
 done
 
 # 2D-Plot Cluster-gelabelte Dokumente
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-    # IMGPREFIX=$STATS_PLOTS_2D_PREFIX-lda-$CLUSTER_METHOD
-    # if [ $CLUSTER_METHOD == "dbscan" ]; then
-        # for EPSILON in "${EPSILONS[@]}"; do
-            # for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-                # CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-                # DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
-                # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-            # done
-        # done
-    # else
-        # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-            # DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-            # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-        # done
-    # fi
-# done
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
+    if [ $CLUSTER_METHOD == "dbscan" ]; then
+        for EPSILON in "${EPSILONS[@]}"; do
+            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
+                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
+                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
+                python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+            done
+        done
+    else
+        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+            python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+        done
+    fi
+done
 
 # silhouetten-plot
 # nur Vielfache von 25, maximal 300

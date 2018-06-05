@@ -40,9 +40,9 @@ BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 # ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
     # ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
-    ./bash/run_documents_postprocessing.sh $PREFIX $KMIN $KMAX $CONTAMINATION
-    continue
     TPREFIX=$PREFIX-$TOPIC_MODEL
+    ./bash/run_documents_postprocessing.sh $TPREFIX $KMIN $KMAX $CONTAMINATION
+    
     for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
         if [ $CLUSTER_METHOD == "dbscan" ]; then
             for EPSILON in "${EPSILONS[@]}"; do

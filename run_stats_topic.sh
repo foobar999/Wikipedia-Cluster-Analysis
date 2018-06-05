@@ -61,20 +61,20 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
-# BOW=$BOW_PREFIX-bow.mm.bz2
-#  TOPIC_MODEL=$TM_PREFIX-lda
-#  LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-#  python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+BOW=$BOW_PREFIX-bow.mm.bz2
+TOPIC_MODEL=$TM_PREFIX-lda
+LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-# TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
-# TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
-# python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
+TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
+python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
-DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-documents-2d.npz
-# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
+python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente, ungefiltert
 DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
@@ -88,10 +88,10 @@ for METRIC in "${METRICS[@]}"; do
     LOF_SCORES_PLOT=$STATS_DOC_PLOTS_PREFIX-lda-lof-scores-$METRIC.pdf
     python3 -m scripts.stats.cluster.get_lof_viz --outlier-scores=$DOC_OUTLIER_SCORES --lof-plot=$LOF_SCORES_PLOT
     
-    DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-documents-2d-filtered-$METRIC.npz
+    DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.npz
     python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
     
-    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-documents-2d-filtered-$METRIC.pdf
+    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.pdf
     python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
 done
 

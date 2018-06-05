@@ -15,11 +15,11 @@ mkdir -p output/doc_filtered
 DOC_FILTERED_PREFIX=output/doc_filtered/$PREFIX
 LOG_PREFIX=output/logs/$PREFIX
 
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOCUMENT_TOPICS=$TM_PREFIX-document-topics.npz
 
 METRICS=(euclidean cosine)
 for METRIC in "${METRICS[@]}"; do
-    DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-lda-document-outlier-scores-$METRIC.json
+    DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-document-outlier-scores-$METRIC.json
     LOG_OUTLIER=$LOG_PREFIX-outlier-$METRIC.log
 
     (time python3 -m scripts.cluster.detect_outlier_documents --document-topics=$DOCUMENT_TOPICS --outlier-scores=$DOC_OUTLIER_SCORES --k-min=$KMIN --k-max=$KMAX --metric=$METRIC) |& tee $LOG_OUTLIER

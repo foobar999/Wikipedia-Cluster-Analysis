@@ -98,15 +98,15 @@ python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2
 
 # silhouetten-plot
 # nur Vielfache von 25, maximal 300
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
-    CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+#    CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
+#    CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
     # für simple-collection: erlaube kleine Werte
     # sonst: nur 25er-Schritte
-    ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 < 5 || ($1 % 25 == 0 && $1 <= 300))  {print} }' > $CLUSTER_SILHOUETTE_CSV
-    CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
-done
+#    ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 < 5 || ($1 % 25 == 0 && $1 <= 300))  {print} }' > $CLUSTER_SILHOUETTE_CSV
+#    CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
+#    python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+#done
 
 # zentralste Dokumente je Cluster
 # K=5

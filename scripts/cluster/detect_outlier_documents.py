@@ -24,7 +24,7 @@ def calc_max_lof_of_bounds(document_topics, metric, k_min, k_max):
     num_docs = document_topics.shape[0]
     max_outlier_scores = np.zeros(num_docs)
     logger.info('calculating max outlier scores: k_min={}, k_max={}'.format(k_min, k_max))    
-    model = LocalOutlierFactor(n_neighbors=k_max, metric=metric, n_jobs=2)
+    model = LocalOutlierFactor(n_neighbors=k_max, metric=metric, n_jobs=-1)
     logger.info('creating k_max-model {}'.format(model))
     model.fit(document_topics)
     neighbors_distances_k_max, neighbors_indices_k_max = (model.kneighbors(None, n_neighbors=k_max))

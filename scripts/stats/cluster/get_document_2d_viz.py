@@ -42,7 +42,7 @@ def main():
         plt.scatter(documents_2d[:,0], documents_2d[:,1], c='dodgerblue', s=1, rasterized=True)        
         
     logger.info('saving img to {}'.format(output_img_path))
-    plt.savefig(output_img_path, bbox_inches='tight', dpi=400)
+    plt.savefig(output_img_path, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':

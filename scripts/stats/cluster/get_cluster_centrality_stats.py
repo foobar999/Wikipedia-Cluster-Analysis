@@ -40,14 +40,14 @@ def get_clusters_of_equaldistant_sizes(id_clusters, K):
     return considered_clusters
     
      
-def get_top_central_cluster_docs(cluster, document_topics, J):
-    logger.info('cluster of size {}: finding {} nearest docs to centroid'.format(len(cluster), J))
+def get_top_central_cluster_docs(cluster, document_topics, J, metric):
+    logger.info('cluster of size {}: finding {} nearest docs to centroid with metric {}'.format(len(cluster), J, metric))
     cluster_documents = document_topics[cluster]
     logger.debug('submatrix shape {}'.format(cluster_documents.shape))
     cluster_centroid = np.mean(cluster_documents, axis=0)
     cluster_centroid = cluster_centroid.reshape((1,len(cluster_centroid)))
     logger.debug('cluster centroid shape {}'.format(cluster_centroid.shape))
-    document_centroid_dists = cdist(cluster_documents, cluster_centroid, metric='euclidean').flatten()
+    document_centroid_dists = cdist(cluster_documents, cluster_centroid, metric=metric).flatten()
     logger.debug('nearest index {}'.format(np.argmin(document_centroid_dists)))
     logger.debug('document_centroid_dists shape {}'.format(document_centroid_dists.shape))
     central_doc_indices = np.argsort(document_centroid_dists)[:J].tolist()
@@ -68,6 +68,7 @@ def main():
     parser.add_argument('--titles', type=argparse.FileType('r'), help='path to input .json.bz2 titles file', required=True)    
     parser.add_argument('--K', type=int, help='number of considered, equaldistant clusters 0,floor(1*(N-1)/K),...,N-1', required=True)
     parser.add_argument('--J', type=int, help='maxiumum number of highest clusters nodes per community', required=True)
+    parser.add_argument('--metric', help='calced dissimilarity to centroids (muse be allowd by cdist of scipy)', required=True)
     
     args = parser.parse_args()
     input_document_topics_path = args.document_topics.name
@@ -75,6 +76,7 @@ def main():
     input_titles_path = args.titles.name
     K = args.K
     J = args.J
+    metric = args.metric
         
     document_topics = load_document_topics(input_document_topics_path)
     cluster_labels = load_cluster_labels(input_cluster_labels_path)
@@ -90,7 +92,7 @@ def main():
     matrix = np.empty(shape=(J+1,len(considered_clusters)), dtype=object)
     for i, cluster in enumerate(considered_clusters):
         matrix[0,i] = '$n={}$'.format(len(cluster))
-        central_docids = get_top_central_cluster_docs(cluster, document_topics, J)
+        central_docids = get_top_central_cluster_docs(cluster, document_topics, J, metric)
         central_titles = get_document_titles(central_docids, document_titles)
         logger.info('top-{}-central titles of cluster:'.format(J))
         for title in central_titles:

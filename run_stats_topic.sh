@@ -11,7 +11,6 @@ source $CONFIG
 COLL_PREFIX=collections/$PREFIX
 BOW_PREFIX=output/bow/$PREFIX
 TM_PREFIX=output/topic/$PREFIX
-DOC_FILTERED_PREFIX=output/doc_filtered/$PREFIX-lda
 CLUS_PREFIX=output/clusters/$PREFIX
 LOG_PREFIX=output/logs/$PREFIX
 
@@ -67,55 +66,39 @@ echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 # python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
-# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 # TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
 # TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
 # python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation
-# DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
+python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
-# 2D-Plot Dokumente, ungefiltert
-# DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
-# python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
-
-# nach Filterung: LOF-Werte, 2D-Plot Dokumente
-# METRICS=(euclidean cosine)
-# for METRIC in "${METRICS[@]}"; do
-#     DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-document-outlier-scores-$METRIC.json.bz2
-    
-#     LOF_SCORES_PLOT=$STATS_DOC_PLOTS_PREFIX-lda-lof-scores-$METRIC.pdf
-#     python3 -m scripts.stats.cluster.get_lof_viz --outlier-scores=$DOC_OUTLIER_SCORES --lof-plot=$LOF_SCORES_PLOT
-    
-#     DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.npz
-#    python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
-    
-#    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.pdf
-#    python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
-# done
+# 2D-Plot Dokumente
+DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
+python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
-#DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-euclidean.npz
-#for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-#    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-#    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
-#    if [ $CLUSTER_METHOD == "dbscan" ]; then
-#        for EPSILON in "${EPSILONS[@]}"; do
-#            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-#                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-#                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
-#                python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-#            done
-#        done
-#    else
-#        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-#            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-#            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-#            python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-#        done
-#    fi
-#done
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
+    if [ $CLUSTER_METHOD == "dbscan" ]; then
+        for EPSILON in "${EPSILONS[@]}"; do
+            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
+                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
+                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
+                python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+            done
+        done
+    else
+        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+            python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+        done
+    fi
+done
 
 # silhouetten-plot
 # nur Vielfache von 25, maximal 300
@@ -132,7 +115,7 @@ done
 # zentralste Dokumente je Cluster
 K=5
 J=5
-DOC_TOPICS_FILT=$DOC_FILTERED_PREFIX-document-topics-filtered-euclidean.npz
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
@@ -141,17 +124,35 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
             for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
                 CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
                 LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$EPSILON-$MIN_SAMPLE-central-titles.log
-                python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOC_TOPICS_FILT --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
+                python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
             done
         done
     else
         for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
             CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
             LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
-            python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOC_TOPICS_FILT --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
+            python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J |& tee $LOG_FILE
         done
     fi
 done
+
+
+############## ALTER FILTER KRAM #################
+
+# nach Filterung: LOF-Werte, 2D-Plot Dokumente
+# METRICS=(euclidean cosine)
+# for METRIC in "${METRICS[@]}"; do
+#     DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-document-outlier-scores-$METRIC.json.bz2
+    
+#     LOF_SCORES_PLOT=$STATS_DOC_PLOTS_PREFIX-lda-lof-scores-$METRIC.pdf
+#     python3 -m scripts.stats.cluster.get_lof_viz --outlier-scores=$DOC_OUTLIER_SCORES --lof-plot=$LOF_SCORES_PLOT
+    
+#     DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.npz
+#    python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
+    
+#    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.pdf
+#    python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
+# done
 
 
 

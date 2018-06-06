@@ -73,7 +73,7 @@ DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 
 # 2D-Transformation
 DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+#python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
 DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf

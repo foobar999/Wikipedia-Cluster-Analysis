@@ -137,24 +137,6 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
 done
 
 
-############## ALTER FILTER KRAM #################
-
-# nach Filterung: LOF-Werte, 2D-Plot Dokumente
-# METRICS=(euclidean cosine)
-# for METRIC in "${METRICS[@]}"; do
-#     DOC_OUTLIER_SCORES=$DOC_FILTERED_PREFIX-document-outlier-scores-$METRIC.json.bz2
-    
-#     LOF_SCORES_PLOT=$STATS_DOC_PLOTS_PREFIX-lda-lof-scores-$METRIC.pdf
-#     python3 -m scripts.stats.cluster.get_lof_viz --outlier-scores=$DOC_OUTLIER_SCORES --lof-plot=$LOF_SCORES_PLOT
-    
-#     DOC_2D_FILT=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.npz
-#    python3 -m scripts.cluster.remove_outlier_documents --documents=$DOCUMENTS_2D --outlier-scores=$DOC_OUTLIER_SCORES --filtered-documents=$DOC_2D_FILT --contamination=$CONTAMINATION
-    
-#    DOC_2D_FILT_IMG=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d-filtered-$METRIC.pdf
-#    python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOC_2D_FILT --img-file=$DOC_2D_FILT_IMG 
-# done
-
-
 
 
 

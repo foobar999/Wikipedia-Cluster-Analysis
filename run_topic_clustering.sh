@@ -50,8 +50,3 @@ for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
 done
 
 
-
-# echo "KMIN $KMIN"
-# echo "KMAX $KMAX"
-# echo "CONTAMINATION $CONTAMINATION"
-    #./bash/run_documents_postprocessing.sh $TPREFIX $KMIN $KMAX $CONTAMINATION

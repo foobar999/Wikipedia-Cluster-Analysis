@@ -50,7 +50,7 @@ def apply_quantile(data, quantile_order):
     
 def main():    
     plt.ioff()
-    plt.rc('font',family='Calibri')
+    #plt.rc('font',family='Calibri')
     parser = argparse.ArgumentParser(description='calculated various stats and of a given document-author-contribs file')
     parser.add_argument('--acc-contribs', type=argparse.FileType('r'), help='path to input MatrixMarket acc contributions file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--img-prefix', help='prefix of output generated img files', required=True)

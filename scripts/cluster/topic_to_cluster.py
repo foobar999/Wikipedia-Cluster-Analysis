@@ -12,7 +12,7 @@ logger = init_logger()
  
 def get_cluster_model(cluster_method, num_clusters, eps, min_samples):
     if cluster_method == 'kmeans':
-        return KMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, verbose=False)
+        return KMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, verbose=False, n_jobs=-1)
     if cluster_method.startswith('aggl'):
         linkages = {
             'aggl-ward': 'ward',

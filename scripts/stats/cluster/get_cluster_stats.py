@@ -27,7 +27,7 @@ def main():
     counts[::-1].sort()
     xlabel = 'Cluster'
     ylabel = 'Anzahl Dokumente'
-    scatter_plot(counts, output_img_path, xlabel, ylabel)
+    scatter_plot(counts, output_img_path, xlabel, ylabel, 3)
     
         
 if __name__ == '__main__':

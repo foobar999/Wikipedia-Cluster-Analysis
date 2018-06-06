@@ -26,12 +26,12 @@ else
 fi
    
     
-DOC_FILT_PREFIX=output/doc_filtered/$IPREFIX
+TM_PREFIX=output/topic/$IPREFIX
 CLUS_PREFIX=output/clusters/$OPREFIX
 LOG_PREFIX=output/logs/$OPREFIX
 
 BOW_TITLES=$BOW_CORPUS_PREFIX-titles.json
-DOC_TOPICS_FILT=$DOC_FILT_PREFIX-document-topics-filtered-euclidean.npz
+DOCUMENT_TOPICS=$TM_PREFIX-document-topics.npz
 
 CLUSTER_LABELS=$CLUS_PREFIX.json
 TITLE_CLUSTER_LABELS=$CLUS_PREFIX-titleclusters.json
@@ -43,20 +43,18 @@ else
     ARGS=" --num-clusters=$NUM_CLUSTERS "
 fi
 echo "computing clusters with $METHOD"
-(time python3 -m scripts.cluster.topic_to_cluster --document-topics=$DOC_TOPICS_FILT --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD $ARGS) |& tee $LOG_CLUSTER
+(time python3 -m scripts.cluster.topic_to_cluster --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --cluster-method=$METHOD $ARGS) |& tee $LOG_CLUSTER
 bzip2 -zf $CLUSTER_LABELS
 
+echo "evaluating clustering"
 if [[ $METHOD =~ .*cos ]]; then
     METRIC="cosine"
 else
     METRIC="euclidean"
 fi
-echo "evaluating clustering"
-(time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOC_TOPICS_FILT --cluster-labels=$CLUSTER_LABELS.bz2 --metric=$METRIC) |& tee -a $LOG_CLUSTER
+(time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2 --metric=$METRIC) |& tee -a $LOG_CLUSTER
 
 echo "generating documenttitle->clusterlabel mappings"
 python3 -m scripts.utils.get_title_communities --communities=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --titlecomms=$TITLE_CLUSTER_LABELS
 bzip2 -zf $TITLE_CLUSTER_LABELS
-
-
 

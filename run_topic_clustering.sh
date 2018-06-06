@@ -23,17 +23,10 @@ echo "TOPIC_MODELS ${TOPIC_MODELS[@]}"
 echo "NUM_TOPICS $NUM_TOPICS"
 echo "ALPHA $ALPHA"
 echo "BETA $BETA"
-echo "KMIN $KMIN"
-echo "KMAX $KMAX"
-echo "CONTAMINATION $CONTAMINATION"
 CLUSTER_METHODS=($CLUSTER_METHODS)
 echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
 CLUSTER_NUMS=($CLUSTER_NUMS) 
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
-EPSILONS=($EPSILONS)
-echo "EPSILONS ${EPSILONS[@]}"
-MIN_SAMPLES=($MIN_SAMPLES)
-echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
 
 
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
@@ -41,7 +34,6 @@ BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
     # ./bash/run_bow_to_topic.sh $PREFIX $TOPIC_MODEL $NUM_TOPICS $PASSES $ALPHA $BETA
     TPREFIX=$PREFIX-$TOPIC_MODEL
-    #./bash/run_documents_postprocessing.sh $TPREFIX $KMIN $KMAX $CONTAMINATION
     for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
         if [ $CLUSTER_METHOD == "dbscan" ]; then
             for EPSILON in "${EPSILONS[@]}"; do
@@ -58,3 +50,8 @@ for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
 done
 
 
+
+# echo "KMIN $KMIN"
+# echo "KMAX $KMAX"
+# echo "CONTAMINATION $CONTAMINATION"
+    #./bash/run_documents_postprocessing.sh $TPREFIX $KMIN $KMAX $CONTAMINATION

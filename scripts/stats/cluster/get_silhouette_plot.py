@@ -25,8 +25,8 @@ def main():
     logger.debug('loaded data \n{}'.format(csv_data))
     
     logger.info('plotting csv data')
-    plt.rc('font',family='Calibri')     
-    plt.figure(figsize=(5,2.5))
+    #plt.rc('font',family='Calibri')     
+    plt.figure(figsize=(7,3.5))
     plt.grid(True)
     plt.xlabel('#Cluster')
     plt.ylabel('Silhouettenkoeffizient')

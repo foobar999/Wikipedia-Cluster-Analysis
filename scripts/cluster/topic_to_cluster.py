@@ -1,10 +1,8 @@
-import os, sys
 import argparse
-import logging
 import json 
 from pprint import pformat
-from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 import numpy as np
+from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from scripts.utils.utils import init_logger, load_npz
  
 logger = init_logger()

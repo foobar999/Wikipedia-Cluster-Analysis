@@ -1,11 +1,8 @@
-import os, sys
 import argparse
-import json
-import bz2
-import numpy as np
 from sklearn.metrics import silhouette_score, calinski_harabaz_score
 from sklearn.metrics.pairwise import _VALID_METRICS 
 from scripts.utils.utils import init_logger, load_npz
+from scripts.utils.documents import load_cluster_labels
  
 logger = init_logger()
 
@@ -27,16 +24,13 @@ def main():
     logger.debug('document-topics-matrix \n{}'.format(document_topics))
     
     logger.info('loading cluster labels from {}'.format(input_cluster_labels_path))
-    with bz2.open(input_cluster_labels_path,'rt') as ifile:
-        labels_list = json.load(ifile)
-    logger.info('loaded {} labels'.format(len(labels_list)))
-    logger.debug(labels_list)
-    labels = np.asarray(labels_list)
+    cluster_labels = load_cluster_labels(input_cluster_labels_path)
+    logger.debug(cluster_labels)
     
     logger.info('calclating unsupervised evaluation metrics')
-    sil_score = silhouette_score(document_topics, labels, metric=metric) # groß=gut
+    sil_score = silhouette_score(document_topics, cluster_labels, metric=metric) # groß=gut
     logger.info('{} silhouette coefficient: {}'.format(metric, sil_score))
-    ch_score = calinski_harabaz_score(document_topics, labels) # between-scatter durch within-scatter inkl. Straftermen -> groß=gut
+    ch_score = calinski_harabaz_score(document_topics, cluster_labels) # between-scatter durch within-scatter inkl. Straftermen -> groß=gut
     logger.info('calinski harabaz score: {}'.format(ch_score))
     
     

@@ -27,12 +27,8 @@ DOC_TOPICS_FILE=$TM_PREFIX-document-topics.npz
 LOG_TOPIC=$LOG_PREFIX.log
 
 echo "generating mallet lda model"
-#( time python3 -m scripts.cluster.bow_to_topic --bow=$BOW_MODEL.bz2 --id2word=$BOW_ID2WORD.bz2 --model-type=$TOPIC_MODEL --model-prefix=$MODEL_PREFIX --num-topics=$NUM_TOPICS --passes=$PASSES --iterations=$ITERATIONS --alpha=$ALPHA --beta=$BETA ) |& tee $LOG_TOPIC
 ( time python3 -m scripts.cluster.bow_to_topic --bow=$BOW_MODEL.bz2 --id2word=$BOW_ID2WORD.bz2 --mallet=$MALLET_EXECUTABLE --model-prefix=$MODEL_PREFIX --num-topics=$NUM_TOPICS --num-iterations=$NUM_ITERATIONS --alpha=$ALPHA ) |& tee $LOG_TOPIC
  
-
-
-
 echo "generating dense document-topic-file"
 ( time python3 -m scripts.cluster.get_dense_document_topics --bow=$BOW_MODEL.bz2 --model-prefix=$MODEL_PREFIX --document-topics=$DOC_TOPICS_FILE ) |& tee -a $LOG_TOPIC
 

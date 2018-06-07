@@ -14,7 +14,6 @@ TM_PREFIX=output/topic/$PREFIX
 CLUS_PREFIX=output/clusters/$PREFIX
 LOG_PREFIX=output/logs/$PREFIX
 
-
 echo "PREFIX $PREFIX"
 echo "DEBUG $DEBUG"
 if [ ! -z ${DEBUG+x} ]; then # variable gesetzt?
@@ -28,10 +27,8 @@ echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
 echo "CONTAMINATION $CONTAMINATION"
 CLUSTER_NUMS=($CLUSTER_NUMS) 
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
-EPSILONS=($EPSILONS)
-echo "EPSILONS ${EPSILONS[@]}"
-MIN_SAMPLES=($MIN_SAMPLES)
-echo "MIN_SAMPLES ${MIN_SAMPLES[@]}"
+echo "MALLET_HOME $MALLET_HOME"
+export MALLET_HOME=$MALLET_HOME
 
 # Preprocessing-Auswirkungen
 STATS_PREPROP_DIR=output/stats/cluster_preprocessing
@@ -48,10 +45,10 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 STATS_AVG_PREFIX=output/stats/cluster_avg
 mkdir -p $STATS_AVG_PREFIX
 STATS_AVG_PREFIX=$STATS_AVG_PREFIX/$PREFIX
-# BOW=$BOW_PREFIX-bow.mm.bz2
-# TOPIC_MODEL=$TM_PREFIX-lda
-# LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-# python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+BOW=$BOW_PREFIX-bow.mm.bz2
+TOPIC_MODEL=$TM_PREFIX-lda
+LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz

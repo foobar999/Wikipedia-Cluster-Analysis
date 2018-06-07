@@ -3,13 +3,20 @@ import argparse
 import logging
 from collections import defaultdict
 from pprint import pformat
+from gensim import matutils
 from gensim.corpora import MmCorpus
-from gensim.models.ldamulticore import LdaMulticore
+from gensim.utils import SaveLoad
 from scipy.sparse import dok_matrix
 from scripts.utils.utils import init_logger
 
 logger = init_logger()
 
+
+def get_topic_terms(ldamodel, topicid, topn=10):
+    topic = ldamodel.get_topics()[topicid]
+    topic = topic / topic.sum()  # normalize to probability distribution
+    bestn = matutils.argsort(topic, topn, reverse=True)
+    return [(idx, topic[idx]) for idx in bestn]
 
 def main():
     parser = argparse.ArgumentParser(description='applies a trained lda model to a bag-of-words and saves the resulting corpus topics as a binary numpy dense matrix file (rows=documents, cols=topics)')
@@ -25,7 +32,7 @@ def main():
     logger.info('loading bow corpus from {}'.format(input_bow_path))
     bow = MmCorpus(input_bow_path)
     logger.info('loading topic model from {}'.format(input_model_prefix))
-    model = LdaMulticore.load(input_model_prefix)
+    model = SaveLoad.load(input_model_prefix)
     
     logger.info('{} docs, {} topics'.format(bow.num_docs, model.num_topics))
     document_topic_probs = dok_matrix((bow.num_docs, model.num_topics), dtype='d')
@@ -52,7 +59,8 @@ def main():
     logger.info('calculating stats of top-{}-topics {} with top-{}-terms per topic'.format(num_top_topics, top_topics, num_top_terms))
     term_topics = defaultdict(list) # mapping termid->topicids für alle termids, die in top-k von irgendwelchen topics enthalten
     for topicid in top_topics:
-        for termid, prob in model.get_topic_terms(topicid, topn=num_top_terms):
+        #for termid, prob in model.get_topic_terms(topicid, topn=num_top_terms):
+        for termid, prob in get_topic_terms(model, topicid, topn=num_top_terms):
             term_topics[termid].append(topicid)
     term_topics = dict(term_topics)
         

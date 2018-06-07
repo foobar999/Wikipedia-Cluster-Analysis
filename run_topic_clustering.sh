@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
-
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
     exit 1
 fi
+
 unset DEBUG
 CONFIG=$1
 source $CONFIG

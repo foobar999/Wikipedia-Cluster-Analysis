@@ -28,7 +28,6 @@ def main():
     xlabel = 'Anzahl Tokens je Dokument'
     ylabel = 'Häufigkeit'
     histogram_plot(dok_token_nums, output_token_nums_dist_path, xlabel, ylabel)
-    #histogram_plot2(list(dok_token_nums), output_token_nums_dist_path, xlabel, ylabel, figsize=((5,2.5)))
     
        
     

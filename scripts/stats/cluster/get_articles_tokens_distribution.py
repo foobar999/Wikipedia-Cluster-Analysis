@@ -30,7 +30,7 @@ def main():
     
     xlabel = 'Mindestanzahl Tokens'
     ylabel = 'Anzahl Artikel'
-    histogram_plot(dok_token_nums, output_token_nums_dist_path, xlabel, ylabel, figsize=(8,2), cumulative=-1)
+    histogram_plot(dok_token_nums, output_token_nums_dist_path, xlabel, ylabel, figsize=(10,2), cumulative=-1)
     
        
     

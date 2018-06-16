@@ -30,19 +30,18 @@ echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
 echo "MALLET_HOME $MALLET_HOME"
 export MALLET_HOME=$MALLET_HOME
 
-
-# Preprocessing-Auswirkungen
+# Statistiken zum Artikeldump
 # STATS_PREPROP_DIR=output/stats/cluster_preprocessing
 # mkdir -p $STATS_PREPROP_DIR
 # STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
-
+## Histogramm der Dokument-Tokenanzahlen
 # ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
 # NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
 # LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
 # IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
-# QUANTILE=0.9
+# QUANTILE=0.95
 # python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
-
+## Preprocessing-Auswirkungen
 # LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
 # TOKEN_MIN_LEN=2
 # python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS

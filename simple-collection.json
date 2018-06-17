@@ -2,62 +2,64 @@
     "One": {
         "namespace": 0,
         "revisions": [
-            {"content": "apple", "user": 1},
-            {"content": "apple banana fruits", "user": 4},
-            {"content": "apple banana fruits tomato", "user": 4},
-            {"content": "", "user": 5},
-            {"content": "apple banana fruits", "user": 1}     
+            {"content": "apple", "user": "user1"},
+            {"content": "apple banana fruits", "user": "user4"},
+            {"content": "apple banana fruits tomato", "user": "user4"},
+            {"content": "", "user": "user5"},
+            {"content": "apple banana fruits", "user": "user1"}     
         ]
     },
     "Two": {
         "namespace": 0,
         "revisions": [
-            {"content": "IT computer", "user": 2},
-            {"content": "IT computer mouse calculator", "user": 2},
-            {"content": "IT computer calculator software online", "user": 3}
+            {"content": "IT computer", "user": "user2"},
+            {"content": "IT computer mouse calculator", "user": "user2"},
+            {"content": "IT computer calculator software online", "user": "user3"}
         ]
     },
     "Three": {
         "namespace": 0,
         "revisions": [
-            {"content": "oranges vegetables", "user": 5},
-            {"content": "oranges fruits", "user": 4},
-            {"content": "oranges fruits apple apple", "user": 5}
+            {"content": "oranges vegetables", "user": "user5"},
+            {"content": "oranges fruits", "user": "user4"},
+            {"content": "oranges fruits apple apple", "user": "user5"}
         ]
     },
     "Four": {
         "revisions": [
-            {"content": "internet", "user": 3},
-            {"content": "internet industry computer IT", "user": 2},
-            {"content": "internet computer IT keyboard", "user": 1},
-            {"content": "internet computer IT keyboard smartphone", "user": 2}
+            {"content": "internet", "user": "user3"},
+            {"content": "internet industry computer IT", "user": "user2"},
+            {"content": "internet industry computer IT engineering", "user": "userOtherBOT"},
+            {"content": "internet computer IT keyboard", "user": "user1"},
+            {"content": "internet computer IT keyboard smartphone", "user": "user2"}
         ]
     },
     "Five": {
         "namespace": 0,
         "revisions": [
-            {"content": "newspaper articles", "user": 6},
-            {"content": "newspaper articles  ", "user": 6},
-            {"content": "newspaper articles online", "user": 7}
+            {"content": "newspaper articles", "user": "user6"},
+            {"content": "newspaper articles haschegif", "user": "usermyBoT"},
+            {"content": "newspaper articles  ", "user": "user6"},
+            {"content": "newspaper articles online", "user": "user7"}
         ]
     },
     "Six": {
         "namespace": 0,
         "revisions": [
-            {"content": "internet IT", "user": 3},
-            {"content": "internet IT keyboard", "user": 2},
-            {"content": "", "user": 1}
+            {"content": "internet IT", "user": "user3"},
+            {"content": "internet IT keyboard", "user": "user2"},
+            {"content": "", "user": "user1"}
         ]
     },
     "Seven": {
         "namespace": 1,
         "revisions": [
-            {"content": "internet", "user": 5}
+            {"content": "internet", "user": "user5"}
         ]
     },
     "Help:Eight": {
         "revisions": [
-            {"content": "keyboard", "user": 5}
+            {"content": "keyboard", "user": "user5"}
         ]
     }
 }

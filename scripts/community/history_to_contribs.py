@@ -1,13 +1,11 @@
-import os, sys
-import logging
 import argparse
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.matutils import MmWriter
-from gensim.corpora import Dictionary, MmCorpus
+from gensim.corpora import Dictionary
 from scripts.utils.utils import init_logger, read_lines
-from scripts.utils.documents import is_mainspace_page, is_valid_contributor, get_tokens
+from scripts.utils.documents import is_mainspace_page, is_registered_user, is_not_bot_user, get_tokens
 
 
 logger = init_logger()
@@ -58,41 +56,53 @@ def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
     num_pages_total = 0
     num_pages_mainspace = 0
     num_revisions_mainspace = 0
-    num_revisions_ms_of_valid_users = 0
+    num_revisions_ms_registered_users = 0
+    num_revisions_ms_nonbots = 0
     num_pages_with_contribs = 0 # bei berechnung beitragsfunktion können doks "leer" werden
-    authors_mainspace = set()
-    authors_mainspace_valid = set()    
+    authors_ms = set()
+    authors_ms_registered_users = set()  
+    authors_ms_nonbot_users = set()  
     for page in history_dump:
         num_pages_total += 1
         logger.debug('page {}'.format(page.title))
         if is_mainspace_page(page, namespace_prefixes):
             num_pages_mainspace += 1
             logger.debug('page {} considered mainspace'.format(page.title))
+            
             revisions = tuple(revision for revision in page)
             num_revisions_mainspace += len(revisions)
-            authors_mainspace.update(rev.contributor.user_text for rev in revisions if rev.contributor.user_text is not None)
+            authors_ms.update(rev.contributor.user_text for rev in revisions if rev.contributor.user_text is not None)
             logger.debug('page {} having {} revisions'.format(page.title, len(revisions)))
-            revisions_of_valid_users = tuple(revision for revision in revisions if is_valid_contributor(revision.contributor))
-            num_revisions_ms_of_valid_users += len(revisions_of_valid_users)
-            authors_mainspace_valid.update(rev.contributor.user_text for rev in revisions_of_valid_users) # ergibt denselben Wert wie len(id2author)
-            logger.debug('page {} having {} revisions of valid users'.format(page.title, len(revisions_of_valid_users)))
+            
+            revisions_ms_registered_users = tuple(revision for revision in revisions if is_registered_user(revision.contributor))
+            num_revisions_ms_registered_users += len(revisions_ms_registered_users)
+            logger.debug('page {} having {} revisions of registered users'.format(page.title, len(revisions_ms_registered_users)))
+            authors_ms_registered_users.update(rev.contributor.user_text for rev in revisions_ms_registered_users) 
+            
+            revisions_ms_nonbots = tuple(revision for revision in revisions if is_not_bot_user(revision.contributor))
+            num_revisions_ms_nonbots += len(revisions_ms_nonbots)
+            logger.debug('page {} having {} revisions of non-bot users'.format(page.title, len(revisions_ms_nonbots)))
+            authors_ms_nonbot_users.update(rev.contributor.user_text for rev in revisions_ms_nonbots) # ergibt denselben Wert wie len(id2author)
+            
             #num_different_authors = len(set(rev.contributor.id for rev in revisions_of_valid_users)) # erhöhr dauer signifikant (~55min -> )
             #logger.debug('page {} having {} different authors -> keep?: {}'.format(page.title, num_different_authors, num_different_authors >= min_doc_authors))
             #if num_different_authors >= min_doc_authors:
             #    num_pages_ms_enough_different_valid_users += 1
             #    yield revisions_of_valid_users,page.title
-            if len(revisions_of_valid_users) > 0:
+            
+            if len(revisions_ms_nonbots) > 0:
                 num_pages_with_contribs += 1
-                yield revisions_of_valid_users,page.title
+                yield revisions_ms_nonbots,page.title
                 
     logger.info('{} pages total'.format(num_pages_total))
     logger.info('{} pages considered mainspace'.format(num_pages_mainspace))
-    logger.info('{} different authors including anonymous ip users'.format(len(authors_mainspace)))
+    logger.info('{} different authors including anonymous ip users'.format(len(authors_ms)))
     logger.info('{} revisions in mainspace pages'.format(num_revisions_mainspace))
-    logger.info('{} different valid authors'.format(len(authors_mainspace_valid)))
-    logger.info('{} revisions of valid users in mainspace'.format(num_revisions_ms_of_valid_users))
+    logger.info('{} different registered authors in mainspace'.format(len(authors_ms_registered_users)))
+    logger.info('{} revisions of registered users in mainspace'.format(num_revisions_ms_registered_users))
+    logger.info('{} different non-bot authors in mainspace'.format(len(authors_ms_nonbot_users)))
+    logger.info('{} revisions of non-bot users in mainspace'.format(num_revisions_ms_nonbots))
     logger.info('{} pages having at least 1 contribution'.format(num_pages_with_contribs))
-    #logger.info('{} pages in mainspace containing at least {} different users'.format(num_pages_ms_enough_different_valid_users, min_doc_authors))
     
     
 # liefert einen Generator ((Autorname für alle Revisionen) für alle Seiten im Mainspace)

@@ -17,8 +17,11 @@ def is_mainspace_page(page, namespace_prefixes):
         return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
         
 # registrierter, eingeloggter Nutzer mit ID, Benutzernamen
-def is_valid_contributor(contributor):
+def is_registered_user(contributor):
     return contributor.id is not None and contributor.user_text is not None 
+    
+def is_not_bot_user(contributor):
+    return contributor.id is not None and 'bot' not in contributor.user_text.lower()
     
 # lädt die als .npz vorliegende dichte Dokument-Topic-Matrix
 def load_document_topics(document_topics_path):        

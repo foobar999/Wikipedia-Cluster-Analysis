@@ -80,21 +80,11 @@ CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
 #for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
 #    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
 #    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
-#    if [ $CLUSTER_METHOD == "dbscan" ]; then
-#        for EPSILON in "${EPSILONS[@]}"; do
-#            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-#                CLUSTER_LABELS=$CMPREFIX-$EPSILON-$MIN_SAMPLE.json.bz2
-#                DOC_CLUSTER_IMG=$IMGPREFIX-$EPSILON-$MIN_SAMPLE.pdf
-#                python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-#            done
-#        done
-#    else
-#        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-#            CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-#            DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-#            python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-#        done
-#    fi
+    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+       # DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+       # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+    # done
 #done
 
 # silhouetten-plot

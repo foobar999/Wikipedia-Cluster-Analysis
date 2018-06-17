@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-# TODO ich sollte das mit der max. komponente eher machen
-
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
     exit 1

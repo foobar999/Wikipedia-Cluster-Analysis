@@ -48,9 +48,9 @@ export MALLET_HOME=$MALLET_HOME
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
-STATS_AVG_PREFIX=output/stats/cluster_avg
-mkdir -p $STATS_AVG_PREFIX
-STATS_AVG_PREFIX=$STATS_AVG_PREFIX/$PREFIX
+STATS_AVG_DIR=output/stats/cluster_avg
+mkdir -p $STATS_AVG_DIR
+STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
 BOW=$BOW_PREFIX-bow.mm.bz2
 TOPIC_MODEL=$TM_PREFIX-lda
 LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log

@@ -2,13 +2,13 @@ import argparse
 import json 
 from pprint import pformat
 import numpy as np
-from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
+from sklearn.cluster import KMeans, AgglomerativeClustering
 from scripts.utils.utils import init_logger, load_npz
  
 logger = init_logger()
  
  
-def get_cluster_model(cluster_method, num_clusters, eps, min_samples):
+def get_cluster_model(cluster_method, num_clusters):
     if cluster_method == 'kmeans':
         return KMeans(n_clusters=num_clusters, n_init=10, init='k-means++', max_iter=1000000, verbose=False, n_jobs=-1)
     if cluster_method.startswith('aggl'):
@@ -22,9 +22,7 @@ def get_cluster_model(cluster_method, num_clusters, eps, min_samples):
             'aggl-avg': 'euclidean',
             'aggl-avg-cos': 'cosine',
         }
-        return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity=affinites[cluster_method], memory='output/.cache')
-    if cluster_method == 'dbscan':
-        return DBSCAN(eps=eps, min_samples=min_samples, metric='euclidean', algorithm='auto', leaf_size=50, n_jobs=-1)
+        return AgglomerativeClustering(n_clusters=num_clusters, linkage=linkages[cluster_method], affinity=affinites[cluster_method], memory='.cache')
  
 
 def main():
@@ -33,30 +31,20 @@ def main():
     parser.add_argument('--cluster-labels', type=argparse.FileType('w'), help='path to output JSON cluster labels file', required=True)
     cluster_methods = {
         'kmeans': 'kmeans algorithm with kmeans++',
-        'dbscan': 'DBSCAN algorithm',
         'aggl-ward': 'hierarchical agglomerative ward clustering',
         'aggl-avg': 'hierarchical agglomerative average clustering',
         'aggl-avg-cos': 'hierarchical agglomerative average clustering with cosine distance',
     }
     cm = parser.add_argument('--cluster-method', choices=cluster_methods, help='clustering algorithm: ' + str(cluster_methods), required=True)
-    parser.add_argument('--num-clusters', type=int, help='number of clusters to create')
-    parser.add_argument('--eps', type=float, help='DBSCANs epsilon')
-    parser.add_argument('--min-samples', type=int, help='DBSCANs min-samples')
+    parser.add_argument('--num-clusters', type=int, help='number of clusters to create', required=True)
     
     args = parser.parse_args()
     input_document_topics_path = args.document_topics.name
     output_cluster_labels_path = args.cluster_labels.name
     cluster_method = args.cluster_method
     num_clusters = args.num_clusters
-    eps = args.eps
-    min_samples = args.min_samples
     
-    if cluster_method == 'dbscan' and (eps is None or min_samples is None):
-        raise argparse.ArgumentError(cm, 'dbscan requires eps and min_samples')
-    if cluster_method != 'dbscan' and num_clusters is None:
-        raise argparse.ArgumentError(cm, '{} requires num_clusters'.format(cluster_method))
-    
-    logger.info('running with:\n{}'.format(pformat({'input_document_topics_path':input_document_topics_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters, 'eps':eps, 'min_samples':min_samples})))
+    logger.info('running with:\n{}'.format(pformat({'input_document_topics_path':input_document_topics_path, 'output_cluster_labels_path':output_cluster_labels_path, 'cluster_method':cluster_method, 'num_clusters':num_clusters})))
                     
     logger.info('loading dense document-topics from {}'.format(input_document_topics_path))
     document_topics = load_npz(input_document_topics_path)
@@ -65,7 +53,7 @@ def main():
     
     num_docs, num_topics = document_topics.shape
     logger.info('clustering on {} documents, {} topics'.format(num_docs, num_topics))
-    cluster_model = get_cluster_model(cluster_method, num_clusters, eps, min_samples)
+    cluster_model = get_cluster_model(cluster_method, num_clusters)
     logger.info('clustering model:\n{}'.format(cluster_model))
     
     cluster_labels = cluster_model.fit_predict(document_topics)

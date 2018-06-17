@@ -27,9 +27,9 @@
     },
     "Four": {
         "revisions": [
+            {"content": "internet", "user": "userOtherBOT"},
             {"content": "internet", "user": "user3"},
             {"content": "internet industry computer IT", "user": "user2"},
-            {"content": "internet industry computer IT engineering", "user": "userOtherBOT"},
             {"content": "internet computer IT keyboard", "user": "user1"},
             {"content": "internet computer IT keyboard smartphone", "user": "user2"}
         ]

@@ -7,61 +7,52 @@ from gensim.corpora import Dictionary
 from scripts.utils.utils import init_logger, read_lines
 from scripts.utils.documents import is_mainspace_page, is_registered_user, is_not_bot_user, get_tokens
 
-
 logger = init_logger()
 
-    
-def contrib_value_one(ids_revisions):
-    for authorid,rev in ids_revisions:
-        yield authorid, 1        
-        
-# resultierende MM-Matrix wird kleiner, da ggf. 0en zurückgegeben, die ja nicht mitgespeichert werden
-# -> Löschen zählt nicht als Beitrag
-# -> Wörter tauschen zählt nicht als Beitrag
-# -> Leerzeichen hinzufügen zählt nicht
-def contrib_value_diff_numterms(ids_revisions):
-    authorid,rev = next(ids_revisions)
-    prev_num_toks = len(get_tokens(rev.text))
-    yield authorid, prev_num_toks
-    for authorid,rev in ids_revisions:
-        num_toks = len(get_tokens(rev.text))
-        yield authorid, max(0,num_toks-prev_num_toks)
-        prev_num_toks = num_toks
-    
-def contrib_value_absdiff(ids_revisions):
-    authorid,rev = next(ids_revisions)
-    prev_num_toks = len(get_tokens(rev.text))
-    yield authorid, prev_num_toks
-    for authorid,rev in ids_revisions:
-        num_toks = len(get_tokens(rev.text))
-        yield authorid, abs(num_toks-prev_num_toks)
-        prev_num_toks = num_toks
+# liefert Autornamen von contributor in id2author oder None, falls nicht vorhanden
+def get_author_id(contributor, id2author):
+    username = contributor.user_text
+    return id2author.token2id.get(username)
 
+
+# berechnet für jede Version eines (registrierter,nicht-Bot) Autoren als Beitragswert: 1
+def contrib_value_one(revisions, id2author):
+    for rev in revisions:
+        authorid = get_author_id(rev.contributor, id2author)
+        if authorid is not None:
+            yield authorid, 1        
+        
+# berechnet für jede Version eines (registrierter,nicht-Bot) Autoren als Beitragswert: max(0, #Tokens - #Tokens des Vorgängers)
+def contrib_value_diff_numterms(revisions, id2author):
+    # da Berechnung der Anzahl Tokens aufwändig: berechne nur Anzahl Tokens, falls für Artikel gültiger Autoren nötig
+    token_nums = {-1: 0}
+    def get_num_tokens(i): 
+        if i not in token_nums:
+            token_nums[i] = len(get_tokens(revisions[i].text))
+        return token_nums[i]
+        
+    for i, rev in enumerate(revisions):
+        authorid = get_author_id(rev.contributor, id2author)
+        if authorid is not None:
+            num_tokens = get_num_tokens(i)
+            prev_num_tokens = get_num_tokens(i-1)
+            rev_value = num_tokens-prev_num_tokens
+            if rev_value > 0:
+                yield authorid, rev_value
     
-CONTRIBUTION_VALUE_CHOICES = {
-    'one': '1 per contribution',
-    'diff_numterms': 'max(0, difference of number of terms to previous contrib',
-    'absdiff': 'absolute difference of number of terms to previous contrib'
-}
-    
+
 # liefert zu einem Generator von Paaren (AutorID,Revision) einen Generator von (AutorID,Beitragswert(Revision))
 CONTRIBUTION_VALUE_FUNCTIONS = {
     'one': contrib_value_one,
     'diff_numterms': contrib_value_diff_numterms,
-    'absdiff': contrib_value_absdiff
 }
 
 # liefert einen Generator ((Revisionen als Tupel, Seitentitel) für alle Seiten im Mainspace)
-def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
+def get_revisions_of_pages(history_dump, namespace_prefixes):
     num_pages_total = 0
     num_pages_mainspace = 0
     num_revisions_mainspace = 0
-    num_revisions_ms_registered_users = 0
-    num_revisions_ms_nonbots = 0
-    num_pages_with_contribs = 0 # bei berechnung beitragsfunktion können doks "leer" werden
     authors_ms = set()
-    authors_ms_registered_users = set()  
-    authors_ms_nonbot_users = set()  
     for page in history_dump:
         num_pages_total += 1
         logger.debug('page {}'.format(page.title))
@@ -69,35 +60,47 @@ def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
             num_pages_mainspace += 1
             logger.debug('page {} considered mainspace'.format(page.title))
             
+            # lade Revisionen des Artikels
             revisions = tuple(revision for revision in page)
             num_revisions_mainspace += len(revisions)
             authors_ms.update(rev.contributor.user_text for rev in revisions if rev.contributor.user_text is not None)
             logger.debug('page {} having {} revisions'.format(page.title, len(revisions)))
-            
-            revisions_ms_registered_users = tuple(revision for revision in revisions if is_registered_user(revision.contributor))
-            num_revisions_ms_registered_users += len(revisions_ms_registered_users)
-            logger.debug('page {} having {} revisions of registered users'.format(page.title, len(revisions_ms_registered_users)))
-            authors_ms_registered_users.update(rev.contributor.user_text for rev in revisions_ms_registered_users) 
-            
-            revisions_ms_nonbots = tuple(revision for revision in revisions if is_not_bot_user(revision.contributor))
-            num_revisions_ms_nonbots += len(revisions_ms_nonbots)
-            logger.debug('page {} having {} revisions of non-bot users'.format(page.title, len(revisions_ms_nonbots)))
-            authors_ms_nonbot_users.update(rev.contributor.user_text for rev in revisions_ms_nonbots) # ergibt denselben Wert wie len(id2author)
-            
-            #num_different_authors = len(set(rev.contributor.id for rev in revisions_of_valid_users)) # erhöhr dauer signifikant (~55min -> )
-            #logger.debug('page {} having {} different authors -> keep?: {}'.format(page.title, num_different_authors, num_different_authors >= min_doc_authors))
-            #if num_different_authors >= min_doc_authors:
-            #    num_pages_ms_enough_different_valid_users += 1
-            #    yield revisions_of_valid_users,page.title
-            
-            if len(revisions_ms_nonbots) > 0:
-                num_pages_with_contribs += 1
-                yield revisions_ms_nonbots,page.title
+                
+            yield revisions, page.title
                 
     logger.info('{} pages total'.format(num_pages_total))
     logger.info('{} pages considered mainspace'.format(num_pages_mainspace))
     logger.info('{} different authors including anonymous ip users'.format(len(authors_ms)))
     logger.info('{} revisions in mainspace pages'.format(num_revisions_mainspace))
+    
+    
+# liefert einen Generator, der die Revisionen & Titel von page_revisions_titles entfernt, falls sie von unregistrierten Autoren oder Bots stammen 
+def filter_revisions(page_revisions_titles):
+    num_revisions_ms_registered_users = 0
+    num_revisions_ms_nonbots = 0
+    num_pages_with_contribs = 0 # bei berechnung beitragsfunktion können doks "leer" werden -> entferne diese Dokumente
+    authors_ms_registered_users = set()  
+    authors_ms_nonbot_users = set()  
+    
+    for revisions, pagetitle in page_revisions_titles:
+        
+        # entferne Revisionen unregistrierter Autoren
+        revisions_ms_registered_users = tuple(revision for revision in revisions if is_registered_user(revision.contributor))
+        num_revisions_ms_registered_users += len(revisions_ms_registered_users)
+        logger.debug('page {} having {} revisions of registered users'.format(pagetitle, len(revisions_ms_registered_users)))
+        authors_ms_registered_users.update(rev.contributor.user_text for rev in revisions_ms_registered_users) 
+        
+        # entferne Revisionen von Bots
+        revisions_ms_nonbots = tuple(revision for revision in revisions if is_not_bot_user(revision.contributor))
+        num_revisions_ms_nonbots += len(revisions_ms_nonbots)
+        logger.debug('page {} having {} revisions of non-bot users'.format(pagetitle, len(revisions_ms_nonbots)))
+        authors_ms_nonbot_users.update(rev.contributor.user_text for rev in revisions_ms_nonbots) # ergibt denselben Wert wie len(id2author)
+                    
+        # gib Revisionen zurück, falls noch welche übrig
+        if len(revisions_ms_nonbots) > 0:
+            num_pages_with_contribs += 1
+            yield revisions_ms_nonbots,pagetitle
+            
     logger.info('{} different registered authors in mainspace'.format(len(authors_ms_registered_users)))
     logger.info('{} revisions of registered users in mainspace'.format(num_revisions_ms_registered_users))
     logger.info('{} different non-bot authors in mainspace'.format(len(authors_ms_nonbot_users)))
@@ -105,32 +108,22 @@ def get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
     logger.info('{} pages having at least 1 contribution'.format(num_pages_with_contribs))
     
     
-# liefert einen Generator ((Autorname für alle Revisionen) für alle Seiten im Mainspace)
+# liefert für einen Generator ((Autorname für alle registrierten nicht-Bot-Autoren des Artikels) für alle Artikel)
 def get_revision_authors_of_pages(history_dump, namespace_prefixes):
-    for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
-        yield (revision.contributor.user_text for revision in revisions)
+    for revisions, pagetitle in filter_revisions(get_revisions_of_pages(history_dump, namespace_prefixes)):
+        yield (revision.contributor.user_text for revision in revisions)    
     
-
-# liefert einen Generator ((Autor-ID, Revision) für alle Revisionen), wobei das Dictionary den Autornamen enthalten muss
-def get_authorid_rev_pairs_by_dictionary(revisions, id2author):
-    for revision in revisions:
-        username = revision.contributor.user_text
-        if username in id2author.token2id:
-            yield id2author.token2id[username], revision
-    
-    
-# liefert einen Generator (((Autor-ID, Revisionswert) für alle Revisionen), Seitentitel für alle Seiteini im Mainspace)
-def get_revision_values_of_pages(history_dump, id2author, revision_value_fun, namespace_prefixes):
-    num_contribs_of_dict_authors = 0
-    for revisions, pagetitle in get_filtered_revisions_of_pages(history_dump, namespace_prefixes):
-        authorid_rev_pairs = tuple(authorid_rev for authorid_rev in get_authorid_rev_pairs_by_dictionary(revisions, id2author))
-        logger.debug('page {} having {} revisions of authors in dictionary'.format(pagetitle, len(authorid_rev_pairs)))
-        num_contribs_of_dict_authors += len(authorid_rev_pairs)
-        #if len(authorid_rev_pairs) > 0:
-        logger.debug('calculating revision values of non-empty revision list')
-        authorid_revisionvalue_pairs = revision_value_fun(iter(authorid_rev_pairs))
-        yield authorid_revisionvalue_pairs, pagetitle
-    logger.info('loaded {} revisions of authors in dictionary'.format(num_contribs_of_dict_authors))
+# berechnet Einträge (((Autor-ID, Revisionswert) für alle Revisionen), Seitentitel für alle Artikel in page_revisions_titles ) gemäß revision_value_fun
+def get_revision_values(page_revisions_titles, id2author, revision_value_fun):    
+    num_considered_revision_values = 0
+    for revisions, pagetitle in page_revisions_titles:
+        logger.debug('page {} having {} revisions'.format(pagetitle, len(revisions)))
+        authorids_revisionvalues = tuple(revision_value_fun(revisions, id2author))
+        logger.debug('page {} having {} contribution values of valid authors'.format(pagetitle, len(authorids_revisionvalues)))
+        num_considered_revision_values += len(authorids_revisionvalues)
+        yield authorids_revisionvalues, pagetitle
+        
+    logger.info('calculated contribution values of {} different revisions'.format(num_considered_revision_values))
 
 
 #einfache Klasse, die einen Generator wrappt und self.metadata = True setzt, damit gensim die Artikeltitel speichert
@@ -147,9 +140,7 @@ def main():
     parser.add_argument('--history-dump', type=argparse.FileType('r'), help='path to input WikiMedia *-pages-meta-history file (.xml/.xml.bz2)', required=True)
     parser.add_argument('--id2author', type=argparse.FileType('w'), help='path to output text id2author dictionary (.txt/.txt.bz2)', required=True)
     parser.add_argument('--contribs', type=argparse.FileType('w'), help='path to output MatrixMarket contributions .mm file; also creates a binary article title file CONTRIBS.metadata.cpickle', required=True)
-    parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_CHOICES, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES), required=True)
-    #parser.add_argument('--min-auth-docs', type=int, help='only consider contributions of authors that contributed to at least MIN_AUTH_DOCS different documents', required=True)
-    #parser.add_argument('--min-doc-auths', type=int, help='only consider documents with MIN_DOC_AUTHS different authors', required=True)
+    parser.add_argument('--contribution-value', choices=CONTRIBUTION_VALUE_FUNCTIONS, help='calculated per-contribution value; choices: {}'.format(CONTRIBUTION_VALUE_CHOICES.keys()), required=True)
     parser.add_argument("--namespace-prefixes", type=argparse.FileType('r'), help='file of namespace prefixes to ignore')    
         
     args = parser.parse_args()
@@ -168,15 +159,13 @@ def main():
         # benutze id2word-Dictionary von gensim als id2author-Dictionary
         id2author = Dictionary(get_revision_authors_of_pages(history_dump, namespace_prefixes))
         # entferne Autoren, die an weniger als min_author_docs beteiligt
-        #id2author.filter_extremes(no_below=min_author_docs, no_above=1, keep_n=None, keep_tokens=None)
         id2author.save_as_text(output_id2author_path)
         
     with smart_open(input_history_dump_path) as history_dump_file: 
         logger.info('generating MatrixMarket representation per revision: (docid, authorid, value of revision)')
         history_dump = xml_dump.Iterator.from_file(history_dump_file)
         revision_value_fun = CONTRIBUTION_VALUE_FUNCTIONS[contribution_value]
-        doc_auth_contribs = MetadataCorpus(get_revision_values_of_pages(history_dump, id2author, revision_value_fun, namespace_prefixes))
-        #MmCorpus.serialize(output_contribs_path, corpus=doc_auth_contribs, id2word=id2author, metadata=True, progress_cnt=10000) 
+        doc_auth_contribs = MetadataCorpus(get_revision_values(get_revisions_of_pages(history_dump, namespace_prefixes), id2author, revision_value_fun))
         MmWriter.write_corpus(output_contribs_path, corpus=doc_auth_contribs, num_terms=len(id2author), index=False, progress_cnt=10000, metadata=True)   
     
     

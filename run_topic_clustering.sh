@@ -32,17 +32,9 @@ BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 ./bash/run_bow_to_topic.sh $PREFIX $MALLET_HOME $NUM_TOPICS $NUM_ITERATIONS $ALPHA
 TPREFIX=$PREFIX-lda
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    if [ $CLUSTER_METHOD == "dbscan" ]; then
-        for EPSILON in "${EPSILONS[@]}"; do
-            for MIN_SAMPLE in "${MIN_SAMPLES[@]}"; do
-                ./bash/run_topic_to_cluster.sh $TPREFIX $BOW_CORPUS_PREFIX $CLUSTER_METHOD $EPSILON $MIN_SAMPLE
-            done
-        done
-    else
-        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            ./bash/run_topic_to_cluster.sh $TPREFIX $BOW_CORPUS_PREFIX $CLUSTER_METHOD $CLUSTER_NUM 
-        done
-    fi
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        ./bash/run_topic_to_cluster.sh $TPREFIX $BOW_CORPUS_PREFIX $CLUSTER_METHOD $CLUSTER_NUM 
+    done
 done
 
 

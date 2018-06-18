@@ -1,5 +1,6 @@
 import bz2
 import json
+from ipaddress import ip_address 
 from gensim.corpora.wikicorpus import filter_wiki, tokenize
 from scripts.utils.utils import init_logger, load_npz
 
@@ -16,12 +17,21 @@ def is_mainspace_page(page, namespace_prefixes):
     else:
         return not any(page.title.startswith(prefix) for prefix in namespace_prefixes)
         
-# registrierter, eingeloggter Nutzer mit ID, Benutzernamen
-def is_registered_user(contributor):
-    return contributor.id is not None and contributor.user_text is not None 
+# registrierter, eingeloggter Autor
+#def is_registered_user(contributor):
+#    return contributor.id is not None
+def is_registered_user(usertext):
+    if usertext is None:
+        return False 
+    try:
+        ip_address(usertext.strip())
+        return False
+    except ValueError:
+        return True
     
-def is_not_bot_user(contributor):
-    return contributor.id is not None and 'bot' not in contributor.user_text.lower()
+# registriert Autor, der kein Bot ist -> da kein Flag o.Ä. vorhanden -> prüfe case-insensitiv, ob "bot" im Namen -> false positives!
+def is_not_bot_user(usertext):
+    return is_registered_user(usertext) and 'bot' not in usertext.lower()
     
 # lädt die als .npz vorliegende dichte Dokument-Topic-Matrix
 def load_document_topics(document_topics_path):        

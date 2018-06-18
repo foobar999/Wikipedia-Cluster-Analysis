@@ -94,7 +94,7 @@ def get_revisions_of_pages(history_dump, namespace_prefixes):
 def get_revision_authors_of_pages(history_dump, namespace_prefixes):
    #for revisions, pagetitle in filter_revisions(get_revisions_of_pages(history_dump, namespace_prefixes)):
     for revisions, pagetitle in get_revisions_of_pages(history_dump, namespace_prefixes):
-        yield (revision.contributor.user_text for revision in revisions)    
+        yield (revision.contributor.user_text for revision in revisions if revision.contributor.user_text is not None)    
     
 # liefert Generator (((Autor-ID, Versionswert) für alle Versionen), Titel für alle Artikel in page_revisions_titles ) 
 # Berechnung der Versionswerte basiert auf revision_value_fun

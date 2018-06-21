@@ -6,6 +6,7 @@ from scripts.utils.utils import init_logger
 
 logger = init_logger()
 
+
 def scatter_plot(data, ofpath, xlabel, ylabel, rasterized=False, size=1, figsize=((5,2.5))):
     logger.info('plotting of shape {} to {}'.format(data.shape, ofpath))
     plt.figure(figsize=figsize)

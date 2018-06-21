@@ -54,7 +54,7 @@ STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
 BOW=$BOW_PREFIX-bow.mm.bz2
 TOPIC_MODEL=$TM_PREFIX-lda
 LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+# python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
@@ -117,28 +117,39 @@ CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
 
 
 # zentralste Dokumente je Cluster
-STATS_CENTRAL_DIR=output/stats/cluster_central
-mkdir -p $STATS_CENTRAL_DIR
-STATS_CENTRAL_PREFIX=$STATS_CENTRAL_DIR/$PREFIX
-K=5
-J=5
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
-    echo "evaluating clustering"
-    if [[ $CLUSTER_METHOD =~ .*cos ]]; then
-        METRIC="cosine"
-    else
-        METRIC="euclidean"
-    fi
-   CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-   for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-       LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
-       python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J --metric=$METRIC|& tee $LOG_FILE
-   done
-done
+# STATS_CENTRAL_DIR=output/stats/cluster_central
+# mkdir -p $STATS_CENTRAL_DIR
+# STATS_CENTRAL_PREFIX=$STATS_CENTRAL_DIR/$PREFIX
+# K=5
+# J=5
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
+    # echo "evaluating clustering"
+    # if [[ $CLUSTER_METHOD =~ .*cos ]]; then
+        # METRIC="cosine"
+    # else
+        # METRIC="euclidean"
+    # fi
+   # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+   # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+       # LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
+       # python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J --metric=$METRIC|& tee $LOG_FILE
+   # done
+# done
 
+# reinheiten der cluster
+# STATS_CLUSTER_PURITIES_DIR=output/stats/cluster_purities
+# mkdir -p $STATS_CLUSTER_PURITIES_DIR
+# STATS_CLUSTER_PURITIES_PREFIX=$STATS_CLUSTER_PURITIES_DIR/$PREFIX
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+   # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       # CLUSTER_LABELS=$CLUS_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.json.bz2
+       # PURITIES_PLOT_FILE=$STATS_CLUSTER_PURITIES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
+       # python3 -m scripts.stats.cluster.plot_cluster_purities --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --plot=$PURITIES_PLOT_FILE
+   # done
+# done
 
 
 

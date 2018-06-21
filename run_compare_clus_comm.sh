@@ -44,7 +44,7 @@ STATS_COMP_PREFIX=$STATS_COMP_DIR/$PREFIX
 COMP_MEASURE=normalized-mutual-info
 echo "clearing score files of scores $COMP_MEASURE"
 SCORE_FILE=$STATS_COMP_PREFIX-$COMP_MEASURE.txt
-truncate -s 0 $SCORE_FILE
+echo "CLUSTER_PARAMS COMMUNIITY_PARAMS SCORE INTERSECTION_SIZE" > $SCORE_FILE
 
 for CLUS_INDEX in ${!BEST_CLUSTER_METHODS[*]}; do 
     # Clustering
@@ -65,9 +65,9 @@ for CLUS_INDEX in ${!BEST_CLUSTER_METHODS[*]}; do
         LOG_FILE=$LOG_PREFIX-$CLUSTER_PARAMS-$COMM_PARAMS.log
         OUTPUT=$(python3 -m scripts.stats.compare_title_clusterings --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2>&1)
         echo "$OUTPUT" |& tee $LOG_FILE # schreibe in Logdatei
-        SCORE="$(echo "$OUTPUT" | grep $COMP_MEASURE | cut -d' ' -f6-)" # speichere Score
-        INTERSECT_SIZE="$(echo "$OUTPUT" | grep "number of intersect" | cut -d' ' -f6-)" # speichere Größe der Schnittmenge beider Partitionierungen
-        LINE="$CLUS_PARAMS $COMM_PARAMS $SCORE $INTERSECT_SIZE"
+        SCORE="$(echo "$OUTPUT" | grep $COMP_MEASURE | cut -d' ' -f7-)" # speichere Score
+        INTERSECT_SIZE="$(echo "$OUTPUT" | grep "number of intersect" | cut -d' ' -f10-)" # speichere Größe der Schnittmenge beider Partitionierungen
+        LINE="$CLUSTER_PARAMS $COMM_PARAMS $SCORE $INTERSECT_SIZE"
         echo $LINE >> $SCORE_FILE # schreibe je Zeile: <Clusteringparameter> <Communitiesparameter> <Ähnlichkeitsscore>
     done
 done

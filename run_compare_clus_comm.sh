@@ -16,10 +16,13 @@ if [ ! -z ${DEBUG+x} ]; then # variable gesetzt?
     export DEBUG=$DEBUG
 fi
 
+# zu vergleichende Parametrierungen
+# Cluster-Parameter
 BEST_CLUSTER_METHODS=($BEST_CLUSTER_METHODS)
 echo "BEST_CLUSTER_METHODS ${BEST_CLUSTER_METHODS[@]}"
 BEST_CLUSTER_NUMS=($BEST_CLUSTER_NUMS) 
 echo "BEST_CLUSTER_NUMS ${BEST_CLUSTER_NUMS[@]}"
+# Community-Parameter
 BEST_COMM_CONTRIBS=($BEST_COMM_CONTRIBS)
 echo "BEST_COMM_CONTRIBS ${BEST_COMM_CONTRIBS[@]}"
 BEST_COMM_COAUTHS=($BEST_COMM_COAUTHS)
@@ -27,6 +30,7 @@ echo "BEST_COMM_COAUTHS ${BEST_COMM_COAUTHS[@]}"
 BEST_COMM_METHODS=($BEST_COMM_METHODS)
 echo "BEST_COMM_METHODS ${BEST_COMM_METHODS[@]}"
 
+# Präfixed benötigter Dateien
 CLUS_PREFIX=output/clusters/$PREFIX
 COMM_PREFIX=output/communities/$PREFIX
 mkdir -p output/logs/comparisons
@@ -36,6 +40,7 @@ STATS_COMP_DIR=output/stats/comparisons
 mkdir -p $STATS_COMP_DIR
 STATS_COMP_PREFIX=$STATS_COMP_DIR/$PREFIX
 
+# initialisiere leeres "score file", in dem nmi,#gemeinsamer cluster in kurzform enthalten
 COMP_MEASURE=normalized-mutual-info
 echo "clearing score files of scores $COMP_MEASURE"
 SCORE_FILE=$STATS_COMP_PREFIX-$COMP_MEASURE.txt

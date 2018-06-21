@@ -1,6 +1,9 @@
 import argparse
 import numpy as np
-from sklearn.metrics import normalized_mutual_info_score
+#from sklearn.metrics import normalized_mutual_info_score
+# sklearn's mi-scores benutzen ln statt log2 -> nimm eigene log2-Variante
+# merkwürdig: es scheint bei nmi bei ln und log2 das gleiche rauszukommen
+from scripts.external.supervised import normalized_mutual_info_score 
 from scripts.utils.utils import init_logger, load_communities
 
 logger = init_logger()

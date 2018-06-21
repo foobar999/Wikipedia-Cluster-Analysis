@@ -16,67 +16,56 @@ if [ ! -z ${DEBUG+x} ]; then # variable gesetzt?
     export DEBUG=$DEBUG
 fi
 
-TOPIC_MODELS=($TOPIC_MODELS) # splitte String zu Array
-echo "TOPIC_MODELS ${TOPIC_MODELS[@]}"
-CLUSTER_METHODS=($CLUSTER_METHODS)
-echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
-CLUSTER_NUMS=($CLUSTER_NUMS) 
-echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
-CONTRIB_VALUES=($CONTRIB_VALUES)
-echo "CONTRIB_VALUES ${CONTRIB_VALUES[@]}"
-COAUTH_MODES=($COAUTH_MODES)
-echo "COAUTH_MODES ${COAUTH_MODES[@]}"
-COMM_METHODS=($COMM_METHODS)
-echo "COMM_METHODS ${COMM_METHODS[@]}"
-COMP_MEASURES=($COMP_MEASURES)
-echo "COMP_MEASURES ${COMP_MEASURES[@]}"
+BEST_CLUSTER_METHODS=($BEST_CLUSTER_METHODS)
+echo "BEST_CLUSTER_METHODS ${BEST_CLUSTER_METHODS[@]}"
+BEST_CLUSTER_NUMS=($BEST_CLUSTER_NUMS) 
+echo "BEST_CLUSTER_NUMS ${BEST_CLUSTER_NUMS[@]}"
+BEST_COMM_CONTRIBS=($BEST_COMM_CONTRIBS)
+echo "BEST_COMM_CONTRIBS ${BEST_COMM_CONTRIBS[@]}"
+BEST_COMM_COAUTHS=($BEST_COMM_COAUTHS)
+echo "BEST_COMM_COAUTHS ${BEST_COMM_COAUTHS[@]}"
+BEST_COMM_METHODS=($BEST_COMM_METHODS)
+echo "BEST_COMM_METHODS ${BEST_COMM_METHODS[@]}"
 
-mkdir -p output/comparisons
-COMP_PREFIX=output/comparisons/$PREFIX
+CLUS_PREFIX=output/clusters/$PREFIX
+COMM_PREFIX=output/communities/$PREFIX
 mkdir -p output/logs/comparisons
 LOG_PREFIX=output/logs/comparisons/$PREFIX
 
-echo "clearing score files of scores ${COMP_MEASURES[@]}"
-for COMP_MEASURE in "${COMP_MEASURES[@]}"; do 
-    SCORE_FILE=$COMP_PREFIX-$COMP_MEASURE.txt
-    truncate -s 0 $SCORE_FILE
-done
+STATS_COMP_DIR=output/stats/comparisons
+mkdir -p $STATS_COMP_DIR
+STATS_COMP_PREFIX=$STATS_COMP_DIR/$PREFIX
 
-for TOPIC_MODEL in "${TOPIC_MODELS[@]}"; do
-    for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-        for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-            CLUS_PARAMS=$TOPIC_MODEL-$CLUSTER_METHOD-$CLUSTER_NUM
-            CLUS_PREFIX=$PREFIX-$CLUS_PARAMS
-            # Clustering Dokumenttitel -> Clusterlabel
-            TITLECLUSTERS=output/clusters/$CLUS_PREFIX-titleclusters.json.bz2
-            for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-                for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 
-                    for COMM_METHOD in "${COMM_METHODS[@]}"; do 
-                        COMM_PARAMS=$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
-                        COMM_PREFIX=$PREFIX-$COMM_PARAMS
-                        # Communities Dokumenttitel -> Communitylabel
-                        TITLECOMMUNITIES=output/communities/$COMM_PREFIX-titlecommunities.json.bz2
-                        echo "comparing $CLUS_PARAMS and $COMM_PARAMS"
-                        #COMP_FILE=$COMP_PREFIX-$TOPIC_MODEL-$CLUSTER_METHOD-$CLUSTER_NUM-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
-                        LOG_FILE=$LOG_PREFIX-$CLUS_PARAMS-$COMM_PREFIX.log
-                        OUTPUT=$(python3 scripts/compare_title_clusterings.py --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2> >(tee $LOG_FILE >&2))
-                        for COMP_MEASURE in "${COMP_MEASURES[@]}"; do 
-                            SCORE="$(echo "${OUTPUT}" | grep $COMP_MEASURE | cut -d' ' -f2-)"
-                            SCORE_FILE=$COMP_PREFIX-$COMP_MEASURE.txt
-                            LINE="$CLUS_PARAMS $COMM_PARAMS $SCORE"
-                            echo $LINE >> $SCORE_FILE # schreibe je Zeile: <Clusteringparameter> <Communitiesparameter> <Ähnlichkeitsscore>
-                        done
-                    done
-                done
-            done
-        done
+COMP_MEASURE=normalized-mutual-info
+echo "clearing score files of scores $COMP_MEASURE"
+SCORE_FILE=$STATS_COMP_PREFIX-$COMP_MEASURE.txt
+truncate -s 0 $SCORE_FILE
+
+for CLUS_INDEX in ${!BEST_CLUSTER_METHODS[*]}; do 
+    # Clustering
+    CLUSTER_METHOD=${BEST_CLUSTER_METHODS[$CLUS_INDEX]}
+    CLUSTER_NUM=${BEST_CLUSTER_NUMS[$CLUS_INDEX]}
+    CLUSTER_PARAMS=lda-$CLUSTER_METHOD-$CLUSTER_NUM
+    TITLECLUSTERS=$CLUS_PREFIX-$CLUSTER_PARAMS-titleclusters.json.bz2
+    for COMM_INDEX in ${!BEST_COMM_CONTRIBS[*]}; do 
+        # Communitystruktur
+        CONTRIB_VALUE=${BEST_COMM_CONTRIBS[$COMM_INDEX]}
+        COAUTH_MODE=${BEST_COMM_COAUTHS[$COMM_INDEX]}
+        COMM_METHOD=${BEST_COMM_METHODS[$COMM_INDEX]}
+        COMM_PARAMS=$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD
+        TITLECOMMUNITIES=$COMM_PREFIX-$COMM_PARAMS-titlecommunities.json.bz2
+        
+        # Vergleich
+        echo "comparing $CLUSTER_PARAMS and $COMM_PARAMS"
+        LOG_FILE=$LOG_PREFIX-$CLUSTER_PARAMS-$COMM_PARAMS.log
+        OUTPUT=$(python3 -m scripts.stats.compare_title_clusterings --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2>&1)
+        echo "$OUTPUT" |& tee $LOG_FILE # schreibe in Logdatei
+        SCORE="$(echo "$OUTPUT" | grep $COMP_MEASURE | cut -d' ' -f6-)" # speichere Score
+        INTERSECT_SIZE="$(echo "$OUTPUT" | grep "number of intersect" | cut -d' ' -f6-)" # speichere Größe der Schnittmenge beider Partitionierungen
+        LINE="$CLUS_PARAMS $COMM_PARAMS $SCORE $INTERSECT_SIZE"
+        echo $LINE >> $SCORE_FILE # schreibe je Zeile: <Clusteringparameter> <Communitiesparameter> <Ähnlichkeitsscore>
     done
 done
-
-
-
-
-
 
 
 

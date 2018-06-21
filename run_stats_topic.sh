@@ -146,7 +146,7 @@ CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
 # for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
        # CLUSTER_LABELS=$CLUS_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.json.bz2
-       # PURITIES_PLOT_FILE=$STATS_CLUSTER_PURITIES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
+       # PURITIES_PLOT_FILE=$STATS_CLUSTER_PURITIES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM-purities.pdf
        # python3 -m scripts.stats.cluster.plot_cluster_purities --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --plot=$PURITIES_PLOT_FILE
    # done
 # done

@@ -114,6 +114,7 @@ def main():
     logger.info('creating vertex clustering of community labels')
     node_labels = [communities[name] for name in coauth_graph.vs['name']] 
     community_structure = VertexClustering(coauth_graph, membership=node_labels)
+    logger.info('created vertex clustering of {} communities'.format(len(community_structure)))
     logger.debug('created vertex clustering {}'.format(community_structure))
         
     centrality_function = centrality_measures[centrality_measure]
@@ -127,7 +128,7 @@ def main():
         logger.debug('max titles: {}'.format(max_doc_titles))
         max_document_titles_of_communities[comm_id] = {'titles': max_doc_titles, 'centralities': centralities}
         
-    logger.info('saving max document titles of communities to {}'.format(output_central_titles_path))
+    logger.info('saving community centrality data (titles,centralities) of {} communities to {}'.format(len(max_document_titles_of_communities), output_central_titles_path))
     with open(output_central_titles_path, 'w') as output_central_titles_file:
         json.dump(max_document_titles_of_communities, output_central_titles_file, indent=1)
     

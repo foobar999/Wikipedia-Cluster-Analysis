@@ -60,12 +60,12 @@ def get_document_titles_of_node_names(node_names, titles):
 def get_top_nodes_of_communities(comm_subgraph, J, centrality_function):  
     comm_size = comm_subgraph.vcount()
     logger.info('computing {} centralities of community of size {}'.format(centrality_function.__name__, comm_size))
-    node_weights = centrality_function(comm_subgraph)
-    node_weights = enumerate(node_weights)
-    max_nodes_weights = nlargest(min(comm_size,J), node_weights, key=lambda nd:nd[1])
-    max_node_names_weights = [(comm_subgraph.vs['name'][nodeid],weight) for nodeid,weight in max_nodes_weights]
-    logger.debug('max_weight_node_names {}'.format(max_node_names_weights))
-    return max_node_names_weights
+    node_centralities = centrality_function(comm_subgraph)
+    node_centralities = enumerate(node_centralities)
+    max_nodes_centralities = nlargest(min(comm_size,J), node_centralities, key=lambda nd:nd[1])
+    max_node_names_centralities = [(comm_subgraph.vs['name'][nodeid],cen) for nodeid,cen in max_nodes_centralities]
+    logger.debug('max_weight_node_names {}'.format(max_node_names_centralities))
+    return max_node_names_centralities
     
      
 def main():
@@ -116,31 +116,27 @@ def main():
     community_structure = VertexClustering(coauth_graph, membership=node_labels)
     logger.debug('created vertex clustering {}'.format(community_structure))
         
-    community_sizes = list(enumerate(community_structure.sizes()))
-    community_sizes.sort(key=lambda t:t[1], reverse=True)
-    logger.debug('community sizes, sorted descending\n{}'.format(community_sizes))
-        
     centrality_function = centrality_measures[centrality_measure]
     max_document_titles_of_communities = {}
     for comm_id in range(len(community_structure)):
         comm_subgraph = community_structure.subgraph(comm_id)
-        max_node_names_weights = get_top_nodes_of_communities(comm_subgraph, J, centrality_function)
-        logger.debug('max_node_names_weights {}'.format(max_node_names_weights))
-        max_node_names = [node_name for node_name,weight in max_node_names_weights]
+        max_node_names_centralities = get_top_nodes_of_communities(comm_subgraph, J, centrality_function)
+        logger.debug('max_node_names_weights {}'.format(max_node_names_centralities))        
+        max_node_names, centralities = zip(*max_node_names_centralities)
         max_doc_titles = get_document_titles_of_node_names(max_node_names, titles)
         logger.debug('max titles: {}'.format(max_doc_titles))
-        max_document_titles_of_communities[comm_id] = max_doc_titles
+        max_document_titles_of_communities[comm_id] = {'titles': max_doc_titles, 'centralities': centralities}
         
     logger.info('saving max document titles of communities to {}'.format(output_central_titles_path))
     with open(output_central_titles_path, 'w') as output_central_titles_file:
         json.dump(max_document_titles_of_communities, output_central_titles_file, indent=1)
     
-    # with open('hallo2.json', 'w') as x:
-        # from collections import defaultdict
-        # d = defaultdict(list)
-        # for n,l in communities.items():
-            # d[l].append(titles[n[1:]])
-        # json.dump(dict(sorted(d.items())), x, indent=1)
+    # prüfe, ob knotenlabel->communityid mapping zu communityid->titles,centralities-mapping passt
+    # titles_nodenames = {title: nodename for nodename,title in titles.items()}
+    # for comm_id,titles_centralities in max_document_titles_of_communities.items():
+        # for title in titles_centralities['titles']:
+            # assert communities['d'+titles_nodenames[title]] == comm_id
+    
         
 if __name__ == '__main__':
     main()

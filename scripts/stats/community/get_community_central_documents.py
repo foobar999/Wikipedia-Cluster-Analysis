@@ -59,8 +59,8 @@ def get_document_titles_of_node_names(node_names, titles):
 # liefert die (maximal) J Knoten aus der Community comm_subgraph mit den höchsten Centrality-Werten, inkl. der jeweiligen Werte
 def get_top_nodes_of_communities(comm_subgraph, J, centrality_function):  
     comm_size = comm_subgraph.vcount()
-    logger.info('computing {} centralities of community of size {}'.format(centrality_function.__name__, comm_size))
-    node_centralities = centrality_function(comm_subgraph)
+    logger.debug('computing {} centralities of community of size {}'.format(centrality_function.__name__, comm_size))
+    node_centralities = centrality_function(comm_subgraph) # insb. weighted_closeness, weighted_betweenness dauern ne weilw
     node_centralities = enumerate(node_centralities)
     max_nodes_centralities = nlargest(min(comm_size,J), node_centralities, key=lambda nd:nd[1])
     max_node_names_centralities = [(comm_subgraph.vs['name'][nodeid],cen) for nodeid,cen in max_nodes_centralities]
@@ -114,9 +114,9 @@ def main():
     logger.info('creating vertex clustering of community labels')
     node_labels = [communities[name] for name in coauth_graph.vs['name']] 
     community_structure = VertexClustering(coauth_graph, membership=node_labels)
-    logger.info('created vertex clustering of {} communities'.format(len(community_structure)))
     logger.debug('created vertex clustering {}'.format(community_structure))
         
+    logger.info('computing {}-centralities of {} communities'.format(centrality_measure, len(community_structure)))
     centrality_function = centrality_measures[centrality_measure]
     max_document_titles_of_communities = {}
     for comm_id in range(len(community_structure)):

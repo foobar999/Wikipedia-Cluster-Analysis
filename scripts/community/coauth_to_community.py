@@ -66,6 +66,7 @@ def main():
     node_names = coauth_graph.vs['name']
     node_community_labels = communities.membership
     name_labeling = dict(zip(node_names, node_community_labels))
+    logger.info('writing {} labels to {}'.format(len(name_labeling), output_communities_path))
     logger.debug('saving labels \n{}'.format(pformat(name_labeling)))
     with open(output_communities_path, 'w') as output_communities_file:
         json.dump(name_labeling, output_communities_file, indent=1)

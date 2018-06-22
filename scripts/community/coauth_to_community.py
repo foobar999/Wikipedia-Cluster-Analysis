@@ -5,7 +5,7 @@ import json
 from pprint import pformat
 from igraph import Graph
 from gensim.utils import smart_open
-from scripts.utils.utils import init_logger, argparse_bool
+from scripts.utils.utils import init_logger
 from scripts.utils.graph import log_igraph, log_communities
 
 logger = init_logger()
@@ -15,31 +15,42 @@ def main():
     parser = argparse.ArgumentParser(description='determines communities in of a weighted co-authorship-network')
     parser.add_argument('--coauth-graph', type=argparse.FileType('r'), help='path to output pickled, gzipped graph file', required=True)
     parser.add_argument('--communities', type=argparse.FileType('w'), help='path to output .json communities file', required=True)
-    parser.add_argument('--use-giant-comp', type=argparse_bool, help='if set: use connected components with most nodes instead of actual graph', required=True)
     methods = {
         'greedy': 'fast greedy detection',
         'louvain': 'louvain detection'
     }
     parser.add_argument('--method', choices=methods, help='community detection method: ' + str(methods), required=True)
+    consider_only_communities = {
+        'giant': 'consider only subgraph of largest connected component in community detection',
+        'non-singleton': 'consider only components with of least 2 nodes'
+    }
+    parser.add_argument('--consider-only-communities', choices=consider_only_communities, help='consider only specific components; options: {}'.format(consider_only_communities))
     
     args = parser.parse_args()
     input_coauth_graph_path = args.coauth_graph.name
     output_communities_path = args.communities.name
-    use_giant_comp = args.use_giant_comp
+    consider_only_communities = args.consider_only_communities
     method = args.method
     
-    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'output_communities_path':output_communities_path, 'use_giant_comp':use_giant_comp, 'method':method})))
-    
+    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'output_communities_path':output_communities_path, 'consider_only_communities':consider_only_communities, 'method':method})))
     
     # lade bipartiten Graph
     coauth_graph = Graph.Read_Picklez(input_coauth_graph_path)
     logger.info('read co-authorship graph')
     log_igraph(coauth_graph)
     
-    # ersetze ggf. durch seine größte Zusammenhangskomponente
-    if use_giant_comp:
-        logger.info('using largest connected component of largest size instead actual graph')
-        coauth_graph = coauth_graph.components().giant()
+    if consider_only_communities is not None:
+        if consider_only_communities == 'giant':
+            # betrachte nur Riesenkomponente
+            logger.info('using largest connected component of largest size instead actual graph')
+            coauth_graph = coauth_graph.components().giant()
+        elif consider_only_communities == 'non-singleton':
+            # entferne Knoten in 1-Knoten-Community, d.h. Knoten ohne Kanten 
+            logger.info('using only non-singleton communities')
+            node_degrees = coauth_graph.degree(coauth_graph.vs)
+            singleton_nodes = [n for n,deg in enumerate(node_degrees) if deg == 0]
+            coauth_graph.delete_vertices(singleton_nodes)
+        logger.info('new network:')
         log_igraph(coauth_graph)        
     
     # community detection 

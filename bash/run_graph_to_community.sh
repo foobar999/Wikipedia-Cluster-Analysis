@@ -2,12 +2,12 @@
 
 
 if (( $# != 4 )); then
-    echo "Usage: $0 IPREFIX COMM_METHOD USE_GIANT_COMP TITLES"
+    echo "Usage: $0 IPREFIX COMM_METHOD CONSIDER_ONLY_COMMUNITIES TITLES"
     exit 1
 fi
 IPREFIX=$1
 COMM_METHOD=$2
-USE_GIANT_COMP=$3
+CONSIDER_ONLY_COMMUNITIES=$3
 TITLES=$4
 OPREFIX=$IPREFIX-$COMM_METHOD
 
@@ -24,7 +24,7 @@ TITLE_COMMUNITIES=$COMM_PREFIX-titlecommunities.json
 LOG_COMMUNITIES=$LOG_PREFIX-communities.log
 
 echo "running community detection"
-(time python3 -m scripts.community.coauth_to_community --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --use-giant-comp=$USE_GIANT_COMP) |& tee $LOG_COMMUNITIES
+(time python3 -m scripts.community.coauth_to_community --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --consider-only-communities=$CONSIDER_ONLY_COMMUNITIES) |& tee $LOG_COMMUNITIES
 bzip2 -zf $COMMUNITIES
 
 echo "creating title->communitylabel mapping file"

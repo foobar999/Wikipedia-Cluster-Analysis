@@ -56,24 +56,25 @@ def weighted_closeness(comm_subgraph):
 def get_document_titles_of_node_names(node_names, titles):
     return [titles[node_name[1:]] for node_name in node_names] # entferne 'd', das bei allen Dokumenten enthalten
         
-# liefert die (maximal) J Knoten aus der Community comm_subgraph mit den höchsten Centrality-Werten, inkl. der jeweiligen Werte
-def get_top_nodes_of_communities(comm_subgraph, J, centrality_function):  
+# liefert die max_docs_per_comm (oder #Knoten der Community, falls diese kleiner) Knoten aus der Community comm_subgraph 
+# mit den höchsten Centrality-Werten, inkl. der jeweiligen Werte
+def get_top_nodes_of_communities(comm_subgraph, max_docs_per_comm, centrality_function):  
     comm_size = comm_subgraph.vcount()
     logger.debug('computing {} centralities of community of size {}'.format(centrality_function.__name__, comm_size))
     node_centralities = centrality_function(comm_subgraph) # insb. weighted_closeness, weighted_betweenness dauern ne weilw
     node_centralities = enumerate(node_centralities)
-    max_nodes_centralities = nlargest(min(comm_size,J), node_centralities, key=lambda nd:nd[1])
+    max_nodes_centralities = nlargest(min(comm_size,max_docs_per_comm), node_centralities, key=lambda nd:nd[1])
     max_node_names_centralities = [(comm_subgraph.vs['name'][nodeid],cen) for nodeid,cen in max_nodes_centralities]
     logger.debug('max_weight_node_names {}'.format(max_node_names_centralities))
     return max_node_names_centralities
     
      
 def main():
-    parser = argparse.ArgumentParser(description='calculated the J most central documents of each community and writes their titles to a JSON file (exactly min(#nodes of community,J) titles are save per community)')
+    parser = argparse.ArgumentParser(description='calculated the most central documents of each community and writes their centrality data (titles,centralities) to a JSON file (exactly min(#nodes of community,J) titles are save per community)')
     parser.add_argument('--coauth-graph', type=argparse.FileType('r'), help='path to output pickled, gzipped graph file', required=True)
     parser.add_argument('--communities', type=argparse.FileType('r'), help='path to input .json.bz2 communities file', required=True)
     parser.add_argument('--titles', type=argparse.FileType('r'), help='path to input .json.bz2 titles file', required=True)
-    parser.add_argument('--central-titles', type=argparse.FileType('w'), help='path to output .json community->j-central-titles file', required=True)
+    parser.add_argument('--central-titles', type=argparse.FileType('w'), help='path to output .json community->centrality_data file', required=True)
     centrality_measures = {
         'degree': degree,
         'strength': strength,
@@ -82,8 +83,8 @@ def main():
         'weighted_betweenness': weighted_betweenness,
         'weighted_closeness': weighted_closeness
     }
-    parser.add_argument('--centrality-measure', choices=centrality_measures, help='used centrality measure to calculated centrality', required=True)
-    parser.add_argument('--J', type=int, help='maxiumum number of highest considered nodes per community', required=True)
+    parser.add_argument('--centrality-measure', choices=centrality_measures, help='centrality measure', required=True)
+    parser.add_argument('--max-docs-per-comm', type=int, help='maxiumum number of highest considered nodes per community', required=True)
     
     args = parser.parse_args()
     input_coauth_graph_path = args.coauth_graph.name
@@ -91,9 +92,9 @@ def main():
     input_titles_path = args.titles.name
     output_central_titles_path = args.central_titles.name
     centrality_measure = args.centrality_measure
-    J = args.J
+    max_docs_per_comm = args.max_docs_per_comm
     
-    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_central_titles_path':output_central_titles_path, 'centrality_measure':centrality_measure, 'J':J})))
+    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_central_titles_path':output_central_titles_path, 'centrality_measure':centrality_measure, 'max_docs_per_comm':max_docs_per_comm})))
     
     logger.info('loading graph from {}'.format(input_coauth_graph_path))
     coauth_graph = Graph.Read_Picklez(input_coauth_graph_path)
@@ -116,17 +117,22 @@ def main():
     community_structure = VertexClustering(coauth_graph, membership=node_labels)
     logger.debug('created vertex clustering {}'.format(community_structure))
         
-    logger.info('computing {}-centralities of {} communities'.format(centrality_measure, len(community_structure)))
+    logger.info('computing {}-centralities of {} documents in {} communities'.format(centrality_measure, community_structure.n, len(community_structure)))
     centrality_function = centrality_measures[centrality_measure]
     max_document_titles_of_communities = {}
     for comm_id in range(len(community_structure)):
         comm_subgraph = community_structure.subgraph(comm_id)
-        max_node_names_centralities = get_top_nodes_of_communities(comm_subgraph, J, centrality_function)
+        max_node_names_centralities = get_top_nodes_of_communities(comm_subgraph, max_docs_per_comm, centrality_function)
         logger.debug('max_node_names_weights {}'.format(max_node_names_centralities))        
         max_node_names, centralities = zip(*max_node_names_centralities)
         max_doc_titles = get_document_titles_of_node_names(max_node_names, titles)
         logger.debug('max titles: {}'.format(max_doc_titles))
-        max_document_titles_of_communities[comm_id] = {'titles': max_doc_titles, 'centralities': centralities}
+        centrality_data = {
+            'community_size': comm_subgraph.vcount(),
+            'titles': max_doc_titles, 
+            'centralities': centralities
+        }
+        max_document_titles_of_communities[comm_id] = centrality_data
         
     logger.info('saving community centrality data (titles,centralities) of {} communities to {}'.format(len(max_document_titles_of_communities), output_central_titles_path))
     with open(output_central_titles_path, 'w') as output_central_titles_file:

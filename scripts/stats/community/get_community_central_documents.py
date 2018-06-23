@@ -128,7 +128,7 @@ def main():
         max_doc_titles = get_document_titles_of_node_names(max_node_names, titles)
         logger.debug('max titles: {}'.format(max_doc_titles))
         centrality_data_of_community = {
-            'community_size': comm_subgraph.vcount(),
+            'size': comm_subgraph.vcount(),
             'titles': max_doc_titles, 
             'centralities': centralities
         }

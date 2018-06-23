@@ -45,29 +45,33 @@ def save_npz(ofname, mat):
 def load_npz(ifname):
     return np.load(ifname, mmap_mode='r')['arr']
     
+# speichert Objekt als JSON-Datei
+def save_data_to_json(data, output_json_path):
+    logger.info('saving {} elements to {}'.format(len(data), output_json_path))
+    logger.debug('saving data {}'.format(data))
+    with open(output_json_path, 'w') as output_json_file:
+        json.dump(data, output_json_file, indent=1)
+        
+# lädt Objekt aus bz2-komprimierter JSON-Datei
+def load_compressed_json_data(input_json_bz2_path):
+    logger.info('loading bz2-compressed json data from {}'.format(input_json_bz2_path))
+    with bz2.open(input_json_bz2_path, 'rt') as input_json_bz2_file:
+        data = json.load(input_json_bz2_file)
+    logger.info('loaded {} elements'.format(len(data)))
+    logger.debug('loaded {}'.format(data))
+    return data
+       
 # lädt die Communitylabels als Datei
 def load_communities(communities_path):
-    logger.info('loading communities from {}'.format(communities_path))
-    with bz2.open(communities_path, 'rt') as communities_file:
-        communities = json.load(communities_file)
-        
-    logger.info('loaded {} labels'.format(len(communities)))
-    logger.info('loaded {} different labels'.format(len(set(communities))))
-    logger.debug('communities:\n{}'.format(communities))
+    logger.info('loading communities')
+    communities = load_compressed_json_data(communities_path)
+    logger.info('loaded {} different community labels'.format(len(set(communities))))
     return communities
        
 # lädt eine Titeldatei
 def load_titles(titles_path):
-    logger.info('loading titles from {}'.format(titles_path))
-    with bz2.open(titles_path, 'rt') as titles_file:
-        titles = json.load(titles_file)
-    logger.info('loaded {} titles'.format(len(titles)))
-    return titles
-       
-       
-       
-       
-       
+    logger.info('loading titles')
+    return load_compressed_json_data(titles_path)
        
         
         

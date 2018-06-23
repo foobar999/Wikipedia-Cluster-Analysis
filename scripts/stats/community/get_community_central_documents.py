@@ -119,7 +119,7 @@ def main():
         
     logger.info('computing {}-centralities of {} documents in {} communities'.format(centrality_measure, community_structure.n, len(community_structure)))
     centrality_function = centrality_measures[centrality_measure]
-    max_document_titles_of_communities = {}
+    centrality_data = {}
     for comm_id in range(len(community_structure)):
         comm_subgraph = community_structure.subgraph(comm_id)
         max_node_names_centralities = get_top_nodes_of_communities(comm_subgraph, max_docs_per_comm, centrality_function)
@@ -127,15 +127,15 @@ def main():
         max_node_names, centralities = zip(*max_node_names_centralities)
         max_doc_titles = get_document_titles_of_node_names(max_node_names, titles)
         logger.debug('max titles: {}'.format(max_doc_titles))
-        centrality_data = {
+        centrality_data_of_community = {
             'community_size': comm_subgraph.vcount(),
             'titles': max_doc_titles, 
             'centralities': centralities
         }
-        max_document_titles_of_communities[comm_id] = centrality_data
+        centrality_data[comm_id] = centrality_data_of_community
         
-    logger.info('saving community centrality data (titles,centralities) of {} communities'.format(len(max_document_titles_of_communities)))
-    save_data_to_json(max_document_titles_of_communities, output_centrality_data_path)
+    logger.info('saving community centrality data (titles,centralities) of {} communities'.format(len(centrality_data)))
+    save_data_to_json(centrality_data, output_centrality_data_path)
     
     # prüfe, ob knotenlabel->communityid mapping zu communityid->titles,centralities-mapping passt
     # titles_nodenames = {title: nodename for nodename,title in titles.items()}

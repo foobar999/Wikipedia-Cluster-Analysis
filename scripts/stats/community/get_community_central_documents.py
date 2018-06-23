@@ -3,7 +3,7 @@ import argparse
 from heapq import nlargest
 from pprint import pformat
 from igraph import Graph, VertexClustering
-from scripts.utils.utils import init_logger, load_communities, load_titles
+from scripts.utils.utils import init_logger, load_communities, load_titles, save_data_to_json
 from scripts.utils.graph import log_igraph
 
 logger = init_logger()
@@ -74,7 +74,7 @@ def main():
     parser.add_argument('--coauth-graph', type=argparse.FileType('r'), help='path to output pickled, gzipped graph file', required=True)
     parser.add_argument('--communities', type=argparse.FileType('r'), help='path to input .json.bz2 communities file', required=True)
     parser.add_argument('--titles', type=argparse.FileType('r'), help='path to input .json.bz2 titles file', required=True)
-    parser.add_argument('--central-titles', type=argparse.FileType('w'), help='path to output .json community->centrality_data file', required=True)
+    parser.add_argument('--centrality-data', type=argparse.FileType('w'), help='path to output .json community->centrality_data file', required=True)
     centrality_measures = {
         'degree': degree,
         'strength': strength,
@@ -90,11 +90,11 @@ def main():
     input_coauth_graph_path = args.coauth_graph.name
     input_communities_path = args.communities.name
     input_titles_path = args.titles.name
-    output_central_titles_path = args.central_titles.name
+    output_centrality_data_path = args.centrality_data.name
     centrality_measure = args.centrality_measure
     max_docs_per_comm = args.max_docs_per_comm
     
-    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_central_titles_path':output_central_titles_path, 'centrality_measure':centrality_measure, 'max_docs_per_comm':max_docs_per_comm})))
+    logger.info('running with:\n{}'.format(pformat({'input_coauth_graph_path':input_coauth_graph_path, 'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_centrality_data_path':output_centrality_data_path, 'centrality_measure':centrality_measure, 'max_docs_per_comm':max_docs_per_comm})))
     
     logger.info('loading graph from {}'.format(input_coauth_graph_path))
     coauth_graph = Graph.Read_Picklez(input_coauth_graph_path)
@@ -134,9 +134,8 @@ def main():
         }
         max_document_titles_of_communities[comm_id] = centrality_data
         
-    logger.info('saving community centrality data (titles,centralities) of {} communities to {}'.format(len(max_document_titles_of_communities), output_central_titles_path))
-    with open(output_central_titles_path, 'w') as output_central_titles_file:
-        json.dump(max_document_titles_of_communities, output_central_titles_file, indent=1)
+    logger.info('saving community centrality data (titles,centralities) of {} communities'.format(len(max_document_titles_of_communities)))
+    save_data_to_json(max_document_titles_of_communities, output_centrality_data_path)
     
     # prüfe, ob knotenlabel->communityid mapping zu communityid->titles,centralities-mapping passt
     # titles_nodenames = {title: nodename for nodename,title in titles.items()}

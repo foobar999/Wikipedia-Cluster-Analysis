@@ -48,35 +48,35 @@ export MALLET_HOME=$MALLET_HOME
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
-STATS_AVG_DIR=output/stats/cluster_avg
-mkdir -p $STATS_AVG_DIR
-STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
-BOW=$BOW_PREFIX-bow.mm.bz2
-TOPIC_MODEL=$TM_PREFIX-lda
-LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+# STATS_AVG_DIR=output/stats/cluster_avg
+# mkdir -p $STATS_AVG_DIR
+# STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
+# BOW=$BOW_PREFIX-bow.mm.bz2
+# TOPIC_MODEL=$TM_PREFIX-lda
+# LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
 # python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 # TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
 # TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
 # python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
-STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
-mkdir -p $STATS_DOC_PLOTS_DIR
-STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
-# 2D-Transformation
-DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
+# 2D-Transformation Topicvektoren
+# STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
+# mkdir -p $STATS_DOC_PLOTS_DIR
+# STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
+# DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
 #python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
-DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
+# DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
 #python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
-CLUSTER_PLOTS_DIR=output/stats/cluster_plots
-mkdir -p $CLUSTER_PLOTS_DIR
-CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
+# CLUSTER_PLOTS_DIR=output/stats/cluster_plots
+# mkdir -p $CLUSTER_PLOTS_DIR
+# CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
 #for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
 #    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
 #    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
@@ -115,30 +115,6 @@ CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
    # done
 # done
 
-
-# zentralste Dokumente je Cluster
-# STATS_CENTRAL_DIR=output/stats/cluster_central
-# mkdir -p $STATS_CENTRAL_DIR
-# STATS_CENTRAL_PREFIX=$STATS_CENTRAL_DIR/$PREFIX
-# K=5
-# J=5
-# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-# DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
-    # echo "evaluating clustering"
-    # if [[ $CLUSTER_METHOD =~ .*cos ]]; then
-        # METRIC="cosine"
-    # else
-        # METRIC="euclidean"
-    # fi
-   # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-   # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-       # LOG_FILE=$STATS_CENTRAL_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-central-titles.log
-       # python3 -m scripts.stats.cluster.get_cluster_centrality_stats --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --K=$K --J=$J --metric=$METRIC|& tee $LOG_FILE
-   # done
-# done
-
 # reinheiten der cluster
 # STATS_CLUSTER_PURITIES_DIR=output/stats/cluster_purities
 # mkdir -p $STATS_CLUSTER_PURITIES_DIR
@@ -150,6 +126,45 @@ CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
        # python3 -m scripts.stats.cluster.plot_cluster_purities --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --plot=$PURITIES_PLOT_FILE
    # done
 # done
+
+# bestimmte von allen Clustern zentralste Dokumente
+STATS_CENTRAL_DOCS_DIR=output/stats/cluster_central_documents
+mkdir -p $STATS_CENTRAL_DOCS_DIR
+STATS_CENTRAL_DOCS_PREFIX=$STATS_CENTRAL_DOCS_DIR/$PREFIX
+MAX_DOCS_PER_COMM=5
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
+echo "calculating centrality data of clusterings"
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
+    if [[ $CLUSTER_METHOD =~ .*cos ]]; then
+        METRIC="cosine"
+    else
+        METRIC="euclidean"
+    fi
+    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+        CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json
+        LOG_FILE=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.log
+        python3 -m scripts.stats.cluster.get_cluster_central_documents --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --centrality-data=$CENTRALITY_DATA --max-docs-per-clus=$MAX_DOCS_PER_COMM --metric=$METRIC |& tee $LOG_FILE
+        bzip2 -zf $CENTRALITY_DATA
+    done
+done
+
+# zeige von ausgewählten, äquidistanten Communities die zentralsten Titel an
+STATS_CENTRAL_DOCS_SAMPLE_DIR=output/stats/cluster_central_documents_sample
+mkdir -p $STATS_CENTRAL_DOCS_SAMPLE_DIR
+STATS_CENTRAL_DOCS_SAMPLE_PREFIX=$STATS_CENTRAL_DOCS_SAMPLE_DIR/$PREFIX
+NUM_SAMPLE_COMMUNITIES=5
+echo "displaying titles of sample clusters"
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json.bz2
+        LOG_SAMPLES=$STATS_CENTRAL_DOCS_SAMPLE_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-sample-titles.log
+        python3 -m scripts.stats.get_sample_central_titles --centrality-data=$CENTRALITY_DATA --num-parts=$NUM_SAMPLE_COMMUNITIES |& tee $LOG_SAMPLES
+    done
+done
+
 
 
 

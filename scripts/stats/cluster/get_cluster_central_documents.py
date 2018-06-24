@@ -19,7 +19,7 @@ def get_clusters_from_labels(cluster_labels):
             
             
 def get_top_central_cluster_docs(cluster, document_topics, max_docs_per_clus, metric):
-    logger.info('cluster of size {}: finding {} nearest docs to centroid with metric {}'.format(len(cluster), max_docs_per_clus, metric))
+    logger.debug('cluster of size {}: finding {} nearest docs to centroid with metric {}'.format(len(cluster), max_docs_per_clus, metric))
     cluster_documents = document_topics[cluster]
     logger.debug('submatrix shape {}'.format(cluster_documents.shape))
     cluster_centroid = np.mean(cluster_documents, axis=0)

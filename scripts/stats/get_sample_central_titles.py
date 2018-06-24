@@ -46,7 +46,7 @@ def main():
     
     max_part_titles = max(len(part['titles']) for part in partitions)
     logger.info('at most {} central titles in given partitions'.format(max_part_titles))
-    logger.info('filtering to partitions of at least this number of titles'.format(max_part_titles))
+    logger.info('removing partitions with less documents than this number of titles'.format(max_part_titles))
     partitions = [p for p in partitions if p['size'] >= max_part_titles]
     logger.info('filtered to {} partitions'.format(len(partitions)))
     logger.debug('filtered partition sizes {}'.format([p['size'] for p in partitions]))

@@ -1,28 +1,9 @@
 import argparse
-import math
 from pprint import pformat
-from io import StringIO
-import numpy as np
 from scripts.utils.utils import init_logger, load_compressed_json_data
+from scripts.utils.comparison import get_equidistant_indices, get_max_num_titles_in_centrality_data, get_partitions_titles_matrix, display_matrix_as_csv
 
 logger = init_logger()
-
-
-def get_partitions_titles_matrix(sample_partitions):
-    max_num_titles = max(len(sample_part['titles']) for sample_part in sample_partitions)
-    titles_matrix = np.empty(shape=(max_num_titles+1, len(sample_partitions)), dtype=object)
-    for i, sample_part in enumerate(sample_partitions):
-        titles_matrix[0,i] = '$n={}$'.format(sample_part['size'])
-        sample_part_titles = sample_part['titles']
-        sample_part_titles_with_padding = sample_part_titles + [''] * (max_num_titles - len(sample_part_titles))
-        titles_matrix[1:,i] = sample_part_titles_with_padding
-    return titles_matrix
-    
-    
-def display_matrix_as_csv(titles_matrix):
-    strf = StringIO()
-    np.savetxt(strf, titles_matrix, delimiter=";", fmt="%s")
-    logger.info('CSV sample partition titles \n{}'.format(strf.getvalue()))
     
      
 def main():
@@ -44,20 +25,13 @@ def main():
     partitions.sort(key=lambda p:p['size'], reverse=True)
     logger.debug('partition sizes after sorting\n{}'.format([p['size'] for p in partitions]))
     
-    max_part_titles = max(len(part['titles']) for part in partitions)
-    logger.info('at most {} central titles in given partitions'.format(max_part_titles))
+    max_part_titles = get_max_num_titles_in_centrality_data(partitions)
     logger.info('removing partitions with less documents than this number of titles'.format(max_part_titles))
     partitions = [p for p in partitions if p['size'] >= max_part_titles]
     logger.info('filtered to {} partitions'.format(len(partitions)))
     logger.debug('filtered partition sizes {}'.format([p['size'] for p in partitions]))
                
-    N = len(partitions)
-    K = num_parts
-    logger.info('calculating K={} equidistant sample partition indices of N={} partitions'.format(N, K))
-    if K > N:
-        logger.warning('K is higher than N: setting K to N')
-        K = N
-    sample_indices = [math.floor(k*(N-1)/(K-1)) for k in range(0,K)]
+    sample_indices = get_equidistant_indices(len(partitions), num_parts)
     logger.info('sample indices {}'.format(sample_indices))
     sample_partitions = [partitions[i] for i in sample_indices]
     logger.info('sample partitions:\n{}'.format(pformat(sample_partitions)))

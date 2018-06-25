@@ -30,7 +30,7 @@ def find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_
     logger.info('considering {} clusters'.format(len(cluster_ids)))
     
     cluster_ids.sort(key=lambda id:len(clustering[id]), reverse=True)
-    sample_indices = get_equidistant_indices(cluster_ids, num_sample_clusters)
+    sample_indices = get_equidistant_indices(len(cluster_ids), num_sample_clusters)
     logger.info('sample cluster indices: {}'.format(sample_indices))
     sample_cluster_ids = [cluster_ids[i] for i in sample_indices]
     logger.info('sample cluster ids: {}'.format(sample_cluster_ids))
@@ -54,7 +54,7 @@ def format_cluster_centrality_data(cluster_centrality_data):
  
 # bestimmt Sample-Cluster aus clustering und bestimmt jeweils das ähnlichste Cluster aus cp_clustering, loggt jeweils die Centrality-Daten 
 def analyze_clustering_similarities(clustering, cp_clustering, centrality_data, cp_centrality_data, num_sample_clusters):
-    min_sample_cluster_size = get_max_num_titles_in_centrality_data(centrality_data)
+    min_sample_cluster_size = get_max_num_titles_in_centrality_data(centrality_data.values())
     sample_cluster_counterpart_data = find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_sample_clusters, min_sample_cluster_size)
     for sample_cluster_id, most_similar_cluster_id, jac, common_docs in sample_cluster_counterpart_data:
         cluster_centrality_data = centrality_data[str(sample_cluster_id)]

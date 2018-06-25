@@ -52,7 +52,8 @@ def find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_
 def format_cluster_centrality_data(cluster_centrality_data):
     return 'size: {}, titles: {}'.format(cluster_centrality_data['size'], cluster_centrality_data['titles'])
  
- 
+
+# erzeugt die CSV-Tabelle der Centrality-Daten samples_centrality_data und gibt sie aus 
 def display_csv_centrality_matrix_of_samples(samples_centrality_data):
     samples_centrality_matrix = get_partitions_titles_matrix(samples_centrality_data)
     display_matrix_as_csv(samples_centrality_matrix)
@@ -75,7 +76,7 @@ def analyze_clustering_similarities(clustering, cp_clustering, centrality_data, 
     logger.info('centrality data of samples')
     display_csv_centrality_matrix_of_samples(samples_centrality_data)
     
-    # logger Tabelle der Centrality-Daten der jeweils ähnlichsten Cluster der Sample-Cluster
+    # logge Tabelle der Centrality-Daten der jeweils ähnlichsten Cluster der Sample-Cluster
     cp_similar_centrality_data = [cp_centrality_data[mscid] for _,mscid,_,_ in sample_cluster_counterpart_data]
     logger.info('centrality data of most similar clusters of samples')
     display_csv_centrality_matrix_of_samples(cp_similar_centrality_data)

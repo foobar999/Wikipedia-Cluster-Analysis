@@ -2,6 +2,7 @@ import argparse
 from pprint import pformat
 from scripts.utils.utils import init_logger, load_compressed_json_data
 from scripts.utils.comparison import clustering_labels_to_sets, get_equidistant_indices, get_max_num_titles_in_centrality_data
+from scripts.utils.comparison import get_partitions_titles_matrix, display_matrix_as_csv
 
 logger = init_logger()
                  
@@ -52,17 +53,33 @@ def format_cluster_centrality_data(cluster_centrality_data):
     return 'size: {}, titles: {}'.format(cluster_centrality_data['size'], cluster_centrality_data['titles'])
  
  
+def display_csv_centrality_matrix_of_samples(samples_centrality_data):
+    samples_centrality_matrix = get_partitions_titles_matrix(samples_centrality_data)
+    display_matrix_as_csv(samples_centrality_matrix)
+ 
+ 
 # bestimmt Sample-Cluster aus clustering und bestimmt jeweils das ähnlichste Cluster aus cp_clustering, loggt jeweils die Centrality-Daten 
 def analyze_clustering_similarities(clustering, cp_clustering, centrality_data, cp_centrality_data, num_sample_clusters):
     min_sample_cluster_size = get_max_num_titles_in_centrality_data(centrality_data.values())
     sample_cluster_counterpart_data = find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_sample_clusters, min_sample_cluster_size)
+    
     for sample_cluster_id, most_similar_cluster_id, jac, common_docs in sample_cluster_counterpart_data:
-        cluster_centrality_data = centrality_data[str(sample_cluster_id)]
+        cluster_centrality_data = centrality_data[sample_cluster_id]
         logger.info('of cluster: id {}, {}'.format(sample_cluster_id, format_cluster_centrality_data(cluster_centrality_data)))
-        cp_cluster_centrality_data = cp_centrality_data[str(most_similar_cluster_id)]
+        cp_cluster_centrality_data = cp_centrality_data[most_similar_cluster_id]
         logger.info('most similar counterpart cluster: id {}, {}'.format(most_similar_cluster_id, format_cluster_centrality_data(cp_cluster_centrality_data)))
         logger.info('jaccard {}, number of common documents {}'.format(jac, common_docs))
-
+    
+    # logge Tabelle der Centrality-Daten der Sample-Cluster
+    samples_centrality_data = [centrality_data[scid] for scid,_,_,_ in sample_cluster_counterpart_data]
+    logger.info('centrality data of samples')
+    display_csv_centrality_matrix_of_samples(samples_centrality_data)
+    
+    # logger Tabelle der Centrality-Daten der jeweils ähnlichsten Cluster der Sample-Cluster
+    cp_similar_centrality_data = [cp_centrality_data[mscid] for _,mscid,_,_ in sample_cluster_counterpart_data]
+    logger.info('centrality data of most similar clusters of samples')
+    display_csv_centrality_matrix_of_samples(cp_similar_centrality_data)
+    
     
 def main():
     parser = argparse.ArgumentParser(description='for two clusterings C1 and C2: 1. samples some equidistant clusters of C1. 2. finds the most Jaccard-similar cluster of C2 for each sample cluster of C1. 3. repeats 1. and 2. with swapped roles of C1 and C2')
@@ -83,7 +100,9 @@ def main():
     
     logger.info('loading centrality data of both clusterings')
     centrality_data1 = load_compressed_json_data(input_centrality_data_paths[0])
+    centrality_data1 = {int(cluster_id): data for cluster_id, data in centrality_data1.items()} # konvertiere str-Keys zu int-Keys 
     centrality_data2 = load_compressed_json_data(input_centrality_data_paths[1])
+    centrality_data2 = {int(cluster_id): data for cluster_id, data in centrality_data2.items()}
     
     clustering1 = clustering_labels_to_sets(title_clustering1)
     clustering2 = clustering_labels_to_sets(title_clustering2)

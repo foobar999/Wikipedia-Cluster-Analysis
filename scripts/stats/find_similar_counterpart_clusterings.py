@@ -49,8 +49,10 @@ def find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_
     
     cluster_ids.sort(key=lambda id:len(clustering[id]), reverse=True)
     sample_indices = get_equidistant_indices(cluster_ids, num_sample_clusters)
-    logger.info('sample indices {}'.format(sample_indices))
+    logger.info('sample cluster indices: {}'.format(sample_indices))
     sample_cluster_ids = [cluster_ids[i] for i in sample_indices]
+    logger.info('sample cluster ids: {}'.format(sample_cluster_ids))
+    logger.info('sample cluster sizes: {}'.format([len(clustering[i]) for i in sample_cluster_ids]))
     
     sample_cluster_counterpart_data = []
     for sample_cluster_id in sample_cluster_ids:
@@ -62,22 +64,19 @@ def find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_
         sample_cluster_counterpart_data.append((sample_cluster_id,most_similar_cluster_id,jac,common_docs))
     return sample_cluster_counterpart_data
 
-
-def log_cluster_centrality_data(id, cluster_centrality_data):
-    logger.info('id: {}, size: {}, central_titles: {}'.format(id, cluster_centrality_data['size'], cluster_centrality_data['titles']))
+    
+def format_cluster_centrality_data(cluster_centrality_data):
+    return 'size: {}, titles: {}'.format(cluster_centrality_data['size'], cluster_centrality_data['titles'])
     
     
 def analyze_clustering_similarities(clustering, cp_clustering, centrality_data, cp_centrality_data, num_sample_clusters):
     min_sample_cluster_size = get_max_num_titles_in_centrality_data(centrality_data)
     sample_cluster_counterpart_data = find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_sample_clusters, min_sample_cluster_size)
     for sample_cluster_id, most_similar_cluster_id, jac, common_docs in sample_cluster_counterpart_data:
-        logger.info('of cluster')
         cluster_centrality_data = centrality_data[str(sample_cluster_id)]
-        log_cluster_centrality_data(sample_cluster_id, cluster_centrality_data)
-        #logger.info(cluster_centrality_data)
-        logger.info('most similar counterpart cluster')
+        logger.info('of cluster: id {}, {}'.format(sample_cluster_id, format_cluster_centrality_data(cluster_centrality_data)))
         cp_cluster_centrality_data = cp_centrality_data[str(most_similar_cluster_id)]
-        log_cluster_centrality_data(most_similar_cluster_id, cp_cluster_centrality_data)
+        logger.info('most similar counterpart cluster: id {}, {}'.format(most_similar_cluster_id, format_cluster_centrality_data(cp_cluster_centrality_data)))
         #logger.info(cp_cluster_centrality_data)
         logger.info('jaccard {}, number of common documents {}'.format(jac, common_docs))
 

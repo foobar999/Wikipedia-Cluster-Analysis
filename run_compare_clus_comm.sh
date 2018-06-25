@@ -33,17 +33,15 @@ echo "BEST_COMM_METHODS ${BEST_COMM_METHODS[@]}"
 # Präfixed benötigter Dateien
 CLUS_PREFIX=output/clusters/$PREFIX
 COMM_PREFIX=output/communities/$PREFIX
-mkdir -p output/logs/comparisons
-LOG_PREFIX=output/logs/comparisons/$PREFIX
 
-STATS_COMP_DIR=output/stats/comparisons
-mkdir -p $STATS_COMP_DIR
-STATS_COMP_PREFIX=$STATS_COMP_DIR/$PREFIX
+STATS_COMP_SCORES_DIR=output/stats/comparisons_scores
+mkdir -p $STATS_COMP_SCORES_DIR
+STATS_COMP_SCORES_PREFIX=$STATS_COMP_SCORES_DIR/$PREFIX
 
 # initialisiere leeres "score file", in dem nmi,#gemeinsamer cluster in kurzform enthalten
 COMP_MEASURE=normalized-mutual-info
 echo "clearing score files of scores $COMP_MEASURE"
-SCORE_FILE=$STATS_COMP_PREFIX-$COMP_MEASURE.txt
+SCORE_FILE=$STATS_COMP_SCORES_PREFIX-$COMP_MEASURE.txt
 echo "CLUSTER_PARAMS COMMUNIITY_PARAMS SCORE INTERSECTION_SIZE" > $SCORE_FILE
 
 for CLUS_INDEX in ${!BEST_CLUSTER_METHODS[*]}; do 
@@ -62,7 +60,7 @@ for CLUS_INDEX in ${!BEST_CLUSTER_METHODS[*]}; do
         
         # Vergleich
         echo "comparing $CLUSTER_PARAMS and $COMM_PARAMS"
-        LOG_FILE=$LOG_PREFIX-$CLUSTER_PARAMS-$COMM_PARAMS.log
+        LOG_FILE=$STATS_COMP_SCORES_PREFIX-$CLUSTER_PARAMS-$COMM_PARAMS.log
         OUTPUT=$(python3 -m scripts.stats.compare_title_clusterings --clusterings $TITLECLUSTERS $TITLECOMMUNITIES 2>&1)
         echo "$OUTPUT" |& tee $LOG_FILE # schreibe in Logdatei
         SCORE="$(echo "$OUTPUT" | grep $COMP_MEASURE | cut -d' ' -f7-)" # speichere Score

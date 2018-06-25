@@ -17,10 +17,12 @@ def clustering_labels_to_sets(title_clustering):
     
 # liefert K äquidistante Indizes von N Elementen 
 def get_equidistant_indices(N, K):     
-    logger.info('calculating K={} equidistant sample partition indices of N={} partitions'.format(N, K))
+    logger.info('calculating K={} equidistant sample partition indices of N={} partitions'.format(K, N))
     if K > N:
         logger.warning('K is higher than N: setting K to N')
         K = N
+    if K == 1:
+        return [0]
     return [math.floor(k*(N-1)/(K-1)) for k in range(0,K)]
     
 

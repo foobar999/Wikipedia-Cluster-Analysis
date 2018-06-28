@@ -27,10 +27,10 @@ def find_most_similar_counterparts_in_clustering(clustering, cp_clustering, num_
     
     logger.info('considering only clusters of size {}'.format(min_sample_cluster_size))
     cluster_ids = list(range(len(clustering)))
+    cluster_ids.sort(key=lambda id:len(clustering[id]), reverse=True)
     cluster_ids = [id for id in cluster_ids if len(clustering[id]) >= min_sample_cluster_size] 
     logger.info('considering {} clusters'.format(len(cluster_ids)))
     
-    cluster_ids.sort(key=lambda id:len(clustering[id]), reverse=True)
     sample_indices = get_equidistant_indices(len(cluster_ids), num_sample_clusters)
     logger.info('sample cluster indices: {}'.format(sample_indices))
     sample_cluster_ids = [cluster_ids[i] for i in sample_indices]

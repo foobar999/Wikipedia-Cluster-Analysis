@@ -7,15 +7,12 @@ creates from a given .xml.bz2 MediaWiki dump multiple prefixed gensim files (onl
 3. a binary <PREFIX>.mm.metadata.cpickle file which maps internal gensim document IDs to article titles of the dump
 """
 
-import os
-import sys
 import argparse
-import logging
 from pprint import pformat
 from mw import xml_dump
 from gensim.utils import smart_open
 from gensim.matutils import MmWriter
-from gensim.corpora import Dictionary, MmCorpus, TextCorpus
+from gensim.corpora import Dictionary, TextCorpus
 from gensim.parsing.preprocessing import STOPWORDS
 from scripts.utils.utils import init_logger, read_lines
 from scripts.utils.documents import is_mainspace_page, get_tokens

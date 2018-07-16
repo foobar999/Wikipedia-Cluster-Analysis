@@ -73,7 +73,6 @@ def get_filtered_articles_data_from_path(articles_path, article_min_tokens, toke
     articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
     return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, stopwords, namespace_prefixes, metadata)
             
-    
 # einfacher Korpus für gensim, sodass Metadaten korrekt geschrieben
 class MediaWikiCorpus(TextCorpus):
     def __init__(self, articles_path, article_min_tokens, token_min_len, stopwords, namespace_prefixes):
@@ -87,7 +86,6 @@ class MediaWikiCorpus(TextCorpus):
     def get_texts(self):
         return get_filtered_articles_data_from_path(self.articles_path, self.article_min_tokens, self.token_min_len, self.stopwords, self.namespace_prefixes, self.metadata)
        
-
 
 def main():
     parser = argparse.ArgumentParser(description=description)
@@ -133,8 +131,6 @@ def main():
     #MmCorpus.serialize(output_corpus_path, corpus, progress_cnt=10000, metadata=True)
     MmWriter.write_corpus(output_corpus_path, corpus=corpus, index=False, progress_cnt=10000, metadata=True)  
         
-    
-    
     
 if __name__ == '__main__':
     main()

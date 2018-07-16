@@ -4,14 +4,16 @@ from gensim.corpora import MmCorpus
 import networkx as nx
 from networkx import bipartite
 from heapq import nsmallest
-from scripts.utils.utils import init_logger, argparse_bool
+from scripts.utils.utils import init_logger
 from scripts.utils.graph import simplify_graph_nwx, get_bipartite_nodes, get_bipartite_node_counts, log_nwx
 
 logger = init_logger()
           
           
-# liefert Beiträge aus Korpus als (docid, authorid+offset, value)-Tripel
-# zu jedem authorid-wert wird als offset die anzahl der dokumente hinzuaddiert, damit docids und authorids sich nicht überlappen 
+# liefert Beiträge als (Dokumentlabel,Autorlabel,Beitragswert)-Tripel
+# jedes Dokumentlabel ist ein String beginnend mit "d", gefolgt von der Dokument-ID
+# Autorenlabel sind analog mit "a" aufgebaut
+# die Label enthalten also je Knoten im Graphen die Information, welche ID ein Knoten auch nach Filterungsoperationen besitzt
 def get_edges_from_contribs(contribs):
     authorid_offset = contribs.num_docs
     for docid, contribs_of_doc in enumerate(contribs):
@@ -32,11 +34,13 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_contribs_path':input_contribs_path, 'output_bipart_graph_path':output_bipart_graph_path, 'top_n_contribs':top_n_contribs})))
     
+    # lade gespeicherte Beiträge
     contribs = MmCorpus(input_contribs_path)
     num_docs = contribs.num_docs
     num_authors = contribs.num_terms
     logger.info('processing contributions of {} documents, {} authors'.format(num_docs, num_authors))
         
+    # erzeuge bipartites Affiliationsnetzwerk: enthält Dokumente & Autoren als Knoten, Dokument-Autor-Beiträge ergeben entsprechende gewichtete Kanten
     bipart_graph = nx.Graph()
     doc_nodes = tuple('d'+str(n) for n in range(0,num_docs))
     bipart_graph.add_nodes_from(doc_nodes, bipartite=0)
@@ -45,15 +49,17 @@ def main():
     bipart_graph.add_weighted_edges_from(get_edges_from_contribs(contribs), weight='weight')
     log_nwx(bipart_graph)
     logger.info('bipartite? {}'.format(bipartite.is_bipartite(bipart_graph))) 
-    
     simplify_graph_nwx(bipart_graph)
     logger.info('actual numbers after simplifying: {} docs, {} authors, {} edges'.format(*get_bipartite_node_counts(bipart_graph), len(bipart_graph.edges)))
+    
+    # gib höchsten Knotengrad eines Autoren aus 
     max_degree_author = max(bipart_graph.degree(auth_nodes), key=lambda node_deg: node_deg[1])
     logger.info('author {} having max degree of {}'.format(*max_degree_author))   
     
     # aktalisiere variablen 
     doc_nodes, auth_nodes = get_bipartite_nodes(bipart_graph)
     
+    # prune die Anzahl aller inzidenten Kanten von Autoren jeweils auf die K Kanten mit den größten Gewichten
     logger.info('pruning to top {} edges per author'.format(top_n_contribs))
     for auth_node in auth_nodes:
         logger.debug('author {}'.format(auth_node))
@@ -72,6 +78,7 @@ def main():
     # bipart_graph.remove_edges_from(min_edges)
     # log_nwx(bipart_graph)
     
+    # gib höchsten Knotengrad eines Autoren aus 
     max_degree_author = max(bipart_graph.degree(auth_nodes), key=lambda node_deg: node_deg[1])
     logger.info('author {} having max degree of {}'.format(*max_degree_author))
     
@@ -80,6 +87,7 @@ def main():
     log_nwx(bipart_graph)
     logger.info('new number of documents {}, authors {}'.format(*get_bipartite_node_counts(bipart_graph)))
     
+    # speichere Affiliationsnetzwerk
     logger.info('writing graph to {}'.format(output_bipart_graph_path))
     nx.write_gpickle(bipart_graph, output_bipart_graph_path)
    

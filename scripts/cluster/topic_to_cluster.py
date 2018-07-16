@@ -1,9 +1,8 @@
 import argparse
-import json 
 from pprint import pformat
 import numpy as np
 from sklearn.cluster import KMeans, AgglomerativeClustering
-from scripts.utils.utils import init_logger, load_npz
+from scripts.utils.utils import init_logger, load_npz, save_data_to_json
  
 logger = init_logger()
  
@@ -62,10 +61,8 @@ def main():
     logger.info('{} different labels'.format(len(np.unique(cluster_labels))))
     logger.info('{} noise labels'.format((cluster_labels < 0).sum()))
     
-    logger.info('writing labels to {}'.format(output_cluster_labels_path))
-    with open(output_cluster_labels_path, 'w') as output_cluster_labels_file:
-        json.dump(cluster_labels.tolist(), output_cluster_labels_file, indent=1)
-    
+    logger.info('saving cluster labels')
+    save_data_to_json(cluster_labels.tolist(), output_cluster_labels_path)
     
 if __name__ == '__main__':
     main()

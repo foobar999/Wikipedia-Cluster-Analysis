@@ -24,7 +24,7 @@ if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
 fi
 
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-    #./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
+    ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS
     CPREFIX=$PREFIX-$CONTRIB_VALUE
     TITLES=output/contribs/$CPREFIX-titles.json.bz2
     for COAUTH_MODE in "${COAUTH_MODES[@]}"; do 

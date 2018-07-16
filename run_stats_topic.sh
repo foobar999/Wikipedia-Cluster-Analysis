@@ -131,25 +131,25 @@ export MALLET_HOME=$MALLET_HOME
 STATS_CENTRAL_DOCS_DIR=output/stats/cluster_central_documents
 mkdir -p $STATS_CENTRAL_DOCS_DIR
 STATS_CENTRAL_DOCS_PREFIX=$STATS_CENTRAL_DOCS_DIR/$PREFIX
-MAX_DOCS_PER_COMM=5
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
-echo "calculating centrality data of clusterings"
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
-    if [[ $CLUSTER_METHOD =~ .*cos ]]; then
-        METRIC="cosine"
-    else
-        METRIC="euclidean"
-    fi
-    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-        CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json
-        LOG_FILE=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.log
-        python3 -m scripts.stats.cluster.get_cluster_central_documents --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --centrality-data=$CENTRALITY_DATA --max-docs-per-clus=$MAX_DOCS_PER_COMM --metric=$METRIC |& tee $LOG_FILE
-        bzip2 -zf $CENTRALITY_DATA
-    done
-done
+# MAX_DOCS_PER_COMM=5
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
+# echo "calculating centrality data of clusterings"
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
+    # if [[ $CLUSTER_METHOD =~ .*cos ]]; then
+        # METRIC="cosine"
+    # else
+        # METRIC="euclidean"
+    # fi
+    # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+        # CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json
+        # LOG_FILE=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.log
+        # python3 -m scripts.stats.cluster.get_cluster_central_documents --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --centrality-data=$CENTRALITY_DATA --max-docs-per-clus=$MAX_DOCS_PER_COMM --metric=$METRIC |& tee $LOG_FILE
+        # bzip2 -zf $CENTRALITY_DATA
+    # done
+# done
 
 # zeige von ausgewählten, äquidistanten Communities die zentralsten Titel an
 STATS_CENTRAL_DOCS_SAMPLE_DIR=output/stats/cluster_central_documents_sample

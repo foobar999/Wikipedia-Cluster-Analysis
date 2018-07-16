@@ -75,21 +75,21 @@ echo "COMM_METHODS ${COMM_METHODS[@]}"
 CENTRAL_DOCS_STATS_DIR=output/stats/community_central_documents
 mkdir -p $CENTRAL_DOCS_STATS_DIR
 CENTRAL_DOCS_STATS_PREFIX=$CENTRAL_DOCS_STATS_DIR/$PREFIX
-MAX_DOCS_PER_COMM=5
-COMM_METHOD="louvain"
-CENTRALITY_MEASURE="weighted_closeness"
-echo "calculating centrality stats"
-for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
-    TITLES=$CONTRIB_PREFIX-$CONTRIB_VALUE-titles.json.bz2
-    for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
-        COAUTH_GRAPH=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
-        COMM=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
-        LOG_CENTRALITY_DATA=$CENTRAL_DOCS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-centralities.log
-        CENTRALITY_DATA=$CENTRAL_DOCS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-$CENTRALITY_MEASURE-centralities.json
-        python3 -m scripts.stats.community.get_community_central_documents --coauth-graph=$COAUTH_GRAPH --communities=$COMM --titles=$TITLES --max-docs-per-com=$MAX_DOCS_PER_COMM --centrality-measure=$CENTRALITY_MEASURE --centrality-data=$CENTRALITY_DATA |& tee $LOG_CENTRALITY_DATA
-        bzip2 -zf $CENTRALITY_DATA
-    done
-done 
+# MAX_DOCS_PER_COMM=5
+# COMM_METHOD="louvain"
+# CENTRALITY_MEASURE="weighted_closeness"
+# echo "calculating centrality stats"
+# for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
+    # TITLES=$CONTRIB_PREFIX-$CONTRIB_VALUE-titles.json.bz2
+    # for COAUTH_MODE in "${COAUTH_MODES[@]}"; do
+        # COAUTH_GRAPH=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
+        # COMM=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
+        # LOG_CENTRALITY_DATA=$CENTRAL_DOCS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-centralities.log
+        # CENTRALITY_DATA=$CENTRAL_DOCS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-$CENTRALITY_MEASURE-centralities.json
+        # python3 -m scripts.stats.community.get_community_central_documents --coauth-graph=$COAUTH_GRAPH --communities=$COMM --titles=$TITLES --max-docs-per-com=$MAX_DOCS_PER_COMM --centrality-measure=$CENTRALITY_MEASURE --centrality-data=$CENTRALITY_DATA |& tee $LOG_CENTRALITY_DATA
+        # bzip2 -zf $CENTRALITY_DATA
+    # done
+# done 
 
 # zeige von ausgewählten, äquidistanten Communities die zentralsten Titel an
 CENTRAL_DOCS_SAMPLE_STATS_DIR=output/stats/community_central_documents_sample

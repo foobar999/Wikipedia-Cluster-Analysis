@@ -1,5 +1,3 @@
-import os, sys
-import logging
 import argparse
 import json
 from pprint import pformat
@@ -12,7 +10,7 @@ logger = init_logger()
              
      
 def main():
-    parser = argparse.ArgumentParser(description='determines communities in of a weighted co-authorship-network')
+    parser = argparse.ArgumentParser(description='detects communities in of a weighted co-authorship-network')
     parser.add_argument('--coauth-graph', type=argparse.FileType('r'), help='path to output pickled, gzipped graph file', required=True)
     parser.add_argument('--communities', type=argparse.FileType('w'), help='path to output .json communities file', required=True)
     methods = {

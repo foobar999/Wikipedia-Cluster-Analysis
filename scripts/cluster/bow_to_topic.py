@@ -30,16 +30,19 @@ def main():
     
     logger.info('running topic model with \n{}'.format(pformat({'input_bow_path':input_bow_path, 'input_id2word_path':input_id2word_path, 'input_mallet_path':input_mallet_path, 'output_model_prefix':output_model_prefix, 'num_topics':num_topics, 'num_iterations':num_iterations, 'alpha':alpha})))
 
+    # lade BOW-Instanz & Vokabular, erzeuge & speichere LDA-Instanz
     bow = MmCorpus(input_bow_path)
     id2word = Dictionary.load_from_text(input_id2word_path)
     lda_model = LdaMallet(input_mallet_path, alpha=alpha, corpus=bow, num_topics=num_topics, id2word=id2word, workers=8, prefix=output_model_prefix, optimize_interval=50, iterations=num_iterations)
     logger.info('saving model with output prefix {}'.format(output_model_prefix))
     lda_model.save(output_model_prefix) # speichert NUR Modelldateien, keine eigentlichen Daten
 
+    # gib chrakteristischte Terme der Topics aus
     max_printed_terms = 10
     for topicid in range(num_topics):
         logger.info('topic nr. {}: {}'.format(topicid, lda_model.print_topic(topicid, topn=max_printed_terms)))
 
+    # berechne Mittelwert, Standardabweichung für Theta-Werte (d.h. Anteile der Topics an den Dokumenten)
     theta_sums = [None] * bow.num_docs
     for doc,doc_topics in enumerate(lda_model[bow]):
         theta_sums[doc] = sum(theta for term,theta in doc_topics)
@@ -47,6 +50,7 @@ def main():
     logger.info('mean theta sum {}'.format(np.mean(theta_sums)))
     logger.info('stddev theta sum {}'.format(np.std(theta_sums)))
 
+    # berechne Mittelwert, Standardabweichung für Phi-Werte (d.h. Anteile der Terme an den Topics)
     phi = lda_model.get_topics()
     logger.info('phi shape {}'.format(phi.shape))
     phi_sums = phi.sum(1)

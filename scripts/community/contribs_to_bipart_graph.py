@@ -1,5 +1,3 @@
-import os, sys
-import logging
 import argparse
 from pprint import pformat
 from gensim.corpora import MmCorpus
@@ -11,6 +9,7 @@ from scripts.utils.graph import simplify_graph_nwx, get_bipartite_nodes, get_bip
 
 logger = init_logger()
           
+          
 # liefert Beiträge aus Korpus als (docid, authorid+offset, value)-Tripel
 # zu jedem authorid-wert wird als offset die anzahl der dokumente hinzuaddiert, damit docids und authorids sich nicht überlappen 
 def get_edges_from_contribs(contribs):
@@ -18,6 +17,7 @@ def get_edges_from_contribs(contribs):
     for docid, contribs_of_doc in enumerate(contribs):
         for authorid, contrib_value in contribs_of_doc:
             yield 'd'+str(docid), 'a'+str(authorid), contrib_value
+     
      
 def main():
     parser = argparse.ArgumentParser(description='maps a given document-author-contribution file to a weighted bipartite network of document and author nodes')
@@ -51,7 +51,7 @@ def main():
     max_degree_author = max(bipart_graph.degree(auth_nodes), key=lambda node_deg: node_deg[1])
     logger.info('author {} having max degree of {}'.format(*max_degree_author))   
     
-    # aktalisiere variablen -> warum muss ich das machen?
+    # aktalisiere variablen 
     doc_nodes, auth_nodes = get_bipartite_nodes(bipart_graph)
     
     logger.info('pruning to top {} edges per author'.format(top_n_contribs))

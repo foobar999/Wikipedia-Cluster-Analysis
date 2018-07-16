@@ -8,6 +8,7 @@ from scripts.utils.utils import init_logger
 logger = init_logger()
 
 
+# liefert aus dem Generator der (Autor,Beitragswert)-Beiträge je Dokument und Autor akkumulierte (Autor,Beitragswert)-Beiträge als Generator
 def accumulate(raw_doc_contribs):
     accumulator = defaultdict(lambda: 0)
     for author_id, value in raw_doc_contribs:
@@ -26,6 +27,7 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_raw_contribs_dump_path':input_raw_contribs_dump_path, 'output_acc_contribs_dump_path':output_acc_contribs_dump_path})))
 
+    # lade, akkumulierte & speichere Beiträge
     raw_contribs = MmCorpus(input_raw_contribs_dump_path)
     acc_contribs = (accumulate(raw_doc_contribs) for raw_doc_contribs in raw_contribs)
     #MmCorpus.serialize(output_acc_contribs_dump_path, corpus=acc_contribs, progress_cnt=10000)  

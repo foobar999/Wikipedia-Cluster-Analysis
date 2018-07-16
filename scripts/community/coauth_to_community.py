@@ -1,16 +1,15 @@
 import argparse
-import json
 from pprint import pformat
 from igraph import Graph
 from gensim.utils import smart_open
-from scripts.utils.utils import init_logger
+from scripts.utils.utils import init_logger, save_data_to_json
 from scripts.utils.graph import log_igraph, log_communities
 
 logger = init_logger()
              
      
 def main():
-    parser = argparse.ArgumentParser(description='detects communities in of a weighted co-authorship-network')
+    parser = argparse.ArgumentParser(description='detects communities in a weighted co-authorship-network')
     parser.add_argument('--coauth-graph', type=argparse.FileType('r'), help='path to output pickled, gzipped graph file', required=True)
     parser.add_argument('--communities', type=argparse.FileType('w'), help='path to output .json communities file', required=True)
     methods = {
@@ -51,7 +50,7 @@ def main():
         logger.info('new network:')
         log_igraph(coauth_graph)        
     
-    # community detection 
+    # führe Community-Detection mit Verfahren method durch
     logger.info('running {} community detection'.format(method))
     if method == 'greedy':
         dendogram = coauth_graph.community_fastgreedy(weights='weight')
@@ -60,14 +59,12 @@ def main():
         communities = coauth_graph.community_multilevel(weights='weight')
     log_communities(communities, coauth_graph)
     
-    # speichere communities: speichere keine Indizes, sondern gespeicherte Labels
+    # speichere communities als JSON-Dictionary {Graph-Label: Community-Label}
     node_names = coauth_graph.vs['name']
     node_community_labels = communities.membership
     name_labeling = dict(zip(node_names, node_community_labels))
-    logger.info('writing {} labels to {}'.format(len(name_labeling), output_communities_path))
-    logger.debug('saving labels \n{}'.format(pformat(name_labeling)))
-    with open(output_communities_path, 'w') as output_communities_file:
-        json.dump(name_labeling, output_communities_file, indent=1)
+    logger.info('saving community labels')
+    save_data_to_json(name_labeling, output_communities_path)
         
         
 if __name__ == '__main__':

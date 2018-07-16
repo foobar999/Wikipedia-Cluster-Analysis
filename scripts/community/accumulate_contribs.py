@@ -1,5 +1,3 @@
-import os, sys
-import logging
 import argparse
 from pprint import pformat
 from collections import defaultdict
@@ -18,7 +16,7 @@ def accumulate(raw_doc_contribs):
 
     
 def main():
-    parser = argparse.ArgumentParser(description='accumulates values of same (document,author)-Pairs', epilog='Example: ./{} --raw-contribs=enwiki-raw-contribs.mm --acc-contribs=enwiki-acc-contribs.mm'.format(sys.argv[0]))
+    parser = argparse.ArgumentParser(description='accumulates values of same (document,author)-Pairs')
     parser.add_argument('--raw-contribs', type=argparse.FileType('r'), help='path to input MatrixMarket raw contributions file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--acc-contribs', type=argparse.FileType('w'), help='path to output MatrixMarket accumulated contributions .mm file', required=True)
     

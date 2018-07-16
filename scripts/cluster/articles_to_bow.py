@@ -1,4 +1,3 @@
-# leichte Adaption von https://github.com/RaRe-Technologies/gensim/blob/master/gensim/scripts/make_wikicorpus.py
 
 description = """
 creates from a given .xml.bz2 MediaWiki dump multiple prefixed gensim files (only mainspace articles):
@@ -20,10 +19,14 @@ from scripts.utils.documents import is_mainspace_page, get_tokens
 logger = init_logger()
 
         
+# liefert Titel, Inhalt, ID der Seite page
 def get_page_data(page):
     text = str(next(page).text)
     return page.title, text, page.id       
     
+# liefert vom Dump articles_dump einen Generator der gefilterten Tokens aller Seiten, für die gilt:
+# - Seite ist ein Artikel -> Seitentitel beginnt nicht mit Namespace aus namespace_prefixes
+# - Seite besitzt mindestens article_min_tokens tokens der Mindestlänge token_min_len, die keine Stoppwörter der Liste stopwords sind
 def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, stopwords, namespace_prefixes, metadata):
     num_articles_total = 0
     num_articles_mainspace = 0
@@ -64,15 +67,14 @@ def get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len,
     logger.info('{} tokens of len >= {} in long enough mainspace articles'.format(num_tokens_mainspace_long_minlen, token_min_len))
     logger.info('{} non-stopword tokens of len >= {} in long enough mainspace articles'.format(num_tokens_mainspace_long_minlen_nstop, token_min_len))
     
-                    
+# liefert vom Dump des Pfades articles_path die Tokens der gefilterten Artikel als Dokumente
 def get_filtered_articles_data_from_path(articles_path, article_min_tokens, token_min_len, stopwords, namespace_prefixes, metadata):
     articles_dump_file = smart_open(articles_path)
     articles_dump = xml_dump.Iterator.from_file(articles_dump_file)
     return get_filtered_articles_data(articles_dump, article_min_tokens, token_min_len, stopwords, namespace_prefixes, metadata)
             
-            
-            
-
+    
+# einfacher Korpus für gensim, sodass Metadaten korrekt geschrieben
 class MediaWikiCorpus(TextCorpus):
     def __init__(self, articles_path, article_min_tokens, token_min_len, stopwords, namespace_prefixes):
         self.articles_path = articles_path
@@ -111,6 +113,7 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_articles_path':input_articles_path, 'output_prefix':output_prefix, 'keep_words':keep_words, 'no_below':no_below, 'no_above':no_above, 'article_min_tokens':article_min_tokens, 'token_min_len':token_min_len, 'remove_stopwords':remove_stopwords, 'namespace_prefixes':namespace_prefixes})))
             
+    # erzeuge & und speichere Vokabular
     logger.info('generating vocabulary')
     stopwords = STOPWORDS if remove_stopwords else ()
     corpus = MediaWikiCorpus(input_articles_path, article_min_tokens, token_min_len, stopwords, namespace_prefixes)
@@ -123,6 +126,7 @@ def main():
     output_id2word_path = output_prefix + '-id2word.txt'
     corpus.dictionary.save_as_text(output_id2word_path)    
     
+    # erzeuge & speichere BOW-Modell aus Vokabular
     logger.info('generating bag of words corpus')
     corpus.metadata = True
     output_corpus_path = output_prefix + '.mm'

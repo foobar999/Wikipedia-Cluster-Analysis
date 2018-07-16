@@ -1,5 +1,3 @@
-import os, sys
-import logging
 import argparse
 import networkx as nx
 from igraph import Graph
@@ -27,8 +25,6 @@ def main():
     
     logger.info('converting read networkx graph to igraph graph')
     weighted_edges = nwx_graph.edges(data='weight')
-    # beachte: Knoten n mit deg(n)=0 verschwinden hier!
-    #igraph_graph = Graph.TupleList(weighted_edges, directed=False, vertex_name_attr='name', edge_attrs=None, weights=True)
     node_name_ids = {node: id for id,node in enumerate(nwx_graph.nodes())}
     edge_weights = (((n1,n2),w) for n1,n2,w in weighted_edges)
     edges, weights = zip(*edge_weights)

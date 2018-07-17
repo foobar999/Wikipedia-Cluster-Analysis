@@ -5,9 +5,12 @@ import argparse
 import bz2
 import numpy as np
 
+
+# liefert True, falls DEBUG-Umgebungsvariable gesetzt, sonst false
 def debug_mode_set():
     return 'DEBUG' in os.environ
     
+# liefert einen initialisierten Logger
 def init_logger():
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
@@ -19,29 +22,35 @@ def init_logger():
 
 logger = init_logger()
 
+# liefert True, falls value='y', liefert False, falls value='n'; wirft argparse-Exception sonst
 def argparse_bool(value):
     if value in ('y', 'n'):
         return value == 'y'
     else:
         raise argparse.ArgumentTypeError('Exepected boolean value "y" or "n"')
 
+# liefert die Zeilen von fname als Tupel von Strings
 def read_lines(fname):
     with open(fname, 'r') as f:
         return tuple(f.read().splitlines())
     
+# schreibt die Zeilen rows CSV-kodiert nach csv_filename
 def write_rows(csv_filename, rows):
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=' ')
         csv_writer.writerows(rows)  
         
+# liefert die CSV-kodierten Zeilen von csv_filename als Liste von Tupeln
 def read_rows(csv_filename):   
     with open(csv_filename, 'r', newline='', encoding='utf-8') as csv_file:
         csvreader = csv.reader(csv_file, delimiter=' ')
         return [tuple(val for val in row) for row in csvreader]
         
+# schreibt die numpy-Matrix mat in die Datei ofname komprimiert (.npz-Format)
 def save_npz(ofname, mat):
     np.savez_compressed(ofname, arr=mat)
     
+# lädt die komprimierte numpy-Matrix der Datei ifname (.npz-Format)
 def load_npz(ifname):
     return np.load(ifname, mmap_mode='r')['arr']
     

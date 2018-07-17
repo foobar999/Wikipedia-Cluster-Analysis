@@ -7,17 +7,20 @@ from scripts.utils.utils import init_logger, debug_mode_set
 logger = init_logger()
 
 
+# teilt die Werte values in numbins Bins ein und gibt die Häufigkeiten dieser Bins aus (sinnvoll für Daten mit vielen verschiedenen Werten)
 def log_np_distribution(values, numbins):
     counts,bin_edges = np.histogram(values, bins=numbins)
     for i,count in enumerate(counts):
         left,right = bin_edges[i],bin_edges[i+1] 
         logger.info('[{0:.5f},{1:.5f}{2} : {3} elements'.format(left, right, '[' if i != len(counts)-1 else ']', count))
     
+# gibt die verschiedenen Werte in values und ihre Häufigkeiten aus
 def log_discrete_sparse_distribution(values):
     eles,counts = zip(*sorted(Counter(values).items()))    
     for ele,count in zip(eles,counts):
         logger.info('{}: {} elements'.format(ele,count))     
 
+# gibt graphbezogene Daten aus: #Knoten, #Kanten, Dichte, #Komponenten, Histogramm Komponentengrößen, Histogramm Knotengrade, Histogramm Kantengewichte
 def log_graph_data(numnodes, numedges, components, degrees, edge_weights):         
     logger.info('{} nodes, {} edges'.format(numnodes, numedges))
     density = numedges / (numnodes*(numnodes-1)/2)
@@ -32,17 +35,20 @@ def log_graph_data(numnodes, numedges, components, degrees, edge_weights):
     logger.info('histogram of edge weights:')
     log_np_distribution(edge_weights, numbins)    
     
+# gibt (zum Debugging) alle Kanten weighted_edges aus
 def log_graph_data_edges(weighted_edges):
     weighted_edges = ((n1,n2,w) if n1<=n2 else (n2,n1,w) for n1,n2,w in weighted_edges)
     for edge in sorted(weighted_edges):
         logger.debug(edge)        
          
+# gibt graphbezogene Daten des igraph-Graphen graph aus
 def log_igraph(graph):
     log_graph_data(graph.vcount(), graph.ecount(), graph.components(), graph.degree(), graph.es['weight'])  
     if debug_mode_set():
         weighted_edges = ((graph.vs[edge.source]['name'],graph.vs[edge.target]['name'],edge['weight']) for edge in graph.es)
         log_graph_data_edges(weighted_edges)
         
+# gibt graphbezogene Daten des NetworkX-Graphen graph aus
 def log_nwx(graph):
     degrees = tuple(deg for node,deg in graph.degree(weight=None))
     edge_weights = tuple(w for n1,n2,w in graph.edges(data='weight'))
@@ -50,6 +56,7 @@ def log_nwx(graph):
     if debug_mode_set():
         log_graph_data_edges(graph.edges(data='weight'))
         
+# gibt die Verteilung der Communitygrößen von communities und die Modularity von communities im Graphen graph aus
 def log_communities(communities, graph):
     if debug_mode_set():
         logger.debug('communities: \n{}'.format(communities))

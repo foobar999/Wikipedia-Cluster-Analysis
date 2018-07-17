@@ -38,15 +38,13 @@ def main():
         'logdot': 'dot product of weighted author vectors of d1 and d2, each weighted log10-ed',
     }
     parser.add_argument('--mode', choices=modes, help='co-authorship generation mode: ' + str(modes), required=True)
-    parser.add_argument('--keep-max-edges', type=int, help='number of edges with highest weights to keep', required=True)
     
     args = parser.parse_args()
     input_bipart_path = args.bipart_graph.name
     output_coauth_graph_path = args.coauth_graph.name
     mode = args.mode
-    keep_max_edges = args.keep_max_edges
     
-    logger.info('running with:\n{}'.format(pformat({'input_bipart_path':input_bipart_path, 'output_coauth_graph_path':output_coauth_graph_path, 'mode':mode, 'keep_max_edges':keep_max_edges})))
+    logger.info('running with:\n{}'.format(pformat({'input_bipart_path':input_bipart_path, 'output_coauth_graph_path':output_coauth_graph_path, 'mode':mode})))
     
     # lade bipartiten Graph
     logger.info('reading bipartite graph from {}'.format(input_bipart_path))
@@ -74,11 +72,11 @@ def main():
         
     # behalte nur die Kanten mit den K größten Gewichten im gesamten Dokumentnetzwerk
     # hab ich bei der Arbeit durch Verwendung eines sehr großen K ignoriert
-    logger.info('pruning to {} highest edges'.format(keep_max_edges))
-    num_edges_to_remove = len(coauth_graph.edges) - keep_max_edges
-    min_edges = nsmallest(num_edges_to_remove, coauth_graph.edges(data='weight'), key=lambda edge: edge[2])
-    coauth_graph.remove_edges_from(min_edges)
-    log_nwx(coauth_graph)
+    #logger.info('pruning to {} highest edges'.format(keep_max_edges))
+    #num_edges_to_remove = len(coauth_graph.edges) - keep_max_edges
+    #min_edges = nsmallest(num_edges_to_remove, coauth_graph.edges(data='weight'), key=lambda edge: edge[2])
+    #coauth_graph.remove_edges_from(min_edges)
+    #log_nwx(coauth_graph)
     
     # speichere Dokumentnetzwerk
     logger.info('writing graph to {}'.format(output_coauth_graph_path))

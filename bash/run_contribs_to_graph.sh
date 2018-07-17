@@ -1,12 +1,11 @@
 #!/bin/bash -e
 
-if (( $# != 3 )); then
-    echo "Usage: $0 IPREFIX COAUTH_MODE KEEP_MAX_EDGES"
+if (( $# != 2 )); then
+    echo "Usage: $0 IPREFIX COAUTH_MODE"
     exit 1
 fi
 IPREFIX=$1
 COAUTH_MODE=$2
-KEEP_MAX_EDGES=$3
 OPREFIX=$IPREFIX-$COAUTH_MODE
 
 IGRAPH_PREFIX=output/graph/$IPREFIX
@@ -20,7 +19,7 @@ COAUTH_GRAPH=$OGRAPH_PREFIX-coauth.graph
 LOG_GRAPH=$LOG_PREFIX-graph.log
 
 echo "creating co-authorship graph from bipartite graph"
-(time python3 -m scripts.community.bipart_to_coauth_graph --bipart-graph=$BIPARTITE_GRAPH.bz2 --coauth-graph=$COAUTH_GRAPH.bz2 --mode=$COAUTH_MODE --keep-max-edges=$KEEP_MAX_EDGES) |& tee $LOG_GRAPH
+(time python3 -m scripts.community.bipart_to_coauth_graph --bipart-graph=$BIPARTITE_GRAPH.bz2 --coauth-graph=$COAUTH_GRAPH.bz2 --mode=$COAUTH_MODE) |& tee $LOG_GRAPH
 
 echo "converting networkx bz2 graph to igraph gz graph"
 (time python3 -m scripts.community.nwx_to_igraph --nwx=$COAUTH_GRAPH.bz2 --igraph=$COAUTH_GRAPH.gz) |& tee -a $LOG_GRAPH

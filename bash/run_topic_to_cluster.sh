@@ -35,7 +35,7 @@ fi
 (time python3 -m scripts.stats.cluster.evaluate_dense_clustering --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS.bz2 --metric=$METRIC) |& tee -a $LOG_CLUSTER
 
 echo "generating documenttitle->clusterlabel mappings"
-python3 -m scripts.utils.get_title_communities --partitions=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --title-partitions=$TITLE_CLUSTER_LABELS
+python3 -m scripts.utils.get_title_partitions --partitions=$CLUSTER_LABELS.bz2 --titles=$BOW_TITLES.bz2 --title-partitions=$TITLE_CLUSTER_LABELS
 bzip2 -zf $TITLE_CLUSTER_LABELS
 
 

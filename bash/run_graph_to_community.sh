@@ -28,7 +28,7 @@ echo "running community detection"
 bzip2 -zf $COMMUNITIES
 
 echo "generating documenttitle->communitylabel mappings"
-python3 -m scripts.utils.get_title_communities  --partitions=$COMMUNITIES.bz2 --titles=$TITLES --title-partitions=$TITLE_COMMUNITIES
+python3 -m scripts.utils.get_title_partitions --partitions=$COMMUNITIES.bz2 --titles=$TITLES --title-partitions=$TITLE_COMMUNITIES
 bzip2 -zf $TITLE_COMMUNITIES
 
 

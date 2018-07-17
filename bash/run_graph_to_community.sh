@@ -27,7 +27,10 @@ echo "running community detection"
 (time python3 -m scripts.community.coauth_to_community --coauth-graph=$COAUTH_GRAPH --communities=$COMMUNITIES --method=$COMM_METHOD --consider-only-communities=$CONSIDER_ONLY_COMMUNITIES) |& tee $LOG_COMMUNITIES
 bzip2 -zf $COMMUNITIES
 
-echo "creating title->communitylabel mapping file"
-python3 -m scripts.utils.get_title_communities  --communities=$COMMUNITIES.bz2 --titles=$TITLES --titlecomms=$TITLE_COMMUNITIES
+echo "generating documenttitle->communitylabel mappings"
+python3 -m scripts.utils.get_title_communities  --partitions=$COMMUNITIES.bz2 --titles=$TITLES --title-partitions=$TITLE_COMMUNITIES
 bzip2 -zf $TITLE_COMMUNITIES
+
+
+
 

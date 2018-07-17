@@ -18,23 +18,24 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_communities_path':input_communities_path, 'input_titles_path':input_titles_path, 'output_titlecomms_path':output_titlecomms_path})))
     
+    # lade Titel, Partitionierung
     titles = load_titles(input_titles_path)
     communities = load_communities(input_communities_path)
         
-    logger.info('{} titles'.format(len(titles)))
-    logger.debug('titles \n{}'.format(titles))
-    logger.info('{} communities'.format(len(communities)))
-    logger.debug('communities \n{}'.format(communities))
-        
+    # erzeuge Titel->Partitionslabel-Mapping
     if isinstance(communities,dict):
+        # bei Graph-Communities ist Partitionierung dict: bestimme Dok-ID aus Graph-Label des Dokumentes (wie z.B. "d123"), bestimme zug. Dok-Titel
         title_communities = {titles[doc_id[1:]]: comm_label for doc_id,comm_label in communities.items()}
     else:
+        # bei Clustering ist Partitionierung list: betrachte Index jedes Clusterlabels als Dok-ID, bestimme zug. Dok-Titel 
         title_communities = {titles[str(doc_id)]: comm_label for doc_id,comm_label in enumerate(communities) if comm_label >= 0}
     logger.info('generated {} title_communities'.format(len(title_communities)))
     logger.debug('title_communities \n{}'.format(title_communities))
         
+    # speichere Titel->Partitionslabel-Mapping
     logger.info('saving title communities')
     save_data_to_json(title_communities, output_titlecomms_path)
+        
         
 if __name__ == '__main__':
     main()

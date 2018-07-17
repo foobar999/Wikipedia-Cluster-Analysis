@@ -28,7 +28,7 @@ echo "generating bag-of-words corpus files"
 ( time python3 -m scripts.cluster.articles_to_bow --articles-dump=$ARTICLES_DUMP.bz2 --out-prefix=$BOW_CORPUS_PREFIX --keep-words=$VOCABULARY_SIZE --no-below=$NO_BELOW --no-above=$NO_ABOVE --article-min-tokens=$ARTICLE_MIN_TOKENS --token-min-len=$TOKEN_MIN_LEN --remove-stopwords --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_BOW
 
 echo "creating JSON docid->doctitle mapping file"
-python3 -m scripts.utils.binary_to_text --metadata=$BOW_CORPUS_PREFIX.mm.metadata.cpickle --titles=$BOW_TITLES 
+python3 -m scripts.utils.metadata_to_doc_id_titles --metadata=$BOW_CORPUS_PREFIX.mm.metadata.cpickle --titles=$BOW_TITLES 
 rm -f $BOW_CORPUS_PREFIX.mm.metadata.cpickle # entferne binäre Metadatendatei
 bzip2 -zf $BOW_MODEL $BOW_TITLES $BOW_ID2WORD # komprimiere Korpus, Dictionary, docID-Mapping
 

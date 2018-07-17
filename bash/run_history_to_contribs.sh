@@ -36,7 +36,7 @@ echo "computing author contributions"
 ( time python3 -m scripts.community.history_to_contribs --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS
 
 echo "creating JSON docid->doctitle mapping file"
-python3 -m scripts.utils.binary_to_text --metadata=$RAW_CONTRIBS.metadata.cpickle --titles=$TITLES
+python3 -m scripts.utils.metadata_to_doc_id_titles --metadata=$RAW_CONTRIBS.metadata.cpickle --titles=$TITLES
 rm -f $RAW_CONTRIBS.metadata.cpickle # gepickelte Dokumenttitel-Datei entfernen
 bzip2 -zf $RAW_CONTRIBS $TITLES # komprimiere Beiträge, Artikeltitel
 

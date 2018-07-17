@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-# TODO sklearn benutzt ln statt log2 !!!
-
 if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
     exit 1

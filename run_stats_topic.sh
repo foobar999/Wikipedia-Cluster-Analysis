@@ -47,20 +47,20 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # python3 -m scripts.stats.cluster.get_articles_bow_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
-# durchschnittliche Wahrscheinlichkeiten
+# durchschnittliche Wahrscheinlichkeiten der Topics
 STATS_AVG_DIR=output/stats/cluster_avg
 mkdir -p $STATS_AVG_DIR
 STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
 BOW=$BOW_PREFIX-bow.mm.bz2
 TOPIC_MODEL=$TM_PREFIX-lda
 LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-python3 -m scripts.stats.cluster.get_topics_avg_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+python3 -m scripts.stats.cluster.get_topics_avg_probs_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
-# avg-plots
+# Plots der durchschnittlichen Anteile
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
 TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
-python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+python3 -m scripts.stats.cluster.plot_topics_avg_probs --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation Topicvektoren
 STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots

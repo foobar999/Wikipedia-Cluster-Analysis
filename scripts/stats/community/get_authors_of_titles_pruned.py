@@ -1,18 +1,15 @@
-import os, sys
-import logging
 import argparse
-import json
 import networkx as nx
 from collections import defaultdict
 from gensim.corpora import Dictionary
-from scripts.utils.utils import init_logger, load_titles
+from scripts.utils.utils import init_logger, load_titles, save_data_to_json
 from scripts.utils.graph import log_nwx, get_bipartite_nodes
 
 logger = init_logger()
                
      
 def main():
-    parser = argparse.ArgumentParser(description='converts a weighted pickle networkx Graph to a pickled igraph graph')
+    parser = argparse.ArgumentParser(description='creates a mapping document title -> list of authors who contributed to this document (in the pruned affiliation network)')
     parser.add_argument('--bipart-graph', type=argparse.FileType('r'), help='path to input pickled networkx bipart graph file (.graph/.graph.bz2)', required=True)
     parser.add_argument('--id2author', type=argparse.FileType('r'), help='path to input .txt.bz2 authorid->authorname mapping file', required=True)
     parser.add_argument('--titles', type=argparse.FileType('r'), help='path to input .json.bz2 documentid->document title mapping file', required=True)
@@ -48,9 +45,13 @@ def main():
     num_authornames = sum(len(authornames) for authornames in title2authorname.values())
     logger.info('generated doctitle->authornames mapping: {} keys, {} entries'.format(num_doctitles, num_authornames))
     
-    logger.info('writing doctitle->authornames to {}'.format(output_title2authornames_path))
-    with open(output_title2authornames_path, 'w') as title2authornames_file:
-        json.dump(title2authorname, title2authornames_file, indent=2)
+    logger.info('sorting doctitle->authornames mapping')
+    title2authorname = dict(sorted(title2authorname.items()))
+    for authornames in title2authorname.values():
+        authornames.sort()
+    
+    logger.info('saving doctitle->authornames mapping')
+    save_data_to_json(title2authorname, output_title2authornames_path)
     
         
 if __name__ == '__main__':

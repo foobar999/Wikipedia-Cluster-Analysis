@@ -35,17 +35,17 @@ STATS_PREPROP_DIR=output/stats/cluster_preprocessing
 mkdir -p $STATS_PREPROP_DIR
 STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # Histogramm der Dokument-Tokenanzahlen
-ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
-IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
-QUANTILE=0.95
-python3 -m scripts.stats.cluster.plot_articles_tokens_dist --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
+# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+# LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
+# IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
+# QUANTILE=0.95
+# python3 -m scripts.stats.cluster.plot_articles_tokens_dist --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
 # Preprocessing-Auswirkungen
-LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
-TOKEN_MIN_LEN=2
-python3 -m scripts.stats.cluster.get_articles_bow_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
-cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
+# LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
+# TOKEN_MIN_LEN=2
+# python3 -m scripts.stats.cluster.get_articles_bow_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
+# cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
 STATS_AVG_DIR=output/stats/cluster_avg
@@ -54,7 +54,7 @@ STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
 BOW=$BOW_PREFIX-bow.mm.bz2
 TOPIC_MODEL=$TM_PREFIX-lda
 LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+python3 -m scripts.stats.cluster.get_topics_avg_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz

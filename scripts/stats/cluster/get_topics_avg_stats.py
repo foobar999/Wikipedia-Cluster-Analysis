@@ -10,6 +10,7 @@ from scripts.utils.utils import init_logger
 logger = init_logger()
 
 
+# liefert die Indizies und die Anteile der topn Terme mit den größten Anteilen an Topic topicid
 def get_topic_terms(ldamodel, topicid, topn=10):
     topic = ldamodel.get_topics()[topicid]
     topic = topic / topic.sum()  # normalize to probability distribution

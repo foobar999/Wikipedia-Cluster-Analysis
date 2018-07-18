@@ -34,14 +34,14 @@ export MALLET_HOME=$MALLET_HOME
 STATS_PREPROP_DIR=output/stats/cluster_preprocessing
 mkdir -p $STATS_PREPROP_DIR
 STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
-# Histogramm der Dokument-Tokenanzahlen
-ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
-IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
-QUANTILE=0.95
-python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
-# Preprocessing-Auswirkungen
+## Histogramm der Dokument-Tokenanzahlen
+# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+# LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
+# IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
+# QUANTILE=0.95
+# python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
+## Preprocessing-Auswirkungen
 # LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
 # TOKEN_MIN_LEN=2
 # python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
@@ -67,9 +67,10 @@ STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
 mkdir -p $STATS_DOC_PLOTS_DIR
 STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
 DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
+DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
 DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
 python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
@@ -91,13 +92,16 @@ done
 STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
 mkdir -p $STATS_SILHOUETTES_DIR
 STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
-# nur Vielfache von 25, maximal 300
 for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
     CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
-    # für simple-collection: erlaube kleine Werte
-    # sonst: nur 25er-Schritte
-    ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 < 5 || ($1 % 25 == 0 && $1 <= 400))  {print} }' > $CLUSTER_SILHOUETTE_CSV
+    # erzeuge aus Logs CSV-Datei: jede Zeile enthält einen Eintrag "#Cluster Silhouettenkoeffizient", jede Datei bezieht sich auf 1 Clusterverfahren
+    truncate -s 0 $CLUSTER_SILHOUETTE_CSV
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        CLUSTER_LOG_FILE=$LOG_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.log
+        SIL_COEFF=$(cat $CLUSTER_LOG_FILE | grep "silhouette coefficient" | sed -E 's/.*silhouette coefficient: //')
+        echo "$CLUSTER_NUM $SIL_COEFF" >> $CLUSTER_SILHOUETTE_CSV
+    done
+    # plotte Silhouettenkoeffizienten der CSV-Datei
     CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
     python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
 done

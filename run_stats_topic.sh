@@ -68,12 +68,11 @@ mkdir -p $STATS_DOC_PLOTS_DIR
 STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
 DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-python3 -m scripts.stats.cluster.transform_documents_2d --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+# python3 -m scripts.stats.cluster.transform_documents_2d --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
-DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
 DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
-python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
+python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
 CLUSTER_PLOTS_DIR=output/stats/cluster_plots
@@ -85,9 +84,10 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
        DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-       python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+       python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
     done
 done
+
 
 # Silhouetten-plot
 STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes

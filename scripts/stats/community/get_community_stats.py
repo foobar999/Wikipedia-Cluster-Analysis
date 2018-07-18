@@ -1,14 +1,8 @@
-import os, sys
-import logging
 import argparse
-import json
-import bz2
-from pprint import pformat
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from scripts.utils.utils import init_logger
+from pprint import pformat
+from scripts.utils.utils import init_logger, load_communities
+from scripts.utils.plot import scatter_plot
 
 logger = init_logger()
              
@@ -24,28 +18,20 @@ def main():
     
     logger.info('running with:\n{}'.format(pformat({'input_communities_path':input_communities_path, 'output_img_path':output_img_path})))
     
-    with bz2.open(input_communities_path, 'rt') as input_communities_file:
-        communities = json.load(input_communities_file)
+    logger.info('loading communties')
+    communities = load_communities(input_communities_path)
         
-    logger.info('{} communities'.format(len(communities)))
-    logger.debug('communities \n{}'.format(communities))
-        
-    labels,counts = np.unique(list(communities.values()), return_counts=True)
+    labels, counts = np.unique(list(communities.values()), return_counts=True)
     logger.info('{} different communities'.format(labels.shape[0]))
     logger.debug('labels \n{}'.format(labels))
     logger.debug('counts \n{}'.format(counts))
-        
     counts[::-1].sort()
-   
-    #plt.rc('font',family='Calibri')     
-    plt.figure(figsize=(6,2))
-    plt.xlabel('Communities')
-    plt.ylabel('Anzahl Knoten')
-    plt.scatter(np.arange(len(counts)), counts, c='b', s=7.5)
-    logger.info('writing to {}'.format(output_img_path))
-    plt.savefig(output_img_path, bbox_inches='tight')
     
-    #plt.show()
+    xlabel = 'Communities'
+    ylabel = 'Anzahl Knoten'
+    figsize = (6,2)
+    size = 7.5
+    scatter_plot(counts, output_img_path, xlabel, ylabel, size=size, figsize=figsize)
     
         
 if __name__ == '__main__':

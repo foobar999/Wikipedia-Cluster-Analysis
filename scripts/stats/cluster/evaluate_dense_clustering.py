@@ -1,8 +1,8 @@
 import argparse
 from sklearn.metrics import silhouette_score, calinski_harabaz_score
 from sklearn.metrics.pairwise import _VALID_METRICS 
-from scripts.utils.utils import init_logger, load_npz
-from scripts.utils.documents import load_cluster_labels
+from scripts.utils.utils import init_logger, load_communities
+from scripts.utils.documents import load_document_topics
  
 logger = init_logger()
 
@@ -18,13 +18,10 @@ def main():
     input_cluster_labels_path = args.cluster_labels.name
     metric = args.metric
     
-    logger.info('loading dense document-topics from {}'.format(input_document_topics_path))
-    document_topics = load_npz(input_document_topics_path)
-    logger.info('loaded document-topics-matrix of shape {}'.format(document_topics.shape))
-    logger.debug('document-topics-matrix \n{}'.format(document_topics))
-    
-    logger.info('loading cluster labels from {}'.format(input_cluster_labels_path))
-    cluster_labels = load_cluster_labels(input_cluster_labels_path)
+    logger.info('loading document topics')
+    document_topics = load_document_topics(input_document_topics_path)    
+    logger.info('loading cluster labels')
+    cluster_labels = load_communities(input_cluster_labels_path)
     logger.debug(cluster_labels)
     
     logger.info('calclating unsupervised evaluation metrics')

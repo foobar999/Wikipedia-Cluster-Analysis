@@ -1,50 +1,14 @@
 import argparse
+import scipy.sparse as sp
+import numpy as np
 from pprint import pformat
 from gensim.corpora import MmCorpus
 from gensim.matutils import corpus2csc
-from scipy.stats import itemfreq
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import scipy.sparse as sp
-import numpy as np
 from scripts.utils.utils import init_logger
 from scripts.utils.plot import get_quantile, bar_plot
 
 logger = init_logger()
 
-
-def render_hist(data, of_path, xlabel, ylabel):
-    logger.info('saving hist of data of shape {} img file to {}'.format(data.shape, of_path))
-    logger.info('min {} max {}'.format(data.min(), data.max()))
-    logger.debug('data\n{}'.format(data))
-    logger.debug('itemfreq\n{}'.format(itemfreq(data)))
-    plt.figure(figsize=(5,2.5))
-    plt.hist(data, bins=np.arange(min(data),max(data)+2)-0.5, edgecolor='black', linewidth=1, color='dodgerblue')
-    xticks = range(0,max(data)+1,2) if max(data) >= 10 else range(0,max(data)+1) # hack
-    plt.xticks(xticks)
-    plt.xlim([min(data)-1, max(data)+1])
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.savefig(of_path, bbox_inches='tight')
-    plt.close()
-    
-    
-def apply_quantile(data, quantile_order):
-    logger.info('applying quantile {}'.format(quantile_order))
-    logger.info('shape before quantile {}, min {} max {}'.format(data.shape, data.min(), data.max()))
-    logger.debug('data before quantile {}'.format(data))
-    hist = itemfreq(data.data)
-    logger.debug('itemfreq hist {}'.format(hist))
-    elements, counts = hist[:,0], hist[:,1]
-    cumul = np.cumsum(counts)
-    total_sum = np.sum(counts)
-    quantile_y_index = np.where(cumul >= quantile_order*total_sum)[0][0]
-    quantile = elements[quantile_y_index]
-    res = data[data <= quantile].T
-    logger.info('shape after quantile {}, min {} max {}'.format(res.shape, res.min(), res.max()))
-    return res
-    
     
 def main():    
     parser = argparse.ArgumentParser(description='calculates various stats and of a given document-author-contribs file')

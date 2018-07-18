@@ -1,13 +1,11 @@
-import os, sys
 import argparse
 import numpy as np
-from scripts.utils.utils import init_logger
-from scripts.utils.documents import load_cluster_labels
+from scripts.utils.utils import init_logger, load_communities
 from scripts.utils.plot import scatter_plot
 
 logger = init_logger()
-             
-     
+
+
 def main():
     parser = argparse.ArgumentParser(description='plots cluster sizes, sorted descending')
     parser.add_argument('--cluster-labels', type=argparse.FileType('r'), help='path to input .json.bz2 cluster labels file', required=True)
@@ -17,14 +15,13 @@ def main():
     input_cluster_labels_path = args.cluster_labels.name
     output_img_path = args.img.name
     
-    cluster_labels = load_cluster_labels(input_cluster_labels_path)
+    logger.info('loading cluster labels')
+    cluster_labels = load_communities(input_cluster_labels_path)
         
-    labels,counts = np.unique(cluster_labels, return_counts=True)
-    logger.info('{} different communities'.format(len(labels)))
-    logger.debug('labels \n{}'.format(labels))
-    logger.debug('counts \n{}'.format(counts))
-        
+    labels, counts = np.unique(cluster_labels, return_counts=True)
     counts[::-1].sort()
+    
+    logger.info('plotting sorted cluster sizes')
     xlabel = 'Cluster'
     ylabel = 'Anzahl Dokumente'
     scatter_plot(counts, output_img_path, xlabel, ylabel, False, 3)

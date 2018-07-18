@@ -1,9 +1,8 @@
 import argparse
 import numpy as np
 from scipy.spatial.distance import cosine
-from scripts.utils.utils import init_logger
-from scripts.utils.documents import load_document_topics, load_cluster_labels
-from scripts.stats.cluster.get_cluster_central_documents import get_clusters_from_labels
+from scripts.utils.utils import init_logger, load_communities, get_clusters_from_labels
+from scripts.utils.documents import load_document_topics
 from scripts.utils.plot import scatter_plot
 
 logger = init_logger()
@@ -39,7 +38,7 @@ def main():
     output_plot_path = args.plot.name
         
     document_topics = load_document_topics(input_document_topics_path)
-    cluster_labels = load_cluster_labels(input_cluster_labels_path)
+    cluster_labels = load_communities(input_cluster_labels_path)
         
     clusters = get_clusters_from_labels(cluster_labels)
     logger.info('calculating purity of {} clusters'.format(len(clusters)))

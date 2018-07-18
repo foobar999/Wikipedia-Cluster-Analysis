@@ -2,20 +2,10 @@ import argparse
 from pprint import pformat
 import numpy as np
 from scipy.spatial.distance import cdist
-from scripts.utils.utils import init_logger, load_titles, save_data_to_json
+from scripts.utils.utils import init_logger, load_titles, save_data_to_json, get_clusters_from_labels
 from scripts.utils.documents import load_document_topics, load_cluster_labels
 
 logger = init_logger()
-
-
-def get_clusters_from_labels(cluster_labels):
-    num_clusters = len(np.unique(cluster_labels))
-    logger.info('number of clusters {}'.format(num_clusters))
-    clusters = [[] for _ in range(num_clusters)]
-    for docid,label in enumerate(cluster_labels):
-        clusters[label].append(docid)
-    logger.debug('clusters \n{}'.format(clusters))
-    return clusters
             
             
 def get_top_central_cluster_docs(cluster, document_topics, max_docs_per_clus, metric):

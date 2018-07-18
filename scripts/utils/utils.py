@@ -82,6 +82,15 @@ def load_titles(titles_path):
     logger.info('loading titles')
     return load_compressed_json_data(titles_path)
        
+# erzeugt aus der Repräsentation eines Clusterings durch ein Label je Index eine Repräsentation des Clusterings als Liste von Listen
+def get_clusters_from_labels(cluster_labels):
+    num_clusters = len(np.unique(cluster_labels))
+    logger.info('number of clusters {}'.format(num_clusters))
+    clusters = [[] for _ in range(num_clusters)]
+    for docid,label in enumerate(cluster_labels):
+        clusters[label].append(docid)
+    logger.debug('clusters \n{}'.format(clusters))
+    return clusters
         
         
         

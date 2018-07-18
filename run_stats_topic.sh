@@ -31,125 +31,125 @@ echo "MALLET_HOME $MALLET_HOME"
 export MALLET_HOME=$MALLET_HOME
 
 # Statistiken zum Artikeldump
-# STATS_PREPROP_DIR=output/stats/cluster_preprocessing
-# mkdir -p $STATS_PREPROP_DIR
-# STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
-## Histogramm der Dokument-Tokenanzahlen
-# ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
-# NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
-# LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
-# IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
-# QUANTILE=0.95
-# python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
-## Preprocessing-Auswirkungen
+STATS_PREPROP_DIR=output/stats/cluster_preprocessing
+mkdir -p $STATS_PREPROP_DIR
+STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
+# Histogramm der Dokument-Tokenanzahlen
+ARTICLES_DUMP=$COLL_PREFIX-pages-articles.xml.bz2
+NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
+LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
+IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
+QUANTILE=0.95
+python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
+# Preprocessing-Auswirkungen
 # LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
 # TOKEN_MIN_LEN=2
 # python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten
-# STATS_AVG_DIR=output/stats/cluster_avg
-# mkdir -p $STATS_AVG_DIR
-# STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
-# BOW=$BOW_PREFIX-bow.mm.bz2
-# TOPIC_MODEL=$TM_PREFIX-lda
-# LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-# python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+STATS_AVG_DIR=output/stats/cluster_avg
+mkdir -p $STATS_AVG_DIR
+STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
+BOW=$BOW_PREFIX-bow.mm.bz2
+TOPIC_MODEL=$TM_PREFIX-lda
+LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+python3 -m scripts.stats.cluster.get_topic_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # avg-plots
-# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-# TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
-# TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
-# python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
+TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
+python3 -m scripts.stats.cluster.get_document_avg_viz --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation Topicvektoren
-# STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
-# mkdir -p $STATS_DOC_PLOTS_DIR
-# STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
-# DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-#python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
+mkdir -p $STATS_DOC_PLOTS_DIR
+STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
+DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
+python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
-# DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
-#python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
+DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
+python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
-# CLUSTER_PLOTS_DIR=output/stats/cluster_plots
-# mkdir -p $CLUSTER_PLOTS_DIR
-# CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
-#for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-#    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-#    IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
-    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-       # DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-       # python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-    # done
-#done
+CLUSTER_PLOTS_DIR=output/stats/cluster_plots
+mkdir -p $CLUSTER_PLOTS_DIR
+CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+   CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+   IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+       DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+       python3 -m scripts.stats.cluster.get_document_2d_viz --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+    done
+done
 
-# silhouetten-plot
-# STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
-# mkdir -p $STATS_SILHOUETTES_DIR
-# STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
-## nur Vielfache von 25, maximal 300
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    # CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
-    # CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
-    ## für simple-collection: erlaube kleine Werte
-    ## sonst: nur 25er-Schritte
-    # ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 < 5 || ($1 % 25 == 0 && $1 <= 400))  {print} }' > $CLUSTER_SILHOUETTE_CSV
-    # CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    # python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
-# done
+# Silhouetten-plot
+STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
+mkdir -p $STATS_SILHOUETTES_DIR
+STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
+# nur Vielfache von 25, maximal 300
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    CLUSTER_LOG_PREFIX=$LOG_PREFIX-lda-$CLUSTER_METHOD-
+    CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
+    # für simple-collection: erlaube kleine Werte
+    # sonst: nur 25er-Schritte
+    ./bash/get_silhouette_data_from_logs.sh $CLUSTER_LOG_PREFIX | awk '{if ($1 < 5 || ($1 % 25 == 0 && $1 <= 400))  {print} }' > $CLUSTER_SILHOUETTE_CSV
+    CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
+    python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+done
 
 # absteigende Clustergrößen
-# STATS_CLUSTER_SIZES_DIR=output/stats/cluster_sizes
-# mkdir -p $STATS_CLUSTER_SIZES_DIR
-# STATS_CLUSTER_SIZES_PREFIX=$STATS_CLUSTER_SIZES_DIR/$PREFIX
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-   # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-   # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-       # CLUSTER_SIZES_IMG=$STATS_CLUSTER_SIZES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
-       # python -m scripts.stats.cluster.get_cluster_stats --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
-   # done
-# done
+STATS_CLUSTER_SIZES_DIR=output/stats/cluster_sizes
+mkdir -p $STATS_CLUSTER_SIZES_DIR
+STATS_CLUSTER_SIZES_PREFIX=$STATS_CLUSTER_SIZES_DIR/$PREFIX
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+   CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+   for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+       CLUSTER_SIZES_IMG=$STATS_CLUSTER_SIZES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
+       python -m scripts.stats.cluster.get_cluster_stats --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
+   done
+done
 
-# reinheiten der cluster
-# STATS_CLUSTER_PURITIES_DIR=output/stats/cluster_purities
-# mkdir -p $STATS_CLUSTER_PURITIES_DIR
-# STATS_CLUSTER_PURITIES_PREFIX=$STATS_CLUSTER_PURITIES_DIR/$PREFIX
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-   # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       # CLUSTER_LABELS=$CLUS_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.json.bz2
-       # PURITIES_PLOT_FILE=$STATS_CLUSTER_PURITIES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM-purities.pdf
-       # python3 -m scripts.stats.cluster.plot_cluster_purities --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --plot=$PURITIES_PLOT_FILE
-   # done
-# done
+# Reinheiten der cluster
+STATS_CLUSTER_PURITIES_DIR=output/stats/cluster_purities
+mkdir -p $STATS_CLUSTER_PURITIES_DIR
+STATS_CLUSTER_PURITIES_PREFIX=$STATS_CLUSTER_PURITIES_DIR/$PREFIX
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+   for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       CLUSTER_LABELS=$CLUS_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.json.bz2
+       PURITIES_PLOT_FILE=$STATS_CLUSTER_PURITIES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM-purities.pdf
+       python3 -m scripts.stats.cluster.plot_cluster_purities --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --plot=$PURITIES_PLOT_FILE
+   done
+done
 
 # bestimmte von allen Clustern zentralste Dokumente
 STATS_CENTRAL_DOCS_DIR=output/stats/cluster_central_documents
 mkdir -p $STATS_CENTRAL_DOCS_DIR
 STATS_CENTRAL_DOCS_PREFIX=$STATS_CENTRAL_DOCS_DIR/$PREFIX
-# MAX_DOCS_PER_COMM=5
-# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-# DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
-# echo "calculating centrality data of clusterings"
-# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
-    # if [[ $CLUSTER_METHOD =~ .*cos ]]; then
-        # METRIC="cosine"
-    # else
-        # METRIC="euclidean"
-    # fi
-    # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-        # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-        # CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json
-        # LOG_FILE=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.log
-        # python3 -m scripts.stats.cluster.get_cluster_central_documents --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --centrality-data=$CENTRALITY_DATA --max-docs-per-clus=$MAX_DOCS_PER_COMM --metric=$METRIC |& tee $LOG_FILE
-        # bzip2 -zf $CENTRALITY_DATA
-    # done
-# done
+MAX_DOCS_PER_COMM=5
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+DOCUMENT_TITLES=$BOW_PREFIX-bow-titles.json.bz2
+echo "calculating centrality data of clusterings"
+for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do 
+    if [[ $CLUSTER_METHOD =~ .*cos ]]; then
+        METRIC="cosine"
+    else
+        METRIC="euclidean"
+    fi
+    CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+        CENTRALITY_DATA=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.json
+        LOG_FILE=$STATS_CENTRAL_DOCS_PREFIX-$CLUSTER_METHOD-$CLUSTER_NUM-centralities.log
+        python3 -m scripts.stats.cluster.get_cluster_central_documents --document-topics=$DOCUMENT_TOPICS --cluster-labels=$CLUSTER_LABELS --titles=$DOCUMENT_TITLES --centrality-data=$CENTRALITY_DATA --max-docs-per-clus=$MAX_DOCS_PER_COMM --metric=$METRIC |& tee $LOG_FILE
+        bzip2 -zf $CENTRALITY_DATA
+    done
+done
 
 # zeige von ausgewählten, äquidistanten Communities die zentralsten Titel an
 STATS_CENTRAL_DOCS_SAMPLE_DIR=output/stats/cluster_central_documents_sample

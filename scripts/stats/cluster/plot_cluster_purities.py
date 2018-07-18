@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.distance import cosine
 from scripts.utils.utils import init_logger
 from scripts.utils.documents import load_document_topics, load_cluster_labels
-from scripts.stats.cluster.get_cluster_centrality_stats import get_clusters_from_labels
+from scripts.stats.cluster.get_cluster_central_documents import get_clusters_from_labels
 from scripts.utils.plot import scatter_plot
 
 logger = init_logger()

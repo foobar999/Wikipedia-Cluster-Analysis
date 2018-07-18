@@ -2,8 +2,8 @@ import argparse
 from pprint import pformat
 import numpy as np
 from scipy.spatial.distance import cdist
-from scripts.utils.utils import init_logger, load_titles, save_data_to_json, get_clusters_from_labels
-from scripts.utils.documents import load_document_topics, load_cluster_labels
+from scripts.utils.utils import init_logger, load_titles, save_data_to_json, load_communities, get_clusters_from_labels
+from scripts.utils.documents import load_document_topics
 
 logger = init_logger()
             
@@ -50,7 +50,7 @@ def main():
     logger.info('running with:\n{}'.format(pformat({'input_document_topics_path':input_document_topics_path, 'input_cluster_labels_path':input_cluster_labels_path, 'input_titles_path':input_titles_path, 'output_centrality_data_path':output_centrality_data_path, 'max_docs_per_clus':max_docs_per_clus, 'metric':metric})))
         
     document_topics = load_document_topics(input_document_topics_path)
-    cluster_labels = load_cluster_labels(input_cluster_labels_path)
+    cluster_labels = load_communities(input_cluster_labels_path)
     document_titles = load_titles(input_titles_path)
         
     clusters = get_clusters_from_labels(cluster_labels)    

@@ -34,12 +34,24 @@ def histogram_plot(data, ofpath, xlabel, ylabel, range=None, cumulative=False, b
     logger.info('min value {}, max value {}'.format(np.min(data), np.max(data)))
     logger.debug('data {}'.format(data))
     plt.figure(figsize=figsize)
-    plt.hist(data, bins=bins, edgecolor='black', linewidth=1, color='dodgerblue', cumulative=cumulative, range=range)
+    plt.hist(data, bins=bins, edgecolor='black', linewidth=1, color='dodgerblue', cumulative=cumulative, range=range, align='center')
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.savefig(ofpath, bbox_inches='tight')
     
-
+# plottet ein Säulenhistogramm der Daten data 
+def bar_plot(x, y, ofpath, xlabel, ylabel, align='center', figsize=(5,2.5)):
+    assert len(x) == len(y)
+    logger.info('plotting bars of {} values to {}'.format(len(x), ofpath))
+    logger.info('min x value {}, max x value {}'.format(np.min(x), np.max(x)))
+    logger.info('min y value {}, max y value {}'.format(np.min(y), np.max(y)))
+    logger.debug('x data {}'.format(x))
+    logger.debug('y data {}'.format(y))
+    plt.figure(figsize=figsize)
+    plt.bar(x, y, align=align, edgecolor='black', linewidth=1, color='dodgerblue')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.savefig(ofpath, bbox_inches='tight')
     
     
     

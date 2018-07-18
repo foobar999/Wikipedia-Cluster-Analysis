@@ -1,5 +1,3 @@
-import os, sys
-import logging
 import argparse
 from pprint import pformat
 from gensim.corpora import MmCorpus
@@ -11,6 +9,7 @@ import matplotlib.pyplot as plt
 import scipy.sparse as sp
 import numpy as np
 from scripts.utils.utils import init_logger
+from scripts.utils.plot import get_quantile, bar_plot
 
 logger = init_logger()
 
@@ -22,7 +21,6 @@ def render_hist(data, of_path, xlabel, ylabel):
     logger.debug('itemfreq\n{}'.format(itemfreq(data)))
     plt.figure(figsize=(5,2.5))
     plt.hist(data, bins=np.arange(min(data),max(data)+2)-0.5, edgecolor='black', linewidth=1, color='dodgerblue')
-    #plt.xlim(0,max(data))
     xticks = range(0,max(data)+1,2) if max(data) >= 10 else range(0,max(data)+1) # hack
     plt.xticks(xticks)
     plt.xlim([min(data)-1, max(data)+1])
@@ -49,9 +47,7 @@ def apply_quantile(data, quantile_order):
     
     
 def main():    
-    plt.ioff()
-    #plt.rc('font',family='Calibri')
-    parser = argparse.ArgumentParser(description='calculated various stats and of a given document-author-contribs file')
+    parser = argparse.ArgumentParser(description='calculates various stats and of a given document-author-contribs file')
     parser.add_argument('--acc-contribs', type=argparse.FileType('r'), help='path to input MatrixMarket acc contributions file (.mm/.mm.bz2)', required=True)
     parser.add_argument('--img-prefix', help='prefix of output generated img files', required=True)
     parser.add_argument('--quantile-order', type=float, help='quantile of histrograms to consider', required=True)
@@ -71,29 +67,24 @@ def main():
     
     logger.info('calculating authors-per-docs-distribution')
     num_authors_per_doc = sp.find((csr_corpus > 0).sum(1))[2]
-    num_authors_per_doc = apply_quantile(num_authors_per_doc, quantile_order)
+    quantile = get_quantile(num_authors_per_doc, quantile_order)
+    num_authors_per_doc = num_authors_per_doc[num_authors_per_doc <= quantile]
     num_authors_per_doc_imgfile = output_image_prefix + '-num-auths-per-doc-dist.pdf'
     xlabel = 'Autoren je Dokument'
     ylabel = 'Häufigkeit'
-    render_hist(num_authors_per_doc[:], num_authors_per_doc_imgfile, xlabel, ylabel)    
+    num_authors, num_authors_counts = np.unique(num_authors_per_doc, return_counts=True)
+    bar_plot(num_authors, num_authors_counts, num_authors_per_doc_imgfile, xlabel, ylabel)
         
     logger.info('calculating docs-per-authors-distribution')
     num_docs_per_author = sp.find((csr_corpus > 0).sum(0).T)[2]
-    num_docs_per_author = apply_quantile(num_docs_per_author, quantile_order)
+    quantile = get_quantile(num_docs_per_author, quantile_order)
+    num_docs_per_author = num_docs_per_author[num_docs_per_author <= quantile]
     num_docs_per_author_imgfile = output_image_prefix + '-num-docs-per-auth-dist.pdf'
     xlabel = 'Dokumente je Autor'
     ylabel = 'Häufigkeit'
-    render_hist(num_docs_per_author[:], num_docs_per_author_imgfile, xlabel, ylabel)
-    
-    #logger.debug('num authors per doc \n{}'.format(num_authors_per_doc))
-    #num_authors_per_doc_dist = itemfreq(num_authors_per_doc.data)
-    #logger.info('calculated authors-per-docs-distribution: shape {}'.format(num_authors_per_doc_dist.shape))
-    #logger.debug('distribution authors per doc \n{}'.format(num_authors_per_doc_dist))
-    
-    
-    
-    
-    
+    num_docs, num_docs_counts = np.unique(num_docs_per_author, return_counts=True)
+    bar_plot(num_docs, num_docs_counts, num_docs_per_author_imgfile, xlabel, ylabel)
+        
     
 if __name__ == '__main__':
     main()

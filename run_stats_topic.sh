@@ -40,11 +40,11 @@ NAMESPACE_PREFIXES=output/$PREFIX-namespaces.txt
 LOG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.log
 IMG_ART_TOKENS_DIST=$STATS_PREPROP_PREFIX-articles-tokens-dist.pdf
 QUANTILE=0.95
-python3 -m scripts.stats.cluster.get_articles_tokens_distribution --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
+python3 -m scripts.stats.cluster.plot_articles_tokens_dist --articles-dump=$ARTICLES_DUMP --namespace-prefixes=$NAMESPACE_PREFIXES --token-nums-dist=$IMG_ART_TOKENS_DIST --quantile-order=$QUANTILE |& tee $LOG_ART_TOKENS_DIST
 # Preprocessing-Auswirkungen
 LOG_ART_STATS=$STATS_PREPROP_PREFIX-articles-stats.log
 TOKEN_MIN_LEN=2
-python3 -m scripts.stats.cluster.get_articles_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
+python3 -m scripts.stats.cluster.get_articles_bow_stats --articles-dump=$ARTICLES_DUMP --no-below=$NO_BELOW --no-above=$NO_ABOVE --token-min-len=$TOKEN_MIN_LEN --article-min-tokens=$ARTICLE_MIN_TOKENS --namespace-prefixes=$NAMESPACE_PREFIXES |& tee $LOG_ART_STATS
 cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten

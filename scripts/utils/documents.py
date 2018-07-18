@@ -47,16 +47,6 @@ def load_document_topics(document_topics_path):
     logger.debug('document-topics-matrix \n{}'.format(document_topics))
     return document_topics
 
-# lädt die als .json.bz2-datei vorliegenden Labels eines Clusterings / einer Communitystruktur
-def load_cluster_labels(labels_path):
-    logger.info('loading cluster labels from {}'.format(labels_path))
-    with bz2.open(labels_path, 'rt') as labels_file:
-        cluster_labels = json.load(labels_file)
-    logger.info('loaded {} cluster labels'.format(len(cluster_labels)))
-    num_clusters = len(set(cluster_labels) - set([-1]))
-    logger.info('number of clusters (excluding noise) {}'.format(num_clusters))
-    logger.info('number of noise labels {}'.format(sum(1 if ele < 0 else 0 for ele in cluster_labels)))
-    return cluster_labels
     
     
     

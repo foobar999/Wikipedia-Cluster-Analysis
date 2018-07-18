@@ -3,7 +3,13 @@ Installation:
 - erfordert python3
 - Installation benötigter Module:
   pip3 install xmltodict scipy mediawiki_utilities numpy matplotlib networkx gensim python_igraph scripts scikit_learn
-
+- genauere Angabe der benötigten Module in "requirements.txt"
+- erfordert außerdem die Installation von MALLET 
+  - Download: siehe http://mallet.cs.umass.edu/download.php
+  - in der verwendeten Konfigurationsdatei muss die Variable MALLET_HOME auf das entpackte Verzeichnis gesetzt werden, beispielsweise:
+    MALLET_HOME=~/Projekte/Wikipedia-Cluster-Analysis/bin/mallet-2.0.8 
+  - die im Speichermedium enthaltene Version von "Wikipedia-Cluster-Analysis" enthält eine MALLET-Installation im Verzeichnis "bin"
+  
   
 Dumps:
 - Artikeldump der Form "collections/<PREFIX>-pages-articles.xml.bz2"
@@ -28,30 +34,36 @@ Dumps:
 
          
 Aufruf:
-- 6 wichtige Shellskripte:
-
-  - Bestimmung Namespaces -> erforderlich für themenbasierter Clusteranalyse und autorenbasierte Community Detection:
-    ./run_namespaces.sh config/<PREFIX>.config
-    
-  - themenbasierter Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
-    ./run_topic_clustering.sh config/<PREFIX>.config
-    
-  - autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung Statistikten der autorenbasierten Community Detection:
-    ./run_community_detection.sh config/<PREFIX>.config
-    
-  - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
-    ./run_stats_topic.sh config/<PREFIX>.config
-    
-  - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
-    ./run_stats_community.sh config/<PREFIX>.config
-    
-  - Vegleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
-    ./run_compare_clus_comm.sh config/<PREFIX>.config
-
+- 6 zentrale Shellskripte, die aufgerufen werden
 - Angabe von Parametern in Konfigurationsdateien in "config"-Verzeichnis
   - Beschreibung der Parameter ist in "config/simple-collection.config" enthalten
+  - Konfigurationsdateien steuern z.B. zu untersuchende Clusteringrößen, Präfix der zu untersuchenden Dumps, ...
 
-         
+- Bestimmung Namespaces -> erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
+  ./run_namespaces.sh config/<PREFIX>.config
+- themenbasierterClusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
+  ./run_topic_clustering.sh config/<PREFIX>.config
+- autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung Statistikten der autorenbasierten Community Detection:
+  ./run_community_detection.sh config/<PREFIX>.config
+- Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
+  ./run_stats_topic.sh config/<PREFIX>.config
+- Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
+  ./run_stats_community.sh config/<PREFIX>.config    
+- Vegleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
+  ./run_compare_clus_comm.sh config/<PREFIX>.config
+
+
+Verzeichnisse:
+- "bash": Bash-Shellskripte
+  - werden von den 6 wichtigen Shellskripten aufgerufen
+  - rufen selbst wiederum die Pythonskripte in "scripts" auf
+- "bin": enthält die MALLET-Installation
+- "collections": Artikel- und Historiendumps der verschiedenen Wikipedia-Kollektionen
+- "config": Konfigurationsdateien der verschiedenen Wikipedia-Kollektionen
+- "old": einige alte, ggf. nützliche Skripte
+- "output": die von "Wikipedia-Cluster-Analysis" erzeugten Dateien
+- "scripts": die Pythonskripte
+   
    
            
            

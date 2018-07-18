@@ -1,4 +1,3 @@
-import json
 import argparse
 from heapq import nlargest
 from pprint import pformat

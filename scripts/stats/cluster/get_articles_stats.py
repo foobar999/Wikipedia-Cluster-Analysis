@@ -1,8 +1,4 @@
-import os
-import sys
 import argparse
-import logging
-from collections import Counter
 from pprint import pformat
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.parsing.preprocessing import STOPWORDS
@@ -38,7 +34,7 @@ def get_stats(articles_path, article_min_tokens, token_min_len, stopwords, no_be
    
    
 def main():
-    parser = argparse.ArgumentParser(description='calcualtes some stats from a givena articles dump and plots them')
+    parser = argparse.ArgumentParser(description='calculates stats of various bag-of-word-models, adding more preprocessing steps incrementally')
     parser.add_argument("--articles-dump", type=argparse.FileType('r'), help='path to input .xml.bz2 articles dump', required=True)
     parser.add_argument("--no-below", type=int, help='Keep only tokes which appear in at least NO_BELOW documents (default {})', required=True)
     parser.add_argument("--no-above", type=float, help='Keep only tokes which appear in at most NO_ABOVE*CORPUSSIZE documents (default {})', required=True)
@@ -70,11 +66,6 @@ def main():
     get_stats(input_articles_path, article_min_tokens, token_min_len, stopwords, no_below, 1, namespace_prefixes)
     logger.info('stats with art_toks>={}, tok_len>={}, stopwords, df>={}, df<={}'.format(article_min_tokens,token_min_len,no_below,no_above))
     get_stats(input_articles_path, article_min_tokens, token_min_len, stopwords, no_below, no_above, namespace_prefixes)
-    
-    
-           
-           
-    
     
     
 if __name__ == '__main__':

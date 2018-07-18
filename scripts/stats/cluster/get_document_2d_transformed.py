@@ -1,6 +1,4 @@
-import os, sys
 import argparse
-import logging
 from sklearn import decomposition
 from sklearn.manifold import TSNE
 from scripts.utils.utils import init_logger, save_npz
@@ -25,7 +23,7 @@ def main():
     documents_2d = model.fit_transform(document_topics)
     logger.debug('2d-transformation res\n{}'.format(documents_2d))
     
-    logger.info('saving 2d-documents to {}'.format(output_documents_2d_path))
+    logger.info('saving 2d-documents')
     save_npz(output_documents_2d_path, documents_2d)
 
 

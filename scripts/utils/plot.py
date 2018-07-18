@@ -77,6 +77,19 @@ def scatter_2d_plot(x, y, ofpath, labels=None, rasterized=False, size=1, figsize
     plt.savefig(ofpath, bbox_inches='tight', dpi=200)
     
     
+# plottet die x-y-Daten verbunden durch eine Linie
+def line_plot(x, y, xlabel, ylabel, ofpath, plot_grid=True, figsize=(5,2.5)):
+    assert len(x) == len(y)
+    logger.info('plotting {} 2d data points as a connected line to {}'.format(len(x), ofpath))
+    plt.figure(figsize=figsize)
+    plt.grid(plot_grid)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.plot(x, y, c='dodgerblue') 
+    plt.xticks(x) # zeige an der x-Achse nur die geplotteten Daten als xticks
+    plt.savefig(ofpath, bbox_inches='tight')
+    
+    
     
     
     

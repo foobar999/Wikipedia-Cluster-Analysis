@@ -1,11 +1,7 @@
-import os, sys
 import argparse
-import logging
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import numpy as np
 from scripts.utils.utils import init_logger
+from scripts.utils.plot import line_plot
 
 logger = init_logger()
 
@@ -24,18 +20,12 @@ def main():
     logger.info('loaded data of shape {}'.format(csv_data.shape))
     logger.debug('loaded data \n{}'.format(csv_data))
     
-    logger.info('plotting csv data')
-    #plt.rc('font',family='Calibri')     
-    plt.figure(figsize=(7,3.5))
-    plt.grid(True)
-    plt.xlabel('#Cluster')
-    plt.ylabel('Silhouettenkoeffizient')
-    plt.plot(csv_data['x'], csv_data['y'], c='dodgerblue') 
-    plt.xticks(csv_data['x'])
-    #plt.ylim(ymin=0)
-    logger.info('saving img to {}'.format(output_img_path))
-    plt.savefig(output_img_path, bbox_inches='tight')
-
+    logger.info('plotting csv data')  
+    xlabel = '#Cluster'
+    ylabel = 'Silhouettenkoeffizient'
+    figsize = (7,3.5)
+    line_plot(csv_data['x'], csv_data['y'], xlabel, ylabel, output_img_path, plot_grid=True, figsize=figsize)
+    
 
 if __name__ == '__main__':
     main()

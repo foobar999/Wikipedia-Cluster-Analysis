@@ -8,6 +8,7 @@ from scripts.utils.utils import init_logger
 logger = init_logger()
 
 
+# plottet einzelne die Daten data als einzelne Datenpunkte
 def scatter_plot(data, ofpath, xlabel, ylabel, rasterized=False, size=1, figsize=((5,2.5))):
     logger.info('plotting of shape {} to {}'.format(data.shape, ofpath))
     plt.figure(figsize=figsize)
@@ -29,7 +30,7 @@ def get_quantile(data, quantile_order):
     logger.info('{}-quantile value: {}'.format(quantile_order, quantile))
     return quantile
     
-# plottet ein Histogram der Daten data
+# plottet ein Histogramm der Daten data
 def histogram_plot(data, ofpath, xlabel, ylabel, range=None, cumulative=False, bins='auto', figsize=(5,2.5)):
     logger.info('plotting hist of {} values to {}'.format(len(data), ofpath))
     logger.info('min value {}, max value {}'.format(np.min(data), np.max(data)))

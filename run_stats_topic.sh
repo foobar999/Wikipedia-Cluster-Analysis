@@ -48,26 +48,27 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # cat $LOG_ART_STATS | grep "stats\|density" >> $LOG_ART_STATS
 
 # durchschnittliche Wahrscheinlichkeiten der Topics
-STATS_AVG_DIR=output/stats/cluster_avg
-mkdir -p $STATS_AVG_DIR
-STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
-BOW=$BOW_PREFIX-bow.mm.bz2
-TOPIC_MODEL=$TM_PREFIX-lda
-LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
-python3 -m scripts.stats.cluster.get_topics_avg_probs_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
+# STATS_AVG_DIR=output/stats/cluster_avg
+# mkdir -p $STATS_AVG_DIR
+# STATS_AVG_PREFIX=$STATS_AVG_DIR/$PREFIX
+# BOW=$BOW_PREFIX-bow.mm.bz2
+# TOPIC_MODEL=$TM_PREFIX-lda
+# LOG_TOPIC_FILE=$STATS_AVG_PREFIX-lda-topic-avg-probs.log
+# python3 -m scripts.stats.cluster.get_topics_avg_probs_stats --bow=$BOW --model-prefix=$TOPIC_MODEL |& tee $LOG_TOPIC_FILE
 
 # Plots der durchschnittlichen Anteile
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
-TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
-python3 -m scripts.stats.cluster.plot_topics_avg_probs --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# TOPIC_AVG_PROBS_IMG=$STATS_AVG_PREFIX-lda-topic-avg-probs.pdf
+# TOPIC_AVG_PROBS_CDF_IMG=$STATS_AVG_PREFIX-lda-topic-probs-avg-cdf.pdf
+# python3 -m scripts.stats.cluster.plot_topics_avg_probs --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation Topicvektoren
 STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
 mkdir -p $STATS_DOC_PLOTS_DIR
 STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
+DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
 DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
-# python3 -m scripts.stats.cluster.get_document_2d_transformed --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
+python3 -m scripts.stats.cluster.transform_documents_2d --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
 DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz

@@ -70,7 +70,9 @@ def load_compressed_json_data(input_json_bz2_path):
     logger.debug('loaded {}'.format(data))
     return data
        
-# lädt die Communitylabels als Datei
+    
+# lädt Communitylabels der Datei in communities_path 
+# TODO in "load_partitions" umbenennen, da auch Clusterings so geladen werden
 def load_communities(communities_path):
     logger.info('loading communities')
     communities = load_compressed_json_data(communities_path)

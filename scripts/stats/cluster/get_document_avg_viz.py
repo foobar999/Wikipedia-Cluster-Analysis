@@ -1,28 +1,13 @@
-import os, sys
 import argparse
-import logging
-import json
-from pprint import pformat
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import numpy as np
+from pprint import pformat
 from scripts.utils.utils import init_logger
 from scripts.utils.documents import load_document_topics
+from scripts.utils.plot import scatter_plot
 
 logger = init_logger()
 
     
-def scatter_plot(data, ofpath, xlabel, ylabel):
-    logger.info('plotting of shape {} to {}'.format(data.shape, ofpath))
-    #plt.rc('font',family='Calibri')     
-    plt.figure(figsize=(5,2.5))
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.scatter(np.arange(len(data)), data, c='dodgerblue', s=1)
-    plt.savefig(ofpath, bbox_inches='tight')
-    
-
 def main():
     parser = argparse.ArgumentParser(description='plots 1. average probalities per topic 3. cdf of these probabilities')
     parser.add_argument('--document-topics', type=argparse.FileType('r'), help='path to input document-topic-file (.npz)', required=True)
@@ -40,14 +25,22 @@ def main():
     average_topic_props = np.average(document_topics, axis=0)
     logger.info('shape of average res {}'.format(average_topic_props.shape))
     average_topic_props[::-1].sort()
-    #x = np.cumsum(average_topic_props)
     logger.info('sum over averages {}'.format(average_topic_props.sum()))    
-    scatter_plot(average_topic_props, output_topic_avg_probs_path, 'Topic', 'Ø Anteil')
     
-    avg_prop_cdf = np.cumsum(average_topic_props)
-    scatter_plot(avg_prop_cdf, output_topic_avg_probs_cdf_path, 'Topic', 'CDF-Anteil')
+    logger.info('plotting average topic probabilites')
+    xlabel = 'Topic'
+    ylabel = 'Ø Anteil'
+    scatter_plot(average_topic_props, output_topic_avg_probs_path, xlabel, ylabel)
+    
+    average_topic_props_cdf = np.cumsum(average_topic_props)
+    logger.info('plotting average topic probabilites cumulative distribution function')
+    xlabel = 'Topic'
+    ylabel = 'Ø Anteil (CDF)'
+    scatter_plot(average_topic_props_cdf, output_topic_avg_probs_cdf_path, xlabel, ylabel)
     
 
+    
+    
 if __name__ == '__main__':
     main()
 

@@ -28,7 +28,7 @@ echo "plotting number of different docs per author, different authors per doc di
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ACC_CONTRIBS=$CONTRIB_PREFIX-$CONTRIB_VALUE-acc-contribs.mm.bz2
     IMG_PREFIX=$CONTRIBS_STATS_PREFIX-$CONTRIB_VALUE-contribs
-    python3 -m scripts.stats.community.get_contribs_stats --acc-contribs=$ACC_CONTRIBS --img-prefix=$IMG_PREFIX --quantile-order=$QUANTILE
+    python3 -m scripts.stats.community.plot_contribs_dists --acc-contribs=$ACC_CONTRIBS --img-prefix=$IMG_PREFIX --quantile-order=$QUANTILE
 done
 
 # Statistiken zu Zusammenhangskomponenten der Graphen
@@ -42,7 +42,7 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     GRAPH_FILE=$GRAPH_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-coauth.graph.gz
     IMG_FILE=$COMPONENTS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-components.pdf
     LOG_FILE=$COMPONENTS_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-components.log
-    python3 -m scripts.stats.community.get_graph_comp_stats --graph=$GRAPH_FILE --img=$IMG_FILE --quantile-order=$QUANTILE |& tee $LOG_FILE
+    python3 -m scripts.stats.community.plot_components_sizes_dist --graph=$GRAPH_FILE --img=$IMG_FILE --quantile-order=$QUANTILE |& tee $LOG_FILE
 done
 
 # betrachte (pruned) bipartiten Graphen: bestimme Mapping: Dokumenttitel -> Liste der Namen adjazenter Autoren
@@ -68,7 +68,7 @@ for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
         for COMM_METHOD in "${COMM_METHODS[@]}"; do
             COMM_FILE=$COMM_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-communities.json.bz2
             IMG_FILE=$COMMUNITY_SIZES_STATS_PREFIX-$CONTRIB_VALUE-$COAUTH_MODE-$COMM_METHOD-community-sizes.pdf
-            python3 -m scripts.stats.community.get_community_stats --communities=$COMM_FILE --img=$IMG_FILE
+            python3 -m scripts.stats.community.plot_communities_sizes_dist --communities=$COMM_FILE --img=$IMG_FILE
         done
     done
 done

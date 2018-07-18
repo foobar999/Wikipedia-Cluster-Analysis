@@ -41,7 +41,7 @@ def histogram_plot(data, ofpath, xlabel, ylabel, range=None, cumulative=False, b
     plt.ylabel(ylabel)
     plt.savefig(ofpath, bbox_inches='tight')
     
-# plottet ein Säulenhistogramm der Daten data 
+# plottet ein Säulenhistogramm der x-y-Daten 
 def bar_plot(x, y, ofpath, xlabel, ylabel, align='center', figsize=(5,2.5)):
     assert len(x) == len(y)
     logger.info('plotting bars of {} values to {}'.format(len(x), ofpath))
@@ -55,6 +55,27 @@ def bar_plot(x, y, ofpath, xlabel, ylabel, align='center', figsize=(5,2.5)):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.savefig(ofpath, bbox_inches='tight')
+
+
+# plottet die x-y-Daten als einzelne 2D-Datenpunkte; bei Angabe von labels werden alle Datenpunkte desselben Labels gleich gefärbt
+# verschiedene Labels erhalten ein möglichst gestreutes Spektrum verschiedener Farben
+def scatter_2d_plot(x, y, ofpath, labels=None, rasterized=False, size=1, figsize=None):
+    assert len(x) == len(y)
+    logger.info('plotting {} 2d data points to {}'.format(len(x), ofpath))
+    
+    if labels is None:
+        logger.info('plotting unlabeled data')
+        color = 'dodgerblue'    
+        color_map = None
+    else:
+        assert len(labels) == len(x)
+        logger.info('plotting labeled data')
+        color = labels
+        color_map = 'prism'
+        
+    plt.scatter(x, y, c=color, cmap=color_map, s=size, rasterized=rasterized)
+    plt.savefig(ofpath, bbox_inches='tight', dpi=200)
+    
     
     
     

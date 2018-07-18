@@ -63,31 +63,30 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # python3 -m scripts.stats.cluster.plot_topics_avg_probs --document-topics=$DOCUMENT_TOPICS --topic-avg-probs=$TOPIC_AVG_PROBS_IMG --topic-avg-probs-cdf=$TOPIC_AVG_PROBS_CDF_IMG
 
 # 2D-Transformation Topicvektoren
-STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
-mkdir -p $STATS_DOC_PLOTS_DIR
-STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
-DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
-DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
+# STATS_DOC_PLOTS_DIR=output/stats/cluster_doc_plots
+# mkdir -p $STATS_DOC_PLOTS_DIR
+# STATS_DOC_PLOTS_PREFIX=$STATS_DOC_PLOTS_DIR/$PREFIX
+# DOCUMENT_TOPICS=$TM_PREFIX-lda-document-topics.npz
+# DOCUMENTS_2D=$STATS_DOC_PLOTS_PREFIX-lda-documents-2d.npz
 # python3 -m scripts.stats.cluster.transform_documents_2d --document-topics=$DOCUMENT_TOPICS --documents-2d=$DOCUMENTS_2D
 
 # 2D-Plot Dokumente
-DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
-python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
+# DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
+# python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
 # 2D-Plot Cluster-gelabelte Dokumente
-CLUSTER_PLOTS_DIR=output/stats/cluster_plots
-mkdir -p $CLUSTER_PLOTS_DIR
-CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-   CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
-   IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
-    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-       CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
-       DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
-       python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
-    done
-done
-
+# CLUSTER_PLOTS_DIR=output/stats/cluster_plots
+# mkdir -p $CLUSTER_PLOTS_DIR
+# CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+   # CMPREFIX=$CLUS_PREFIX-lda-$CLUSTER_METHOD
+   # IMGPREFIX=$CLUSTER_PLOTS_PREFIX-lda-$CLUSTER_METHOD
+    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+       # CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
+       # DOC_CLUSTER_IMG=$IMGPREFIX-$CLUSTER_NUM.pdf
+       # python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --cluster-labels=$CLUSTER_LABELS --img-file=$DOC_CLUSTER_IMG 
+    # done
+# done
 
 # Silhouetten-plot
 STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
@@ -104,8 +103,9 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
     done
     # plotte Silhouettenkoeffizienten der CSV-Datei
     CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    python3 -m scripts.stats.cluster.get_silhouette_plot --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+    python3 -m scripts.stats.cluster.plot_document_silhouettes --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
 done
+
 
 # absteigende Clustergrößen
 STATS_CLUSTER_SIZES_DIR=output/stats/cluster_sizes

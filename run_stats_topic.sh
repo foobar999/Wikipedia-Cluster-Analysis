@@ -74,7 +74,7 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # DOC_DATA_IMG=$STATS_DOC_PLOTS_PREFIX-lda-document-data.pdf
 # python3 -m scripts.stats.cluster.plot_documents_2d --documents-2d=$DOCUMENTS_2D --img-file=$DOC_DATA_IMG 
 
-# 2D-Plot Cluster-gelabelte Dokumente
+# 2D-Plot clustergelabelte Dokumente
 # CLUSTER_PLOTS_DIR=output/stats/cluster_plots
 # mkdir -p $CLUSTER_PLOTS_DIR
 # CLUSTER_PLOTS_PREFIX=$CLUSTER_PLOTS_DIR/$PREFIX
@@ -89,25 +89,24 @@ STATS_PREPROP_PREFIX=$STATS_PREPROP_DIR/$PREFIX
 # done
 
 # Silhouetten-plot
-STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
-mkdir -p $STATS_SILHOUETTES_DIR
-STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
-for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
-    CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
-    # erzeuge aus Logs CSV-Datei: jede Zeile enthält einen Eintrag "#Cluster Silhouettenkoeffizient", jede Datei bezieht sich auf 1 Clusterverfahren
-    truncate -s 0 $CLUSTER_SILHOUETTE_CSV
-    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
-        CLUSTER_LOG_FILE=$LOG_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.log
-        SIL_COEFF=$(cat $CLUSTER_LOG_FILE | grep "silhouette coefficient" | sed -E 's/.*silhouette coefficient: //')
-        echo "$CLUSTER_NUM $SIL_COEFF" >> $CLUSTER_SILHOUETTE_CSV
-    done
-    # plotte Silhouettenkoeffizienten der CSV-Datei
-    CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
-    python3 -m scripts.stats.cluster.plot_document_silhouettes --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
-done
+# STATS_SILHOUETTES_DIR=output/stats/cluster_silhouettes
+# mkdir -p $STATS_SILHOUETTES_DIR
+# STATS_SILHOUETTES_PREFIX=$STATS_SILHOUETTES_DIR/$PREFIX
+# for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
+    # CLUSTER_SILHOUETTE_CSV=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.csv
+    ## erzeuge aus Logs CSV-Datei: jede Zeile enthält einen Eintrag "#Cluster Silhouettenkoeffizient", jede Datei bezieht sich auf 1 Clusterverfahren
+    # truncate -s 0 $CLUSTER_SILHOUETTE_CSV
+    # for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
+        # CLUSTER_LOG_FILE=$LOG_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.log
+        # SIL_COEFF=$(cat $CLUSTER_LOG_FILE | grep "silhouette coefficient" | sed -E 's/.*silhouette coefficient: //')
+        # echo "$CLUSTER_NUM $SIL_COEFF" >> $CLUSTER_SILHOUETTE_CSV
+    # done
+    ## plotte Silhouettenkoeffizienten der CSV-Datei
+    # CLUSTER_SILHOUETTE_PDF=$STATS_SILHOUETTES_PREFIX-$CLUSTER_METHOD-silhouettes.pdf
+    # python3 -m scripts.stats.cluster.plot_document_silhouettes --csv-data=$CLUSTER_SILHOUETTE_CSV --img-file=$CLUSTER_SILHOUETTE_PDF
+# done
 
-
-# absteigende Clustergrößen
+# plotte Clustergrößen, absteigend sortiert
 STATS_CLUSTER_SIZES_DIR=output/stats/cluster_sizes
 mkdir -p $STATS_CLUSTER_SIZES_DIR
 STATS_CLUSTER_SIZES_PREFIX=$STATS_CLUSTER_SIZES_DIR/$PREFIX
@@ -116,9 +115,10 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
        CLUSTER_SIZES_IMG=$STATS_CLUSTER_SIZES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
-       python -m scripts.stats.cluster.get_cluster_stats --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
+       python -m scripts.stats.cluster.plot_cluster_sizes --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
    done
 done
+
 
 # Reinheiten der cluster
 STATS_CLUSTER_PURITIES_DIR=output/stats/cluster_purities

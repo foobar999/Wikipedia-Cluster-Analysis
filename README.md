@@ -39,7 +39,7 @@ bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-c
 Verzeichnisse
 -------------
 - `bash`: Bash-Shellskripte
-  - werden von den 6 wichtigen Shellskripten aufgerufen
+  - werden von den zentralen Shellskripten im Wurzelverzeichnis aufgerufen
   - rufen selbst wiederum die Pythonskripte in `scripts` auf
 - `bin`: enthält die MALLET-Installation
 - `collections`: Artikel- und Historiendumps der verschiedenen Wikipedia-Kollektionen
@@ -52,43 +52,49 @@ Aufruf
 ------
 Wikipedia-Cluster-Analysis besitzt acht zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
 
-Das Skript `run_namespaces.sh` ermöglicht die Bestimmung der im Historiendump enthaltenen Namensräume, was für die themenbasierte Clusteranalyse und autorenbasierte Community Detection erforderlich ist:
+Das Skript `run_namespaces.sh` ermöglicht die Bestimmung der im Historiendump enthaltenen Namensräume:
 ```
 ./run_namespaces.sh config/<PREFIX>.config <MIN_OCCURENCES>
 ```
-Danach ist eine manuelle Filterung der gefundenen Namensräume in der erzeugten Liste von Titelpräfixen `output/<PREFIX>-namespaces.txt` erforderlich (siehe Abschnitt "Bestimmung Namensräume" unten). Da die Liste von Namensraumpräfixen in der Online- und in der Speichermedium-Version von Wikipedia-Cluster-Analysis enthalten ist, kann auf den Aufruf von `run_namespaces.sh` auch verzichtet werden.
+Danach ist eine manuelle Filterung der gefundenen Namensräume in der erzeugten Liste von Titelpräfixen `output/<PREFIX>-namespaces.txt` erforderlich (siehe Abschnitt "Bestimmung Namensräume" unten). Da die Liste von Namensraumpräfixen in der Online- und in der Speichermedium-Version von Wikipedia-Cluster-Analysis enthalten ist, kann auf den Aufruf von `run_namespaces.sh` auch verzichtet werden. Die Bestimmung der Namensräume ist für die themenbasierte Clusteranalyse und autorenbasierte Community Detection erforderlich.
   
-Das Skript `run_topic_clustering.sh` führt die themenbasierte Clusteranalyse durch: Dies beinhaltet die Erzeugung des Bag-of-Words-Modells, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster => erforderlich für Berechnung zentralster Dokumente und Statistiken der themenbasierten Clusteranalyse:
+Das Skript `run_topic_clustering.sh` führt die themenbasierte Clusteranalyse durch:
 ```
 ./run_topic_clustering.sh config/<PREFIX>.config
 ```
+Dies beinhaltet die Erzeugung des Bag-of-Words-Modells, die Erzeugung des Latent Dirichlet Allocation-Topicmodells und die Bestimmung der Cluster. Die themenbasierte Clusteranalyse ist erforderlich für die zugehörige Berechnung der zentralsten Dokumente und Statistiken.
   
-- autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities => erforderlich für Berechnung zentralster Dokumente und Statistiken der autorenbasierten Community Detection:
+Das Skript `run_community_detection.sh` führt die autorenbasierte Community Detection durch: 
 ```
 ./run_community_detection.sh config/<PREFIX>.config
 ```
+Dies beinhaltet die Bestimmung der Beitragswerte aus Historiendump, die Erzeugung des Affiliations- und Dokumentnetzwerkes und Bestimmung der Communities. Die autorenbasierter Community Detection ist erforderlich für die zugehörige Berechnung zentralster Dokumente und Statistiken.
 
-- Berechnung der zentralsten Dokumente der themenbasierten Clusteranalyse => erforderlich für Cluster-Community-Vergleich:
+Das Skript `run_centralities_topic.sh` berechnet die zentralsten Dokumente der themenbasierten Clusteranalyse:
 ```
 ./run_centralities_topic.sh config/<PREFIX>.config
 ```
+Die Berechnung der zentralsten Dokumente der themenbasierten Clusteranalyse ist erforderlich für den Cluster-Community-Vergleich.
   
-- Berechnung der zentralsten Dokumente der autorenbasierten Community Detection => erforderlich für Cluster-Community-Vergleich:    
+Das Skript `run_centralities_community.sh` berechnet die zentralsten Dokumente der autorenbasierten Community Detection:
 ```
 ./run_centralities_community.sh config/<PREFIX>.config  
 ```
+Die Berechnung der zentralsten Dokumente der autorenbasiertern Community Detection ist erforderlich für den Cluster-Community-Vergleich.
   
-- Vergleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
+Das Skript `run_compare_clus_comm.sh` vergleicht berechnete Cluster und Communities:
 ```
 ./run_compare_clus_comm.sh config/<PREFIX>.config
 ```
+Der Vergleich von Clusterings und Communitystrukturen erfolgt mit Normalized Mutual Information. Außerdem bestimmt das Skript Jaccard-ähnlichste Cluster-Community-Paare und repräsentiert Cluster und Communities mit den Titeln ihrer zentralsten Dokumente.
+
   
-- Berechnung verschiedener Statistiken (u.A. Plots) der themenbasierten Clusteranalyse:
+Das Skript `run_stats_topic.sh` berechnet verschiedene Statistiken (u.A. Plots) der themenbasierten Clusteranalyse:
 ```
 ./run_stats_topic.sh config/<PREFIX>.config
 ```
 
-- Berechnung verschiedener Statistiken (u.A. Plots) der autorenbasierten Community Detection:    
+Das Skript `run_stats_community.sh` berechnet verschiedener Statistiken (u.A. Plots) der autorenbasierten Community Detection:    
 ```
 ./run_stats_community.sh config/<PREFIX>.config  
 ```

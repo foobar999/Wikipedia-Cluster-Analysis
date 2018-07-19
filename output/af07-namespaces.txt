@@ -1,0 +1,15 @@
+Beeld:
+Beeldbespreking:
+Bespreking:
+Gebruiker:
+Gebruikerbespreking:
+Kategorie:
+Kategoriebespreking:
+Lys van outeurs volgens naam:
+MediaWiki:
+MediaWikibespreking:
+Sjabloon:
+Sjabloonbespreking:
+Templaat:
+Wikipedia:
+Wikipediabespreking:

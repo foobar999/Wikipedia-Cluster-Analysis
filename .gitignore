@@ -1,7 +1,11 @@
+# Ignore
 bin/*
 collections/*
 output/*
 logs/*
+
+# Allow
+!output/*-namespaces.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,18 @@
+CAT:
+Category:
+Category talk:
+File:
+File talk:
+Help:
+Help talk:
+MediaWiki:
+MediaWiki talk:
+T:
+Talk:
+Template:
+Template talk:
+User:
+User talk:
+Wikipedia:
+Wikipedia talk:
+WT:

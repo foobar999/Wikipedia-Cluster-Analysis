@@ -50,7 +50,7 @@ Aufruf
 Wikipedia-Cluster-Analysis besitzt acht zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
 
 Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
-- Bestimmung Namespaces => erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
+- Bestimmung der Namensräume => erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
 ```
 ./run_namespaces.sh config/<PREFIX>.config
 ```
@@ -90,9 +90,16 @@ Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
 ./run_stats_community.sh config/<PREFIX>.config  
 ```
 
-Bestimmung Namespaces
+Bestimmung Namensräume
 ---------------------
-Die Bestimmung der Namespaces ist für themenbasierte Clusteranalyse und autorenbasierte Community Detection notwendig, da beide Prozesse auf den Artikeln der Wikipediadumps beruhen. Artikeldumps und Historiendumps enthalten Seiten eines Standes von Wikipedia, die Artikel sind die Seiten des Namespace 0 ("Mainspace"). Beide Arten von Dumps enthalten speicheren Angaben zu den Seiten als große XML-Datenstruktur, jede Seite liegt in der Form `<page>...</page>` vor. In modernen XML-Wikipediadumps ist je Seite durch das XML-Tag `<ns>...</ns>` explizit angegeben, zu welchem Namespace diese Seite gehört (ein Beispiel befindet sich in https://en.wikipedia.org/wiki/Help:Export#Example). Diese Angabe ermöglicht eine einfache Bestimmung des Namespaces einer Seite, fehlt aber in den hier verwendeten, älteren Dumps. Wikipedia-Cluster-Analysis verwendet daher zur Überprüfung, ob eine Seite im Mainspace liegt oder nicht, den Titel der Seite. Der Titel einer Seite, die nicht im Mainspace liegt, besitzt das Präfix `<NAMESPACE>:`. Die ist z.B. am Titel der Seite https://en.wikipedia.org/wiki/Help:Export, die im Namensraum `Help` liegt, und am Titel der Seite https://en.wikipedia.org/wiki/Template:Article_creation, die im Namensraum `Template` liegt, erkennbar.
+Die Bestimmung der Namensräume ist für themenbasierte Clusteranalyse und autorenbasierte Community Detection notwendig, da beide Prozesse auf den Artikeln der Wikipediadumps beruhen. Artikeldumps und Historiendumps enthalten Seiten eines Standes von Wikipedia, die Artikel sind die Seiten im Namensraum 0 ("Mainspace"). Beide Arten von Dumps speichern Angaben zu den enhaltenen Seiten als große XML-Datenstruktur, jede Seite liegt in der Form `<page>...</page>` vor. In modernen XML-Wikipediadumps ist je Seite durch das XML-Tag `<ns>...</ns>` explizit angegeben, zu welchem Namensraum diese Seite gehört (ein Beispiel befindet sich in https://en.wikipedia.org/wiki/Help:Export#Example). Diese Angabe ermöglicht eine einfache Bestimmung des Namensraumes einer Seite, fehlt aber in den hier verwendeten, älteren Dumps. Wikipedia-Cluster-Analysis verwendet daher zur Überprüfung, ob eine Seite im Mainspace liegt oder nicht, den Titel der Seite. Der Titel einer Seite, die nicht im Mainspace liegt, besitzt das Präfix `<NAMESPACE>:`. Dies ist z.B. am Titel der Seite https://en.wikipedia.org/wiki/Help:Export, die im Namensraum `Help` liegt, und am Titel der Seite https://en.wikipedia.org/wiki/Template:Article_creation, die im Namensraum `Template` liegt, erkennbar. Um zu bestimmen, ob eine Seite im Mainspace liegt, ist eine einfache Überprüfung, ob der Seitentitel mit einem String und `:` beginnt, allerdings nicht sinnvoll: Es ist möglich, dass auch Seiten im Mainspace ein Präfix mit `:` besitzen, ohne dass dieses Präfix einem Namensraum entspricht (wie z.B. in https://de.wikipedia.org/wiki/CSI:_Vegas). Daher prüft Wikipedia-Cluster-Analysis, ob eine Seite im Mainspace liegt, folgendermaßen:
+1. Falls die Seite die explizite `<ns>...</ns>`-Angabe im Dump besitzt: Die Seite gehört zum Mainspace, falls die Angabe `<ns>0</ns>` ist, ansonsten gehört sie nicht zum Mainspace.
+2. Falls die explizite Namensraumangabe im Dump fehlt: Die Seite gehört nicht zum Mainspace, falls der Titel mit einem Präfix `<NAMESPACE>:` beginnt, das in einer vordefinierten Liste von Namensräumen enthalten ist. Ansonsten gehört die Seite zum Mainspace.
+trallafiiti
+
+
+
+
  
 
 

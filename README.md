@@ -56,19 +56,19 @@ Das Skript `run_namespaces.sh` ermöglicht die Bestimmung der im Historiendump e
 ```
 ./run_namespaces.sh config/<PREFIX>.config <MIN_OCCURENCES>
 ```
-Danach ist eine manuelle Filterung der gefundenen Namensräume in der erzeugten Liste von Titelpräfixen `output/<PREFIX>-namespaces.txt` erforderlich (siehe Abschnitt "Bestimmung Namensräume" unten). Da die Liste von Namensraumpräfixen in der Online- und in der Speichermedium-Version von Wikipedia-Cluster-Analysis enthalten ist, kann auf den Aufruf von `run_namespaces.sh` auch verzichtet werden. Die Bestimmung der Namensräume ist für die themenbasierte Clusteranalyse und autorenbasierte Community Detection erforderlich.
+Danach ist eine manuelle Filterung der gefundenen Namensräume in der erzeugten Liste `output/<PREFIX>-namespaces.txt` von Namensraumpräfixen erforderlich (siehe Abschnitt "Bestimmung Namensräume" unten). Da die Liste von Namensraumpräfixen in der Online- und in der Speichermedium-Version von Wikipedia-Cluster-Analysis enthalten ist, kann auf den Aufruf von `run_namespaces.sh` verzichtet werden. Die Bestimmung der Namensräume ist für die themenbasierte Clusteranalyse und autorenbasierte Community Detection erforderlich.
   
 Das Skript `run_topic_clustering.sh` führt die themenbasierte Clusteranalyse durch:
 ```
 ./run_topic_clustering.sh config/<PREFIX>.config
 ```
-Dies beinhaltet die Erzeugung des Bag-of-Words-Modells, die Erzeugung des Latent Dirichlet Allocation-Topicmodells und die Bestimmung der Cluster. Die themenbasierte Clusteranalyse ist erforderlich für die zugehörige Berechnung der zentralsten Dokumente und Statistiken.
+Dies beinhaltet die Erzeugung des Bag-of-Words-Modells (BOW), die Erzeugung des Latent Dirichlet Allocation-Topicmodells (LDA) und die Bestimmung der Cluster. Die themenbasierte Clusteranalyse ist erforderlich für die zugehörige Berechnung zentralster Dokumente und Statistiken.
   
 Das Skript `run_community_detection.sh` führt die autorenbasierte Community Detection durch: 
 ```
 ./run_community_detection.sh config/<PREFIX>.config
 ```
-Dies beinhaltet die Bestimmung der Beitragswerte aus Historiendump, die Erzeugung des Affiliations- und Dokumentnetzwerkes und Bestimmung der Communities. Die autorenbasierter Community Detection ist erforderlich für die zugehörige Berechnung zentralster Dokumente und Statistiken.
+Dies beinhaltet die Bestimmung der Beitragswerte, die Erzeugung des Affiliations- und Dokumentnetzwerkes und Bestimmung der Communities. Die autorenbasierte Community Detection ist erforderlich für die zugehörige Berechnung zentralster Dokumente und Statistiken.
 
 Das Skript `run_centralities_topic.sh` berechnet die zentralsten Dokumente der themenbasierten Clusteranalyse:
 ```
@@ -80,7 +80,7 @@ Das Skript `run_centralities_community.sh` berechnet die zentralsten Dokumente d
 ```
 ./run_centralities_community.sh config/<PREFIX>.config  
 ```
-Die Berechnung der zentralsten Dokumente der autorenbasiertern Community Detection ist erforderlich für den Cluster-Community-Vergleich.
+Die Berechnung der zentralsten Dokumente der autorenbasierten Community Detection ist erforderlich für den Cluster-Community-Vergleich.
   
 Das Skript `run_compare_clus_comm.sh` vergleicht berechnete Cluster und Communities:
 ```
@@ -98,6 +98,19 @@ Das Skript `run_stats_community.sh` berechnet verschiedener Statistiken (u.A. Pl
 ```
 ./run_stats_community.sh config/<PREFIX>.config  
 ```
+
+Ausgabe
+-------
+Die Ergebnisse der verschiedenen Skriptaufrufe befinden sich im Verzeichnis `output`. Dieses Verzeichnis enthält folgende Verzeichnisse und Dateien:
+- `output/<PREFIX>-namespaces.txt`: Listen der Namensraumpräfixe 
+- `output/bow`: Dateien des BOW-Modells: BOW-Matrix, Vokabular, Dokumenttitel
+- `output/topic`: Dateien des LDA-Topicmodells: Modellinstanz-Dateien, Matrix der Dokument-Topic-Anteile
+- `output/cluster`: Dateien der themenbasierten Clusterings: Dokument-Cluster-Label, Dokumenttitel--Cluster-Label
+- `output/contribs`: Dateien der Beitragswerte: rohe/akkumulierte Beiträge, Autornamen, Dokumenttitel
+- `output/graph`: Dateien der Graphen: Affiliationsnetzwerk, Co-Authorship-Dokumentnetzwerk
+- `output/communities`: Dateien der autorenbasierten Communities: Dokument-Community-Label, Dokumenttitel-Community-Label
+- `output/logs`: Logfiles der verschiedenen Schritte
+- `output/stats`: Dateien von Statistiken und Cluster-Community-Vergleichen
 
 Bestimmung Namensräume
 ---------------------

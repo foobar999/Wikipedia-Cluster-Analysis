@@ -31,10 +31,10 @@ Dumps
     -> sehr kleiner, künstlich erzeugter Dump zum Testen auf Funktionalität
       - erzeugt aus der Datei "simple-collection.json"
       - wird erneut erzeugt durch:
-        ```console
-        python3 -m scripts.utils.generate_xml_from_simple_json_collection simple-collection.json collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
-        bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
-        ```
+```
+python3 -m scripts.utils.generate_xml_from_simple_json_collection simple-collection.json collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
+bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
+```
          
 Aufruf
 ------

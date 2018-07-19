@@ -31,6 +31,7 @@ Dumps
     -> sehr kleiner, künstlich erzeugter Dump zum Testen auf Funktionalität
       - erzeugt aus der Datei "simple-collection.json"
       - wird erneut erzeugt durch:
+      
          python3 -m scripts.utils.generate_xml_from_simple_json_collection simple-collection.json collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
          bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
 
@@ -43,21 +44,27 @@ Aufruf
   - Konfigurationsdateien steuern z.B. zu untersuchende Clusteringrößen, Präfix der zu untersuchenden Dumps, ...
 
 - Bestimmung Namespaces -> erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
+
   ./run_namespaces.sh config/<PREFIX>.config
   
 - themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
+
   ./run_topic_clustering.sh config/<PREFIX>.config
   
 - autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung Statistikten der autorenbasierten Community Detection:
+
   ./run_community_detection.sh config/<PREFIX>.config
   
 - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
+
   ./run_stats_topic.sh config/<PREFIX>.config
   
 - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
+
   ./run_stats_community.sh config/<PREFIX>.config  
   
 - Vegleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
+
   ./run_compare_clus_comm.sh config/<PREFIX>.config
 
 

@@ -1,13 +1,12 @@
 
 Installation
 ------------
-Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities aus einem Artikeldump und einem Historiendump von Wikipedia. Wikipedia-Cluster-Analysis erfordert grundsätzlich `python3`. Außerdem benötigt Wikipedia-Cluster-Analysis Pythonmodule, die folgendermaßen installiert werden können:
+Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities aus XML-Dumps von Wikipedia. Wikipedia-Cluster-Analysis erfordert grundsätzlich `python3`. Außerdem benötigt Wikipedia-Cluster-Analysis Pythonmodule, die folgendermaßen installiert werden können:
 ```
 pip3 install xmltodict scipy mediawiki_utilities numpy matplotlib networkx gensim python_igraph scripts scikit_learn
 ```
 Eine genauere Angabe der verwendeten Module befindet sich in `requirements.txt`. Wikipedia-Cluster-Analysis benötigt außerdem eine heruntergeladene Version von 
 "MALLET", zum Download siehe http://mallet.cs.umass.edu/download.php . Der Aufruf des Skripts zur themenbasiertern Clusteranalyse sowie des zugehörigen Statistikskripts erfordert, dass in der verwendeten Knofigurationsdatei die Variable MALLET_HOME auf das entpackte Verzeichnis gesetzt wird, z.B. `MALLET_HOME=~/Projekte/Wikipedia-Cluster-Analysis/bin/mallet-2.0.8`. Die im Speichermedium enthaltene Version von Wikipedia-Cluster-Analysis enthält eine MALLET-Installation im Verzeichnis `bin`.
-  
   
 Dumps
 -----
@@ -33,6 +32,18 @@ Die beiden künstlichen `simple-collection`-Dumps können folgendermaßen erzeug
 python3 -m scripts.utils.generate_xml_from_simple_json_collection simple-collection.json collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
 bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
 ```
+         
+Verzeichnisse
+-------------
+- `bash`: Bash-Shellskripte
+  - werden von den 6 wichtigen Shellskripten aufgerufen
+  - rufen selbst wiederum die Pythonskripte in `scripts` auf
+- `bin`: enthält die MALLET-Installation
+- `collections`: Artikel- und Historiendumps der verschiedenen Wikipedia-Kollektionen
+- `config`: Konfigurationsdateien der verschiedenen Wikipedia-Kollektionen
+- `old`: einige alte, ggf. nützliche Skripte
+- `output`: die von "Wikipedia-Cluster-Analysis" erzeugten Dateien
+- `scripts`: die Pythonskripte
          
 Aufruf
 ------
@@ -79,19 +90,22 @@ Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
 ./run_stats_community.sh config/<PREFIX>.config  
 ```
 
-Verzeichnisse
--------------
-- `bash`: Bash-Shellskripte
-  - werden von den 6 wichtigen Shellskripten aufgerufen
-  - rufen selbst wiederum die Pythonskripte in `scripts` auf
-- `bin`: enthält die MALLET-Installation
-- `collections`: Artikel- und Historiendumps der verschiedenen Wikipedia-Kollektionen
-- `config`: Konfigurationsdateien der verschiedenen Wikipedia-Kollektionen
-- `old`: einige alte, ggf. nützliche Skripte
-- `output`: die von "Wikipedia-Cluster-Analysis" erzeugten Dateien
-- `scripts`: die Pythonskripte
-   
-   
+Bestimmung Namespaces
+---------------------
+Die Bestimmung der Namespaces ist für themenbasierte Clusteranalyse und autorenbasierte Community Detection notwendig, da beide Prozesse auf den Artikeln der Wikipediadumps beruhen sollen. Artikeldumps und Historiendumps enthalten Seiten der eines Standes von Wikipedia, die Artikel sind die Seiten des Namespace 0 ("Mainspace"). Beide Arten von Dumps enthalten speicheren Angaben zu den Seiten als große XML-Datenstruktur, jede Seite liegt in der Form `<page>...</page>` vor. In modernen XML-Wikipediadumps ist je Seite durch das XML-Tag `<ns>...</ns>` explizit angegeben, zu welchem Namespace diese Seite gehört (ein Beispiel befindet sich in https://en.wikipedia.org/wiki/Help:Export). 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
            
            
            

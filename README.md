@@ -1,6 +1,6 @@
 Wikipedia-Cluster-Analysis
 ==========================
-Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities aus XML-Dumps von Wikipedia. 
+Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht die Erzeugung, den Vergleich und die Analyse von themenbasierten Clustern und autorenbasierten Communities aus XML-Dumps von Wikipedia. 
 
 Installation
 ------------

@@ -52,13 +52,13 @@ Aufruf
 ------
 Wikipedia-Cluster-Analysis besitzt acht zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
 
-Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
-- Bestimmung der Namensräume => erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
+Das Skript `run_namespaces.sh` ermöglicht die Bestimmung der im Historiendump enthaltenen Namensräume, was für die themenbasierte Clusteranalyse und autorenbasierte Community Detection erforderlich ist:
 ```
 ./run_namespaces.sh config/<PREFIX>.config <MIN_OCCURENCES>
 ```
+Danach ist eine manuelle Filterung der gefundenen Namensräume in der erzeugten Liste von Titelpräfixen `output/<PREFIX>-namespaces.txt` erforderlich (siehe Abschnitt "Bestimmung Namensräume" unten). Da die Liste von Namensraumpräfixen in der Online- und in der Speichermedium-Version von Wikipedia-Cluster-Analysis enthalten ist, kann auf den Aufruf von `run_namespaces.sh` auch verzichtet werden.
   
-- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster => erforderlich für Berechnung zentralster Dokumente und Statistiken der themenbasierten Clusteranalyse:
+Das Skript `run_topic_clustering.sh` führt die themenbasierte Clusteranalyse durch: Dies beinhaltet die Erzeugung des Bag-of-Words-Modells, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster => erforderlich für Berechnung zentralster Dokumente und Statistiken der themenbasierten Clusteranalyse:
 ```
 ./run_topic_clustering.sh config/<PREFIX>.config
 ```

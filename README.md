@@ -11,14 +11,16 @@ Eine genauere Angabe der verwendeten Module befindet sich in `requirements.txt`.
   
 Dumps
 -----
-Wikipedia-Cluster-Analysisg geht von zwei Arten von Wikipediadumps aus, die sich im Verzeichnis `collections` befinden müssen: Einem Artikeldump der Form `collections/<PREFIX>-pages-articles.xml.bz2` und einem Historiendump der Form `collections/<PREFIX>-pages-articles.xml.bz2`. Die i Speichermedium enthaltene Version von Wikipedia-Cluster-Analysis enthält drei Wikipediadump-Paare:
-- Präfix `af07`: entspricht `afwiki-20070124`
-  - Name des Artikeldumps: `afwiki-20070124-pages-articles.xml.bz2`
-  - Name des Historiendumps: `afwiki-20070124-pages-meta-history.xml.bz2`
+Wikipedia-Cluster-Analysis geht von zwei Arten von Wikipediadumps aus, die sich im Verzeichnis `collections` befinden müssen: Einem Artikeldump der Form `collections/<PREFIX>-pages-articles.xml.bz2` und einem Historiendump der Form `collections/<PREFIX>-pages-articles.xml.bz2`. Zwei zusammengehörende Dumps bilden ein Paar mit demselben Präfix `<PREFIX>`. Die im Speichermedium enthaltene Version von Wikipedia-Cluster-Analysis enthält drei Dump-Paar:
+- Präfix `af07`: 
+  - originales Präfix dieses Dumps: `afwiki-20070124` -> wurde hier zur Vermeidung langer Dateinamen umbenannt
+  - Name des Artikeldumps: `af07-pages-articles.xml.bz2`
+  - Name des Historiendumps: `af07-pages-meta-history.xml.bz2`
   - älterer Dump in "afrikaans" -> Dumps sind "richtige" Wikipediadumps, die aber klein und damit handlicher zur Untersuchung sind
-- Präfix `sw11`: entspricht `simplewiki-20111012`
-  - Name des Artikeldumps: `simplewiki-20111012-pages-articles.xml.bz2`
-  - Name des Historiendumps: `simplewiki-20111012-pages-meta-history.xml.bz2`
+- Präfix `sw11`:
+  - originales Präfix dieses Dumps: `simplewiki-20111012` -> wurde hier zur Vermeidung langer Dateinamen umbenannt
+  - Name des Artikeldumps: `sw11-pages-articles.xml.bz2`
+  - Name des Historiendumps: `sw11-pages-meta-history.xml.bz2`
   - älterer Dump in einfachem Englisch -> der in der Arbeit untersuchte Dump
 - Präfix `simple-collection`
   - Name des Artikeldumps: `simple-collection-pages-articles.xml.bz2`
@@ -34,7 +36,7 @@ bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-c
          
 Aufruf
 ------
-Wikipedia-Cluster-Analysis besitzt 8 zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
+Wikipedia-Cluster-Analysis besitzt acht zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
 
 Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
 - Bestimmung Namespaces -> erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:

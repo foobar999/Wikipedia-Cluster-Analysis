@@ -1,6 +1,6 @@
 Wikipedia-Cluster-Analysis
 ==========================
-Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht die Erzeugung, den Vergleich und die Analyse von themenbasierten Clustern und autorenbasierten Communities aus XML-Dumps von Wikipedia. 
+Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht die Erzeugung, den Vergleich und die Analyse von themenbasierten Clusterings und autorenbasierten Communitystrukturen aus XML-Dumps von Wikipedia. 
 
 Installation
 ------------
@@ -99,13 +99,27 @@ Das Skript `run_stats_community.sh` berechnet verschiedener Statistiken (u.A. Pl
 ./run_stats_community.sh config/<PREFIX>.config  
 ```
 
+Test
+----
+Die Funktionalität von Wikipedia-Cluster-Analysis kann mithilfe der vorliegenden `simple-collection`-Dumps einfach getestet werden:
+```
+./run_namespaces.sh config/simple-collection.config 1
+./run_topic_clustering.sh config/simple-collection.config
+./run_community_detection.sh config/simple-collection.config
+./run_centralities_topic.sh config/simple-collection.config
+./run_centralities_community.sh config/simple-collection.config  
+./run_compare_clus_comm.sh config/simple-collection.config
+./run_stats_topic.sh config/simple-collection.config
+./run_stats_community.sh config/simple-collection.config 
+```
+
 Ausgabe
 -------
 Die Ergebnisse der verschiedenen Skriptaufrufe befinden sich im Verzeichnis `output`. Dieses Verzeichnis enthält folgende Verzeichnisse und Dateien:
 - `output/<PREFIX>-namespaces.txt`: Listen der Namensraumpräfixe 
 - `output/bow`: Dateien des BOW-Modells: BOW-Matrix, Vokabular, Dokumenttitel
 - `output/topic`: Dateien des LDA-Topicmodells: Modellinstanz-Dateien, Matrix der Dokument-Topic-Anteile
-- `output/cluster`: Dateien der themenbasierten Clusterings: Dokument-Cluster-Label, Dokumenttitel--Cluster-Label
+- `output/cluster`: Dateien der themenbasierten Clusterings: Dokument-Cluster-Label, Dokumenttitel-Cluster-Label
 - `output/contribs`: Dateien der Beitragswerte: rohe/akkumulierte Beiträge, Autornamen, Dokumenttitel
 - `output/graph`: Dateien der Graphen: Affiliationsnetzwerk, Co-Authorship-Dokumentnetzwerk
 - `output/communities`: Dateien der autorenbasierten Communities: Dokument-Community-Label, Dokumenttitel-Community-Label

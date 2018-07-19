@@ -1,7 +1,7 @@
 
 Installation
 ------------
-Das Projekt "Wikipedia-Cluster-Analysis" erfordert grundsätzlich `python3`. Außerdem benötigt Wikipedia-Cluster-Analysis Pythonmodule, die folgendermaßen installiert werden können:
+Das Projekt "Wikipedia-Cluster-Analysis" ermöglicht Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities aus einem Artikeldump und einem Historiendump von Wikipedia. Wikipedia-Cluster-Analysis erfordert grundsätzlich `python3`. Außerdem benötigt Wikipedia-Cluster-Analysis Pythonmodule, die folgendermaßen installiert werden können:
 ```
 pip3 install xmltodict scipy mediawiki_utilities numpy matplotlib networkx gensim python_igraph scripts scikit_learn
 ```
@@ -11,23 +11,22 @@ Eine genauere Angabe der verwendeten Module befindet sich in `requirements.txt`.
   
 Dumps
 -----
-- Artikeldump der Form `collections/<PREFIX>-pages-articles.xml.bz2`
-- Historiendump der Form `collections/<PREFIX>-pages-articles.xml.bz2`
-- hier enthalten:
-  - Präfix `af07`: entspricht `afwiki-20070124`
-    - Name des Artikeldumps: `afwiki-20070124-pages-articles.xml.bz2`
-    - Name des Historiendumps: `afwiki-20070124-pages-meta-history.xml.bz2`
-    - älterer Dump in "afrikaans" -> Dumps sind "richtige" Wikipediadumps, die aber klein und damit handlicher zur Untersuchung sind
-  - Präfix `sw11`: entspricht `simplewiki-20111012`
-    - Name des Artikeldumps: `simplewiki-20111012-pages-articles.xml.bz2`
-    - Name des Historiendumps: `simplewiki-20111012-pages-meta-history.xml.bz2`
-    -> älterer Dump in einfachem Englisch -> der in der Arbeit untersuchte Dump
-  - Präfix `simple-collection`
-    - Name des Artikeldumps: `simple-collection-pages-articles.xml.bz2`
-    - Name des Historiendumps: `simple-collection-pages-meta-history.xml.bz2`
-    -> sehr kleiner, künstlich erzeugter Dump zum Testen auf Funktionalität
-      - erzeugt aus der Datei `simple-collection.json`
-      - wird erneut erzeugt durch:
+Wikipedia-Cluster-Analysisg geht von zwei Arten von Wikipediadumps aus, die sich im Verzeichnis `collections` befinden müssen: Einem Artikeldump der Form `collections/<PREFIX>-pages-articles.xml.bz2` und einem Historiendump der Form `collections/<PREFIX>-pages-articles.xml.bz2`. Die i Speichermedium enthaltene Version von Wikipedia-Cluster-Analysis enthält drei Wikipediadump-Paare:
+- Präfix `af07`: entspricht `afwiki-20070124`
+  - Name des Artikeldumps: `afwiki-20070124-pages-articles.xml.bz2`
+  - Name des Historiendumps: `afwiki-20070124-pages-meta-history.xml.bz2`
+  - älterer Dump in "afrikaans" -> Dumps sind "richtige" Wikipediadumps, die aber klein und damit handlicher zur Untersuchung sind
+- Präfix `sw11`: entspricht `simplewiki-20111012`
+  - Name des Artikeldumps: `simplewiki-20111012-pages-articles.xml.bz2`
+  - Name des Historiendumps: `simplewiki-20111012-pages-meta-history.xml.bz2`
+  - älterer Dump in einfachem Englisch -> der in der Arbeit untersuchte Dump
+- Präfix `simple-collection`
+  - Name des Artikeldumps: `simple-collection-pages-articles.xml.bz2`
+  - Name des Historiendumps: `simple-collection-pages-meta-history.xml.bz2`
+  - sehr kleiner, künstlich erzeugter Dump zum Testen auf Funktionalität
+  - erzeugt aus der Datei `simple-collection.json`
+
+Die beiden künstlichen `simple-collection`-Dumps können folgendermaßen erzeugt werden:
 ```
 python3 -m scripts.utils.generate_xml_from_simple_json_collection simple-collection.json collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
 bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml

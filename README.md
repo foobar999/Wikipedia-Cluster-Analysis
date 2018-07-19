@@ -1,17 +1,12 @@
 
 Installation
 ------------
-- erfordert python3
-- Installation benötigter Module:
+Das Projekt "Wikipedia-Cluster-Analysis" erfordert grundsätzlich `python3`. Außerdem benötigt Wikipedia-Cluster-Analysis Pythonmodule, die folgendermaßen installiert werden können:
 ```
 pip3 install xmltodict scipy mediawiki_utilities numpy matplotlib networkx gensim python_igraph scripts scikit_learn
 ```
-- genauere Angabe der benötigten Module in `requirements.txt`
-- erfordert außerdem die Installation von MALLET 
-  - Download: siehe http://mallet.cs.umass.edu/download.php
-  - in der verwendeten Konfigurationsdatei muss die Variable MALLET_HOME auf das entpackte Verzeichnis gesetzt werden, beispielsweise:
-    `MALLET_HOME=~/Projekte/Wikipedia-Cluster-Analysis/bin/mallet-2.0.8`
-  - die im Speichermedium enthaltene Version von "Wikipedia-Cluster-Analysis" enthält eine MALLET-Installation im Verzeichnis `bin`
+Eine genauere Angabe der verwendeten Module befindet sich in `requirements.txt`. Wikipedia-Cluster-Analysis benötigt außerdem eine heruntergeladene Version von 
+"MALLET", zum Download siehe http://mallet.cs.umass.edu/download.php . Der Aufruf des Skripts zur themenbasiertern Clusteranalyse sowie des zugehörigen Statistikskripts erfordert, dass in der verwendeten Knofigurationsdatei die Variable MALLET_HOME auf das entpackte Verzeichnis gesetzt wird, z.B. `MALLET_HOME=~/Projekte/Wikipedia-Cluster-Analysis/bin/mallet-2.0.8`. Die im Speichermedium enthaltene Version von Wikipedia-Cluster-Analysis enthält eine MALLET-Installation im Verzeichnis `bin`.
   
   
 Dumps
@@ -40,17 +35,15 @@ bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-c
          
 Aufruf
 ------
-- 8 zentrale Shellskripte, die aufgerufen werden
-- Angabe von Parametern in Konfigurationsdateien in `config`-Verzeichnis
-  - Beschreibung der Parameter ist in `config/simple-collection.config` enthalten
-  - Konfigurationsdateien steuern z.B. zu untersuchende Clusteringrößen, Präfix der zu untersuchenden Dumps, ...
+Wikipedia-Cluster-Analysis besitzt 8 zentrale Shellskripte im Wurzelverzeichnis des Projektes zur Erzeugung, Vergleich und Analyse von themenbasierten Clustern und autorenbasierten Communities. Alle zentralen Skripte werden durch die Parameter einer Konfigurationsdatei im `config`-Verzeichnis gesteuert. Das Format und die Beschreibung der Parameter ist in `config/simple-collection.config` enthalten. Eine Konfigurationsdatei legt z.B. die zu untersuchenden Clusteringrößen oder das Präfix der zu untersuchenden Dumps fest. 
 
+Wikipedia-Cluster-Analysis enthält folgende zentrale Shellskripte:
 - Bestimmung Namespaces -> erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
 ```
 ./run_namespaces.sh config/<PREFIX>.config
 ```
   
-- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistiken und Centrality der themenbasierten Clusteranalyse:
+- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung zentralster Dokumente und Statistiken der themenbasierten Clusteranalyse:
 ```
 ./run_topic_clustering.sh config/<PREFIX>.config
 ```

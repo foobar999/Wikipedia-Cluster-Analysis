@@ -1,5 +1,6 @@
 
-Installation:
+Installation
+------------
 - erfordert python3
 - Installation benötigter Module:
   pip3 install xmltodict scipy mediawiki_utilities numpy matplotlib networkx gensim python_igraph scripts scikit_learn
@@ -11,7 +12,8 @@ Installation:
   - die im Speichermedium enthaltene Version von "Wikipedia-Cluster-Analysis" enthält eine MALLET-Installation im Verzeichnis "bin"
   
   
-Dumps:
+Dumps
+-----
 - Artikeldump der Form "collections/<PREFIX>-pages-articles.xml.bz2"
 - Historiendump der Form "collections/<PREFIX>-pages-articles.xml.bz2"
 - hier enthalten:
@@ -33,7 +35,8 @@ Dumps:
          bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-collection-pages-meta-history.xml
 
          
-Aufruf:
+Aufruf
+------
 - 6 zentrale Shellskripte, die aufgerufen werden
 - Angabe von Parametern in Konfigurationsdateien in "config"-Verzeichnis
   - Beschreibung der Parameter ist in "config/simple-collection.config" enthalten
@@ -41,19 +44,25 @@ Aufruf:
 
 - Bestimmung Namespaces -> erforderlich für themenbasierte Clusteranalyse und autorenbasierte Community Detection:
   ./run_namespaces.sh config/<PREFIX>.config
-- themenbasierterClusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
+  
+- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
   ./run_topic_clustering.sh config/<PREFIX>.config
+  
 - autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung Statistikten der autorenbasierten Community Detection:
   ./run_community_detection.sh config/<PREFIX>.config
+  
 - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
   ./run_stats_topic.sh config/<PREFIX>.config
+  
 - Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
-  ./run_stats_community.sh config/<PREFIX>.config    
+  ./run_stats_community.sh config/<PREFIX>.config  
+  
 - Vegleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
   ./run_compare_clus_comm.sh config/<PREFIX>.config
 
 
-Verzeichnisse:
+Verzeichnisse
+-------------
 - "bash": Bash-Shellskripte
   - werden von den 6 wichtigen Shellskripten aufgerufen
   - rufen selbst wiederum die Pythonskripte in "scripts" auf

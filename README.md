@@ -40,7 +40,7 @@ bzip2 -zkf collections/simple-collection-pages-articles.xml collections/simple-c
          
 Aufruf
 ------
-- 6 zentrale Shellskripte, die aufgerufen werden
+- 8 zentrale Shellskripte, die aufgerufen werden
 - Angabe von Parametern in Konfigurationsdateien in `config`-Verzeichnis
   - Beschreibung der Parameter ist in `config/simple-collection.config` enthalten
   - Konfigurationsdateien steuern z.B. zu untersuchende Clusteringrößen, Präfix der zu untersuchenden Dumps, ...
@@ -50,31 +50,40 @@ Aufruf
 ./run_namespaces.sh config/<PREFIX>.config
 ```
   
-- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistikten der der themenbasierten Clusteranalyse:
+- themenbasierte Clusteranalyse: Erzeugung Bag-of-Words-Modell, Erzeugung Latent Dirichlet Allocation-Topicmodell, Bestimmung Cluster -> erforderlich für Berechnung Statistiken und Centrality der themenbasierten Clusteranalyse:
 ```
 ./run_topic_clustering.sh config/<PREFIX>.config
 ```
   
-- autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung Statistikten der autorenbasierten Community Detection:
+- autorenbasierte Community Detection: Bestimmung Beitragswerte aus Historiendump, Erzeugung Affiliations- und Dokumentnetzwerk, Bestimmung Communities -> erforderlich für Berechnung zentralster Dokumente und Statistiken der autorenbasierten Community Detection:
 ```
 ./run_community_detection.sh config/<PREFIX>.config
 ```
-  
-- Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
+
+- Berechnung der zentralsten Dokumente der themenbasierten Clusteranalyse -> erforderlich für Cluster-Community-Vergleich:
 ```
-./run_stats_topic.sh config/<PREFIX>.config
-```
-  
-- Berechnung verschiedener Statistiken (u.A. Plots, zentralster Dokumente) bzgl. der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
-```
-./run_stats_community.sh config/<PREFIX>.config  
+./run_centralities_topic.sh config/<PREFIX>.config
 ```
   
-- Vegleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
+- Berechnung der zentralsten Dokumente der autorenbasierten Community Detection -> erforderlich für Cluster-Community-Vergleich:    
+```
+./run_centralities_community.sh config/<PREFIX>.config  
+```
+  
+- Vergleich von Clustern und Communities (Normalized Mutual Information, Jaccard-Vergleich mit Titeln zentralster Dokumente):
 ```
 ./run_compare_clus_comm.sh config/<PREFIX>.config
 ```
+  
+- Berechnung verschiedener Statistiken (u.A. Plots) der themenbasierten Clusteranalyse:
+```
+./run_stats_topic.sh config/<PREFIX>.config
+```
 
+- Berechnung verschiedener Statistiken (u.A. Plots) der autorenbasierten Community Detection:    
+```
+./run_stats_community.sh config/<PREFIX>.config  
+```
 
 Verzeichnisse
 -------------

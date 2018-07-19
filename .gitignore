@@ -6,6 +6,7 @@ logs/*
 
 # Allow
 !output/*-namespaces.txt
+!collections/simple-collection-*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

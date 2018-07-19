@@ -1,0 +1,300 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.8/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.8/ http://www.mediawiki.org/xml/export-0.8.xsd" version="0.8" xml:lang="en">
+  <siteinfo>
+    <sitename>Wikipedia</sitename>
+    <base>http://en.wikipedia.org/wiki/Main_Page</base>
+    <generator>MediaWiki 1.22wmf2</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="0" case="first-letter"></namespace>
+      <namespace key="1" case="first-letter">Talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>One</title>
+    <ns>0</ns>
+    <id>1</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user1</username>
+        <id>1</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">apple</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>user4</username>
+        <id>4</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">apple banana fruits</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user4</username>
+        <id>4</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">apple banana fruits tomato</text>
+    </revision>
+    <revision>
+      <id>4</id>
+      <timestamp>2002-01-04T00:00:00Z</timestamp>
+      <contributor>
+        <username>user5</username>
+        <id>5</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve"></text>
+    </revision>
+    <revision>
+      <id>5</id>
+      <timestamp>2002-01-05T00:00:00Z</timestamp>
+      <contributor>
+        <username>user1</username>
+        <id>1</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">apple banana fruits</text>
+    </revision>
+  </page>
+  <page>
+    <title>Two</title>
+    <ns>0</ns>
+    <id>2</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user2</username>
+        <id>2</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">IT computer</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>user2</username>
+        <id>2</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">IT computer mouse calculator</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user3</username>
+        <id>3</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">IT computer calculator software online</text>
+    </revision>
+  </page>
+  <page>
+    <title>Three</title>
+    <ns>0</ns>
+    <id>3</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user5</username>
+        <id>5</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">oranges vegetables</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>user4</username>
+        <id>4</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">oranges fruits</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user5</username>
+        <id>5</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">oranges fruits apple apple</text>
+    </revision>
+  </page>
+  <page>
+    <title>Four</title>
+    <id>4</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>userOtherBOT</username>
+        <id>8</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>user3</username>
+        <id>3</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user2</username>
+        <id>2</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet industry computer IT</text>
+    </revision>
+    <revision>
+      <id>4</id>
+      <timestamp>2002-01-04T00:00:00Z</timestamp>
+      <contributor>
+        <username>user1</username>
+        <id>1</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet computer IT keyboard</text>
+    </revision>
+    <revision>
+      <id>5</id>
+      <timestamp>2002-01-05T00:00:00Z</timestamp>
+      <contributor>
+        <username>user2</username>
+        <id>2</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet computer IT keyboard smartphone</text>
+    </revision>
+  </page>
+  <page>
+    <title>Five</title>
+    <ns>0</ns>
+    <id>5</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user6</username>
+        <id>6</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">newspaper articles</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>usermyBoT</username>
+        <id>9</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">newspaper articles haschegif</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user6</username>
+        <id>6</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">newspaper articles  </text>
+    </revision>
+    <revision>
+      <id>4</id>
+      <timestamp>2002-01-04T00:00:00Z</timestamp>
+      <contributor>
+        <username>user7</username>
+        <id>7</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">newspaper articles online</text>
+    </revision>
+  </page>
+  <page>
+    <title>Six</title>
+    <ns>0</ns>
+    <id>6</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user3</username>
+        <id>3</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet IT</text>
+    </revision>
+    <revision>
+      <id>2</id>
+      <timestamp>2002-01-02T00:00:00Z</timestamp>
+      <contributor>
+        <username>user2</username>
+        <id>2</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet IT keyboard</text>
+    </revision>
+    <revision>
+      <id>3</id>
+      <timestamp>2002-01-03T00:00:00Z</timestamp>
+      <contributor>
+        <username>user1</username>
+        <id>1</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve"></text>
+    </revision>
+  </page>
+  <page>
+    <title>Seven</title>
+    <ns>1</ns>
+    <id>7</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user5</username>
+        <id>5</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">internet</text>
+    </revision>
+  </page>
+  <page>
+    <title>Help:Eight</title>
+    <id>8</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2002-01-01T00:00:00Z</timestamp>
+      <contributor>
+        <username>user5</username>
+        <id>5</id>
+      </contributor>
+      <comment>*</comment>
+      <text xml:space="preserve">keyboard</text>
+    </revision>
+  </page>
+</mediawiki>

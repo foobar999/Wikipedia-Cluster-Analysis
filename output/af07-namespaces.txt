@@ -1,13 +1,17 @@
+A:
 Beeld:
 Beeldbespreking:
 Bespreking:
 Gebruiker:
 Gebruikerbespreking:
+Hulp:
 Kategorie:
 Kategoriebespreking:
 Lys van outeurs volgens naam:
 MediaWiki:
 MediaWikibespreking:
+Portaal:
+Portal:
 Sjabloon:
 Sjabloonbespreking:
 Templaat:

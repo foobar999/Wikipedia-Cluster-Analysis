@@ -1,15 +1,22 @@
-#!/bin/bash
+#!/bin/bash -e
 
-set -e  # Abbruch bei Fehler
-if (( $# != 1 )); then
-    echo "Usage: $0 PREFIX"
+if (( $# != 2 )); then
+    echo "Usage: $0 CONFIG MIN_OCCURENCES"
     exit 1
 fi
-unset DEBUG
-PREFIX=$1
+CONFIG=$1
+MIN_OCCURENCES=$2
+source $CONFIG
 
-COLL_PREFIX="collections/$PREFIX"
-LOG_PREFIX="output/logs/$PREFIX"
+echo "PREFIX $PREFIX"
+echo "MIN_OCCURENCES $MIN_OCCURENCES"
 
-NS_MIN_OCCURENCES=5
-( time ./bash/get_likely_namespaces.sh $COLL_PREFIX-pages-meta-history.xml.bz2 $NS_MIN_OCCURENCES | tee output/$PREFIX-namespaces.txt )|& tee $LOG_PREFIX-namespaces.log
+COLL_PREFIX=collections/$PREFIX
+LOG_PREFIX=output/logs/$PREFIX
+
+COLLECTION=$COLL_PREFIX-pages-meta-history.xml.bz2
+NAMESPACES_LIST=output/$PREFIX-namespaces.txt
+LOG_FILE=$LOG_PREFIX-namespaces.log
+
+echo "extracting title prefixes from $COLLECTION appearing at least $MIN_OCCURENCES times"
+( time ./bash/get_likely_namespaces.sh $COLLECTION $MIN_OCCURENCES | tee $NAMESPACES_LIST )|& tee $LOG_FILE

@@ -114,7 +114,7 @@ for CLUSTER_METHOD in "${CLUSTER_METHODS[@]}"; do
    for CLUSTER_NUM in "${CLUSTER_NUMS[@]}"; do
        CLUSTER_LABELS=$CMPREFIX-$CLUSTER_NUM.json.bz2
        CLUSTER_SIZES_IMG=$STATS_CLUSTER_SIZES_PREFIX-lda-$CLUSTER_METHOD-$CLUSTER_NUM.pdf
-       python -m scripts.stats.cluster.plot_cluster_sizes --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
+       python3 -m scripts.stats.cluster.plot_cluster_sizes --cluster-labels=$CLUSTER_LABELS --img=$CLUSTER_SIZES_IMG
    done
 done
 

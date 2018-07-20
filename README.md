@@ -119,7 +119,7 @@ Die Ergebnisse der verschiedenen Skriptaufrufe befinden sich im Verzeichnis `out
 - `output/<PREFIX>-namespaces.txt`: Listen der Namensraumpräfixe 
 - `output/bow`: Dateien des BOW-Modells: BOW-Matrix, Vokabular, Dokumenttitel
 - `output/topic`: Dateien des LDA-Topicmodells: Modellinstanz-Dateien, Matrix der Dokument-Topic-Anteile
-- `output/cluster`: Dateien der themenbasierten Clusterings: Dokument-Cluster-Label, Dokumenttitel-Cluster-Label
+- `output/clusters`: Dateien der themenbasierten Clusterings: Dokument-Cluster-Label, Dokumenttitel-Cluster-Label
 - `output/contribs`: Dateien der Beitragswerte: rohe/akkumulierte Beiträge, Autornamen, Dokumenttitel
 - `output/graph`: Dateien der Graphen: Affiliationsnetzwerk, Co-Authorship-Dokumentnetzwerk
 - `output/communities`: Dateien der autorenbasierten Communities: Dokument-Community-Label, Dokumenttitel-Community-Label

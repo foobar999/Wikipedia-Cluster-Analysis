@@ -4,16 +4,15 @@ if (( $# != 1 )); then
     echo "Usage: $0 CONFIG"
     exit 1
 fi
-
 unset DEBUG
 CONFIG=$1
 source $CONFIG
-
-echo "PREFIX $PREFIX"
 echo "DEBUG $DEBUG"
 if [ ! -z ${DEBUG+x} ]; then # variable gesetzt?
     export DEBUG=$DEBUG
 fi
+
+echo "PREFIX $PREFIX"
 echo "NO_BELOW $NO_BELOW"
 echo "NO_ABOVE $NO_ABOVE"
 echo "ARTICLE_MIN_TOKENS $ARTICLE_MIN_TOKENS"
@@ -26,6 +25,8 @@ CLUSTER_METHODS=($CLUSTER_METHODS)
 echo "CLUSTER_METHODS ${CLUSTER_METHODS[@]}"
 CLUSTER_NUMS=($CLUSTER_NUMS) 
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
+
+mkdir -p output/logs
 
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS

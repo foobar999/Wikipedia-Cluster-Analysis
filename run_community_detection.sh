@@ -7,9 +7,12 @@ fi
 unset DEBUG
 CONFIG=$1
 source $CONFIG
+echo "DEBUG $DEBUG"
+if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
+    export DEBUG=$DEBUG
+fi
 
 echo "PREFIX $PREFIX"
-echo "DEBUG $DEBUG"
 CONTRIB_VALUES=($CONTRIB_VALUES) # splitte String zu Array
 echo "CONTRIB_VALUES ${CONTRIB_VALUES[@]}"
 echo "TOP_N_CONTRIBS $TOP_N_CONTRIBS"
@@ -18,9 +21,8 @@ echo "COAUTH_MODES ${COAUTH_MODES[@]}"
 COMM_METHODS=($COMM_METHODS)
 echo "COMM_METHODS ${COMM_METHODS[@]}"
 echo "CONSIDER_ONLY_COMMUNITIES $CONSIDER_ONLY_COMMUNITIES"
-if [ ! -z ${DEBUG+x} ]; then    # variable gesetzt?
-    export DEBUG=$DEBUG
-fi
+
+mkdir -p output/logs
 
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS

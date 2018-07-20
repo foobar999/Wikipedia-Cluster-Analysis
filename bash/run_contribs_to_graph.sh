@@ -10,7 +10,6 @@ OPREFIX=$IPREFIX-$COAUTH_MODE
 
 IGRAPH_PREFIX=output/graph/$IPREFIX
 OGRAPH_PREFIX=output/graph/$OPREFIX
-mkdir -p output/logs
 LOG_PREFIX=output/logs/$OPREFIX
 
 BIPARTITE_GRAPH=$IGRAPH_PREFIX-doc-auth-bipartite.graph

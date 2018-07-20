@@ -27,6 +27,9 @@ CLUSTER_NUMS=($CLUSTER_NUMS)
 echo "CLUSTER_NUMS ${CLUSTER_NUMS[@]}"
 
 mkdir -p output/logs
+mkdir -p output/bow
+mkdir -p output/topic
+mkdir -p output/clusters
 
 BOW_CORPUS_PREFIX=output/bow/$PREFIX-bow
 ./bash/run_articles_to_bow.sh $PREFIX $NO_BELOW $NO_ABOVE $ARTICLE_MIN_TOKENS

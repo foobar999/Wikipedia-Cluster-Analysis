@@ -10,11 +10,8 @@ TOP_N_CONTRIBS=$3
 OPREFIX=$IPREFIX-$CONTRIBUTION_VALUE
 
 COLL_PREFIX=collections/$IPREFIX
-mkdir -p output/contribs
 CONTRIB_PREFIX=output/contribs/$OPREFIX
-mkdir -p output/graph
 GRAPH_PREFIX=output/graph/$OPREFIX
-mkdir -p output/logs
 LOG_PREFIX=output/logs/$OPREFIX
 
 NAMESPACE_PREFIXES=output/$IPREFIX-namespaces.txt
@@ -27,10 +24,6 @@ ACC_CONTRIBS=$CONTRIB_PREFIX-acc-contribs.mm
 BIPARTITE_GRAPH=$GRAPH_PREFIX-doc-auth-bipartite.graph
 
 LOG_CONTRIBS=$LOG_PREFIX-contribs.log
-
-#echo "extracting likely namespaces from XML dump"
-#NS_MIN_OCCURENCES=1
-#( time ./bash/get_likely_namespaces.sh $HISTORY.bz2 $NS_MIN_OCCURENCES | tee $NAMESPACE_PREFIXES )|& tee $LOG_PREFIX-namespaces.log
 
 echo "computing author contributions"
 ( time python3 -m scripts.community.history_to_contribs --history-dump=$HISTORY.bz2 --id2author=$ID2AUTHOR.bz2 --contribs=$RAW_CONTRIBS --contribution-value=$CONTRIBUTION_VALUE --namespace-prefixes=$NAMESPACE_PREFIXES ) |& tee $LOG_CONTRIBS

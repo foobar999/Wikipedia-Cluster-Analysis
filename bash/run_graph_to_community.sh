@@ -13,7 +13,6 @@ OPREFIX=$IPREFIX-$COMM_METHOD
 
 CONTRIB_PREFIX=output/contribs/$IPREFIX
 GRAPH_PREFIX=output/graph/$IPREFIX
-mkdir -p output/communities
 COMM_PREFIX=output/communities/$OPREFIX
 LOG_PREFIX=output/logs/$OPREFIX
 

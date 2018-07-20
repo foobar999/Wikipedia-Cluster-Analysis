@@ -23,6 +23,9 @@ echo "COMM_METHODS ${COMM_METHODS[@]}"
 echo "CONSIDER_ONLY_COMMUNITIES $CONSIDER_ONLY_COMMUNITIES"
 
 mkdir -p output/logs
+mkdir -p output/contribs
+mkdir -p output/graph 
+mkdir -p output/communities
 
 for CONTRIB_VALUE in "${CONTRIB_VALUES[@]}"; do
     ./bash/run_history_to_contribs.sh $PREFIX $CONTRIB_VALUE $TOP_N_CONTRIBS

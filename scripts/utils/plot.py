@@ -74,6 +74,8 @@ def scatter_2d_plot(x, y, ofpath, labels=None, rasterized=False, size=1, figsize
         color_map = 'prism'
         
     plt.scatter(x, y, c=color, cmap=color_map, s=size, rasterized=rasterized)
+    plt.xticks([])
+    plt.yticks([])
     plt.savefig(ofpath, bbox_inches='tight', dpi=200)
     
     
